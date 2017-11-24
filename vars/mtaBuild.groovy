@@ -2,10 +2,17 @@ import com.sap.piper.Utils
 
 /**
  * mtaBuild
- * Builds Fiori app with Multitarget Archiver
- * Prerequisite: InitializeNpm needs to be called beforehand
+ * Executes the SAP MTA Archive Builder to create an mtar archive of the application.
  *
+ * @param script
+ *           The common script environment of the Jenkinsfile running. Typically the reference to the script calling the pipeline step is provided with the `this` parameter, as in `script: this`. This allows the function to access the [`commonPipelineEnvironment`](commonPipelineEnvironment.md) for retrieving, for example, configuration parameters.
+ * @param buildTarget
+ *           The target platform to which the mtar can be deployed.
+ * @param mtaJarLocation
+ *           The path of the `mta.jar` file. If no parameter is provided, the path is retrieved from the Jenkins environment variables using `env.MTA_JAR_LOCATION`. If the Jenkins environment variable is not set it is assumed that `mta.jar` is located in the current working directory.
+ * @return The file name of the resulting archive is returned with this step. The file name is extracted from the key `ID` defined in `mta.yaml`.
  */
+
 def call(Map parameters = [:]) {
 
     handlePipelineStepErrors (stepName: 'mtaBuild', stepParameters: parameters) {
