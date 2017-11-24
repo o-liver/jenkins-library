@@ -28,12 +28,12 @@ needs to be extracted into the folder provided by `neoHome`. In case this parame
 | `neoCredentialsId` | no        | `'CI_CREDENTIALS_ID'`                                                                    |                 |
 | `neoHome`          | no        | Environment is checked for `NEO_HOME`, otherwise the neo toolset is expected in the path |                 |
 
-* `script` The common script environment of the Jenkinsfile run. Typically `this` is passed to this parameter. This allows the function to access the [`commonPipelineEnvironment`](commonPipelineEnvironment.md) for retrieving e.g. configuration parameters.
-* `archivePath` The path to the archive for deployment to SAP CP.
-* `deployHost` The SAP Cloud Platform host to deploy to.
-* `deployAccount` The SAP Cloud Platform account to deploy to.
-* `credentialsId` The Jenkins credentials containing user and password used for SAP CP deployment.
-* `neoHome` The path to the `neo-java-web-sdk` tool used for SAP CP deployment. If no parameter is provided, the path is retrieved from the Jenkins environment variables using `env.NEO_HOME`. If this Jenkins environment variable is not set it is assumed that the tool is available in the `PATH`.
+* `script` - The common script environment of the Jenkinsfile run. Typically `this` is passed to this parameter. This allows the function to access the [`commonPipelineEnvironment`](commonPipelineEnvironment.md) for retrieving e.g. configuration parameters.
+* `archivePath`- The path to the archive for deployment to SAP CP.
+* `deployHost` - The SAP Cloud Platform host to deploy to.
+* `deployAccount` - The SAP Cloud Platform account to deploy to.
+* `credentialsId` - The Jenkins credentials containing user and password used for SAP CP deployment.
+* `neoHome` - The path to the `neo-java-web-sdk` tool used for SAP CP deployment. If no parameter is provided, the path is retrieved from the Jenkins environment variables using `env.NEO_HOME`. If this Jenkins environment variable is not set it is assumed that the tool is available in the `PATH`.
 
 ## Return value
 

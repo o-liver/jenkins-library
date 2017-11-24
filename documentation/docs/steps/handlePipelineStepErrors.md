@@ -16,7 +16,7 @@ none
 
 * `stepParameters` - The parameters from the step to be executed. The list of parameters is then shown in the console output.
 * `stepName` - The name of the step executed to be shown in the console output.
-* `echoDetails` - if set to true will output the following as console output:
+* `echoDetails` - If set to true the following will be output to the console:
     1. Step beginning: `--- BEGIN LIBRARY STEP: ${stepName}.groovy ---`
     2. Step end: `--- END LIBRARY STEP: ${stepName}.groovy ---`
     3. Step errors: 
