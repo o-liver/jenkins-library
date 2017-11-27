@@ -1,24 +1,5 @@
 import com.sap.piper.Utils
 
-/**
- * neoDeployment
- * Deploys an Application to SAP Cloud Platform (SAP CP) using the SAP Cloud Platform Console Client (Neo Java Web SDK).
- *
- * @param archivePath
- *           Path of the archive to be deployed.
- * @param script
- *           The common script environment of the Jenkinsfile run. Typically `this` is passed to this parameter. This allows the function to access the [`commonPipelineEnvironment`](commonPipelineEnvironment.md) for retrieving e.g. configuration parameters.
- * @param archivePath
- *           The path to the archive for deployment to SAP CP.
- * @param deployHost
- *           The SAP Cloud Platform host to deploy to.
- * @param deployAccount
- *           The SAP Cloud Platform account to deploy to.
- * @param credentialsId
- *           The Jenkins credentials containing user and password used for SAP CP deployment.
- * @param neoHome
- *           The path to the `neo-java-web-sdk` tool used for SAP CP deployment. If no parameter is provided, the path is retrieved from the Jenkins environment variables using `env.NEO_HOME`. If this Jenkins environment variable is not set it is assumed that the tool is available in the `PATH`.
- */
 
 def call(parameters = [:]) {
 

@@ -1,14 +1,3 @@
-/**
- * handlePipelineStepErrors
- * Used by other steps to make error analysis easier. Lists parameters and other data available to the step in which the error occurs.
- *
- * @param stepParameters
- *           The parameters from the step to be executed. The list of parameters is then shown in the console output.
- * @param stepName
- *           The name of the step executed to be shown in the console output.
- * @param echoDetails
- *           Echo beginning and end of step call as well as detailed error message in case of failure.
- */
 
 def call(Map parameters = [:], body) {
 
