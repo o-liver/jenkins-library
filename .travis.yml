@@ -1,8 +1,6 @@
 language: groovy
 sudo: false
-addons:
-  apt:
-    packages:
-    - python
 after_success:
 - python -V
+- pip install mkdocs -U
+- mkdocs --version
