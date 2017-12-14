@@ -3,6 +3,8 @@ sudo: false
 install:
 - sudo pip install mkdocs
 - sudo pip install mkdocs-material
+script:
+- cd documentation && mkdocs build --clean --verbose --strict
 cache:
   directories:
   - $HOME/.cache/pip 
