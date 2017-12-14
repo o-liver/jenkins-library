@@ -1,2 +1,8 @@
 language: groovy
 sudo: false
+addons:
+  apt:
+    packages:
+    - python
+after_success:
+- python -V
