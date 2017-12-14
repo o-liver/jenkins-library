@@ -1,6 +1,7 @@
 language: groovy
 sudo: false
+install:
+- pip install mkdocs
+- pip install mkdocs-material
 after_success:
-- python -V
-- pip install mkdocs -U
 - mkdocs --version
