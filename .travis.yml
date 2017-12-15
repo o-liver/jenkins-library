@@ -8,7 +8,11 @@ install:
 - sudo pip install mkdocs-material
 script:
 - cd documentation && mkdocs build --clean --verbose --strict
-- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "Pushing to gh-pages"; mkdocs gh-deploy -v --clean; fi;
+- git config user.name "Travis CI Publisher"
+- git config user.email "oliver.feldmann@sap.com"
+- git remote add gh-token "git@github.com:o-liver/jenkins-library.git";
+- git fetch gh-token && git fetch gh-token gh-pages:gh-pages;
+- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "Pushing to gh-pages"; mkdocs gh-deploy -v --clean --remote-name gh-token; fi;
 cache:
   directories:
   - "$HOME/.cache/pip"
