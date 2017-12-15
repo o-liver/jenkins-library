@@ -8,15 +8,13 @@ install:
 - sudo pip install mkdocs-material
 script:
 - cd documentation && mkdocs build --clean --verbose --strict
-- cd ..
-- chmod 600 deploy-key
-- eval `ssh-agent -s`
-- ssh-add deploy-key
-- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "Pushing to gh-pages"; cd documentation
-  && mkdocs gh-deploy -v --clean; fi;
+- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then echo "Pushing to gh-pages"; mkdocs gh-deploy -v --clean; fi;
 cache:
   directories:
   - "$HOME/.cache/pip"
 before_install:
 - openssl aes-256-cbc -K $encrypted_2ece8a72e6e4_key -iv $encrypted_2ece8a72e6e4_iv
   -in deploy-key.enc -out deploy-key -d
+- chmod 600 deploy-key
+- eval `ssh-agent -s`
+- ssh-add deploy-key
