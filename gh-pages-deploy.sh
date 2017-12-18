@@ -1,11 +1,11 @@
 #!/bin/bash
 
 if [[ "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
+    echo "Github page deployment not performed for pull requests"
     # Check for build errors or warnings
     cd documentation
     mkdocs build --clean --verbose --strict
-    echo "Github page deployment not performed for pull requests"
-    exit 0
+    exit $?
 elif [[ "${TRAVIS_BRANCH}" != "master" ]]; then
     echo "Github page deployment not performed for non-master."
     exit 0
