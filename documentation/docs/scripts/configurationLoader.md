@@ -152,4 +152,4 @@ To get the map containing the key `targets` and the list of the deployment locat
 Map configuration = ConfigurationLoader.stageConfiguration(script, 'productionDeployment')
 ```
 
-[commonPipelineEnvironment]: /steps/commonPipelineEnvironment.md
+[commonPipelineEnvironment]: commonPipelineEnvironment.md
