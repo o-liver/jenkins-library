@@ -3,11 +3,11 @@ sudo: true
 branches:
   only:
   - master
-after_success:
+install:
 - sudo pip install mkdocs
 - sudo pip install mkdocs-material
-- ./documentation/gh-pages-deploy.sh
+script:
+- cd documentation && ./gh-pages-deploy.sh
 cache:
   directories:
   - "$HOME/.cache/pip"
-  - "$HOME/.m2"
