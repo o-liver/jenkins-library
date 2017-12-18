@@ -10,3 +10,4 @@ after_success:
 cache:
   directories:
   - "$HOME/.cache/pip"
+  - "$HOME/.m2"
