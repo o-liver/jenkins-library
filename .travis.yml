@@ -6,7 +6,7 @@ branches:
 after_success:
 - sudo pip install mkdocs
 - sudo pip install mkdocs-material
-- documentation/gh-pages-deploy.sh
+- ./documentation/gh-pages-deploy.sh
 cache:
   directories:
   - "$HOME/.cache/pip"
