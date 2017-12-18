@@ -1,4 +1,5 @@
 language: groovy
+sudo: true
 branches:
   only:
   - master
@@ -6,7 +7,8 @@ install:
 - sudo pip install mkdocs
 - sudo pip install mkdocs-material
 script:
-- cd documentation && ./gh-pages-deploy.sh
+- chmod +x gh-pages-deploy.sh
+- ./gh-pages-deploy.sh
 cache:
   directories:
   - "$HOME/.cache/pip"

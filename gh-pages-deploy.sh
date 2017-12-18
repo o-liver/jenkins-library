@@ -2,6 +2,7 @@
 
 if [[ "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
     # Check for build errors or warnings
+    cd documentation
     mkdocs build --clean --verbose --strict
     echo "Github page deployment not performed for pull requests"
     exit 0
@@ -27,4 +28,5 @@ git config user.name "Travis CI Publisher"
 git remote add gh-token "git@github.com:$REPO.git";
 git fetch gh-token && git fetch gh-token gh-pages:gh-pages
 echo "Pushing to gh-pages"
+cd documentation
 mkdocs gh-deploy -v --clean --remote-name gh-token
