@@ -1,4 +1,4 @@
-# ConfigurationLoader
+# ConfigurationOverLoader
 
 ## Description
 Loads configuration values from the global configuration. 
@@ -152,4 +152,4 @@ To get the map containing the key `targets` and the list of the deployment locat
 Map configuration = ConfigurationLoader.stageConfiguration(script, 'productionDeployment')
 ```
 
-[commonPipelineEnvironment]: commonPipelineEnvironment.md
+[commonPipelineEnvironment]: /steps/commonPipelineEnvironment.md
