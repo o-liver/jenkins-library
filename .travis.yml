@@ -1,5 +1,4 @@
 language: groovy
-sudo: true
 branches:
   only:
   - master
