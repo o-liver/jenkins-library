@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Merge to master"
+
 . .travis.env
 
 # We can't deploy if any of these vars are empty
