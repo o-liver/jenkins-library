@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. .travis.env
+
 if [[ "${TRAVIS_PULL_REQUEST}" != "false" ]]; then
     echo "Github page deployment not performed for pull requests"
     # Check for build errors or warnings
