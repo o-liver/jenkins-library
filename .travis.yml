@@ -4,8 +4,8 @@ branches:
   only:
   - master
 install:
-- sudo pip install mkdocs
-- sudo pip install mkdocs-material
+- sudo -H pip install mkdocs
+- sudo -H pip install mkdocs-material
 script:
 - if [[ "${TRAVIS_PULL_REQUEST}" != "false" ]]; then chmod +x pull-request.sh && ./pull-request.sh; else chmod +x gh-pages-deploy.sh && ./gh-pages-deploy.sh; fi;
 cache:
