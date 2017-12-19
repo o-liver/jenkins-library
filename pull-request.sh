@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Pull request"
+echo "Found pull request: Running maven tests and building documentation"
 
 # Run tests
 mvn test -B

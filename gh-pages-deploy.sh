@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Merge to master"
+echo "Found change on master: Deployment of documentation"
 
 . .travis.env
 
