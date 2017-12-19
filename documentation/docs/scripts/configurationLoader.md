@@ -1,4 +1,4 @@
-# ConfigurationOverLoader
+# ConfigurationLoader
 
 ## Description
 Loads configuration values from the global configuration. 
