@@ -11,4 +11,4 @@ TRAVIS_COMMIT itself.
 */
 
 println "Hello"
-println "commit sha: ${env.TRAVIS_COMMIT}"
+println "commit sha: ${System.getenv('TRAVIS_COMMIT')}"
