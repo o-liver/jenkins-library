@@ -1,7 +1,5 @@
-@Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.7' )
+@Grab(group = 'org.codehaus.groovy.modules.http-builder', module = 'http-builder', version = '0.7')
 import groovyx.net.http.HTTPBuilder
-import static groovyx.net.http.Method.GET
-import static groovyx.net.http.ContentType.TEXT
 
 /*
 In case the build is performed for a pull request TRAVIS_COMMIT is a merge
@@ -23,22 +21,20 @@ notifyGithub("pending", "Integration tests in progress.", COMMIT_HASH_FOR_STATUS
 def notifyGithub(state, description, hash) {
     println "[INFO] Notifying about state '${state}' for commit '${hash}'."
 
-    def http = new HTTPBuilder( 'http://www.google.com/search' )
+    def http = new HTTPBuilder("https://api.github" +
+        ".com/repos/o-liver/jenkins-library/statuses/${hash}")
+    http.auth.basic System.getenv('INTEGRATION_TEST_VOTING_USER'), System.getenv('INTEGRATION_TEST_VOTING_TOKEN')
 
-    http.request(GET,TEXT) { req ->
-        uri.path = '/mail/help/tasks/' // overrides any path in the default URL
-        headers.'User-Agent' = 'Mozilla/5.0'
+    def postBody = [
+        state      : state,
+        target_url : System.getenv('TRAVIS_BUILD_WEB_URL'),
+        description: description,
+        context    : "integration-tests"
+    ]
 
-        response.success = { resp, reader ->
-            assert resp.status == 200
-            println "My response handler got response: ${resp.statusLine}"
-            println "Response length: ${resp.headers.'Content-Length'}"
-            System.out << reader // print response reader
-        }
+    http.post(path: '/', body: postBody, requestContentType: URLENC) { resp ->
 
-        // called only for a 404 (not found) status code:
-        response.'404' = { resp ->
-            println 'Not found'
-        }
+        println "POST Success: ${resp.statusLine}"
+        assert resp.statusLine.statusCode == 201
     }
 }
