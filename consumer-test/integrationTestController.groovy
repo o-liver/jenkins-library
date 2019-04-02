@@ -1,5 +1,6 @@
 @Grab(group = 'org.codehaus.groovy.modules.http-builder', module = 'http-builder', version = '0.7')
 import groovyx.net.http.HTTPBuilder
+import static groovyx.net.http.ContentType.URLENC
 
 /*
 In case the build is performed for a pull request TRAVIS_COMMIT is a merge
