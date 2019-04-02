@@ -1,6 +1,6 @@
 branches:
   only:
-  - master
+  - groovyIntegrationTests
   - /^it\/.*$/
 language: groovy
 sudo: required
@@ -18,42 +18,8 @@ cache:
 # Travis Conditions: https://docs.travis-ci.com/user/conditional-builds-stages-jobs
 jobs:
   include:
-    - stage: Tests
-      name: Unit Tests
-      before_script:
-        - curl -L --output cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-        - chmod +x ./cc-test-reporter
-        - ./cc-test-reporter before-build
-      script: mvn package --batch-mode
-      after_script:
-        - JACOCO_SOURCE_PATH="src vars test" ./cc-test-reporter format-coverage target/site/jacoco/jacoco.xml --input-type jacoco
-        - ./cc-test-reporter upload-coverage
-    - name: Docs Build
-      if: type = pull_request
-      install: docker pull squidfunk/mkdocs-material:3.0.4
-      script:
-      - |
-        cp -r documentation/docs documentation/docs-tmp
-        documentation/bin/createDocu.sh vars documentation/docs-tmp/steps
-        docker run --rm -it -v ${TRAVIS_BUILD_DIR}:/docs -w /docs/documentation squidfunk/mkdocs-material:3.0.4 build --clean --verbose --strict
     - name: Consumer Tests
-      if: repo = "SAP/jenkins-library" && ( (type != pull_request && branch =~ /^master$|^it\/.*$/) || (type == pull_request && head_repo = "SAP/jenkins-library" && head_branch =~ /^it\/.*$/) )
-      script: cd consumer-test && chmod +x integrationTestController.sh && ./integrationTestController.sh
-
-    - stage: Docs
-      name: Deploy
-      if: repo = "SAP/jenkins-library" AND branch = master AND NOT type = pull_request
-      install: 
-        - docker pull squidfunk/mkdocs-material:3.0.4
-        - |
-          echo "Found change on master: Deployment of documentation"
-          PRIVATE_KEY="cfg/id_rsa"
-          openssl aes-256-cbc -K $encrypted_12c8071d2874_key -iv $encrypted_12c8071d2874_iv -in cfg/id_rsa.enc -out "${PRIVATE_KEY}" -d
-          chmod a+x gh-pages-deploy.sh        
-          cp -r documentation/docs documentation/docs-tmp
-          documentation/bin/createDocu.sh vars documentation/docs-tmp/steps
-      script: docker run --rm -it --entrypoint "./gh-pages-deploy.sh" -e "TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}" -v ${TRAVIS_BUILD_DIR}:/docs -w /docs squidfunk/mkdocs-material:3.0.4
-      # TODO: make use of GHPages deploy provider: https://docs.travis-ci.com/user/deployment/pages/
+      script: groovy consumer-test/integrationTestController.groovy
 
 #notifications:
 #  slack:
