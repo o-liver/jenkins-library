@@ -4,6 +4,12 @@ branches:
   - /^it\/.*$/
 language: groovy
 sudo: required
+env:
+  global:
+    MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+cache:
+  directories:
+  - $HOME/.m2
 
 # Travis Lifecycle: https://docs.travis-ci.com/user/job-lifecycle#the-job-lifecycle
 # Travis Stages: https://docs.travis-ci.com/user/build-stages/
@@ -11,7 +17,7 @@ sudo: required
 jobs:
   include:
     - name: Consumer Tests
-      script: groovy consumer-test/integrationTestController.groovy
+      script: cd consumer-test && groovy integrationTestController.groovy
 
 #notifications:
 #  slack:
