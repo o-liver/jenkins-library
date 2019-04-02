@@ -1,6 +1,7 @@
 @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.7' )
-
-
+import groovyx.net.http.HTTPBuilder
+import static groovyx.net.http.Method.GET
+import static groovyx.net.http.ContentType.TEXT
 
 /*
 In case the build is performed for a pull request TRAVIS_COMMIT is a merge
@@ -22,6 +23,22 @@ notifyGithub("pending", "Integration tests in progress.", COMMIT_HASH_FOR_STATUS
 def notifyGithub(state, description, hash) {
     println "[INFO] Notifying about state '${state}' for commit '${hash}'."
 
-    def http = new groovyx.net.http.HTTPBuilder('http://www.codehaus.org')
-    println http
+    def http = new HTTPBuilder( 'http://www.google.com/search' )
+
+    http.request(GET,TEXT) { req ->
+        uri.path = '/mail/help/tasks/' // overrides any path in the default URL
+        headers.'User-Agent' = 'Mozilla/5.0'
+
+        response.success = { resp, reader ->
+            assert resp.status == 200
+            println "My response handler got response: ${resp.statusLine}"
+            println "Response length: ${resp.headers.'Content-Length'}"
+            System.out << reader // print response reader
+        }
+
+        // called only for a 404 (not found) status code:
+        response.'404' = { resp ->
+            println 'Not found'
+        }
+    }
 }
