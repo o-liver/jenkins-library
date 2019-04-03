@@ -29,7 +29,7 @@ def notifyGithub(state, description, hash) {
 //    def usernamepassword64 = "${System.getenv('INTEGRATION_TEST_VOTING_USER')}:${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
 //        .bytes.encodeBase64().toString()
 //    http.setHeaders([Authorization: "Basic ${usernamepassword64}"])
-    http.auth.basic System.getenv('o-liver'), System.getenv('7aab2d4007034b961c0dfc2d858e2b240198ee31')
+    http.auth.basic('o-liver', '7aab2d4007034b961c0dfc2d858e2b240198ee31')
 //    http.headers['Authorization'] = 'Basic '+"${System.getenv('INTEGRATION_TEST_VOTING_USER')}:${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}".getBytes('iso-8859-1').encodeBase64()
 
     def postBody = [
