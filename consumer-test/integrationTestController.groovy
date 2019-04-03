@@ -19,6 +19,13 @@ println "commit sha: ${COMMIT_HASH_FOR_STATUS_NOTIFICATIONS}"
 
 notifyGithub("pending", "Integration tests in progress.", COMMIT_HASH_FOR_STATUS_NOTIFICATIONS)
 
+def WORKSPACES_ROOT = new File('workspaces')
+if (WORKSPACES_ROOT.exists()) {
+    WORKSPACES_ROOT.deleteDir()
+}
+
+
+
 def notifyGithub(state, description, hash) {
     println "[INFO] Notifying about state '${state}' for commit '${hash}'."
 
