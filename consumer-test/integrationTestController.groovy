@@ -25,7 +25,7 @@ def notifyGithub(state, description, hash) {
     println "XXXXXXXXXX 'TRAVIS_BUILD_WEB_URL': ${System.getenv('TRAVIS_BUILD_WEB_URL')}"
 
     def http = new RESTClient("https://api.github" +
-        ".com/repos/o-liver/jenkins-library/statuses/${hash}")
+        ".com/repos/o-liver/jenkins-library/")
 //    def usernamepassword64 = "${System.getenv('INTEGRATION_TEST_VOTING_USER')}:${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
 //        .bytes.encodeBase64().toString()
 //    http.setHeaders([Authorization: "Basic ${usernamepassword64}"])
@@ -39,7 +39,7 @@ def notifyGithub(state, description, hash) {
         context    : "integration-tests"
     ]
 
-    def response = http.post(path: '', body: postBody, requestContentType: URLENC)
+    def response = http.post(path: "statuses/${hash}", body: postBody, requestContentType: URLENC)
 
     println response.status
 }
