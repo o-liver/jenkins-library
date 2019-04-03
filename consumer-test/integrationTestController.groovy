@@ -1,5 +1,6 @@
 @Grab(group = 'org.codehaus.groovy.modules.http-builder', module = 'http-builder', version = '0.7')
 import groovyx.net.http.HTTPBuilder
+import groovyx.net.http.RESTClient
 import static groovyx.net.http.ContentType.URLENC
 
 /*
@@ -23,12 +24,12 @@ def notifyGithub(state, description, hash) {
     println "[INFO] Notifying about state '${state}' for commit '${hash}'."
     println "XXXXXXXXXX 'TRAVIS_BUILD_WEB_URL': ${System.getenv('TRAVIS_BUILD_WEB_URL')}"
 
-    def http = new HTTPBuilder("https://api.github" +
+    def http = new RESTClient("https://api.github" +
         ".com/repos/o-liver/jenkins-library/statuses/${hash}")
-    def usernamepassword64 = "${System.getenv('INTEGRATION_TEST_VOTING_USER')}:${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
-        .bytes.encodeBase64().toString()
-    http.setHeaders([Authorization: "Basic by1saXZlcjo3YWFiMmQ0MDA3MDM0Yjk2MWMwZGZjMmQ4NThlMmIyNDAxOThlZTMx"])
-//    http.auth.basic System.getenv('INTEGRATION_TEST_VOTING_USER'), System.getenv('INTEGRATION_TEST_VOTING_TOKEN')
+//    def usernamepassword64 = "${System.getenv('INTEGRATION_TEST_VOTING_USER')}:${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
+//        .bytes.encodeBase64().toString()
+//    http.setHeaders([Authorization: "Basic ${usernamepassword64}"])
+    http.auth.basic System.getenv('INTEGRATION_TEST_VOTING_USER'), System.getenv('INTEGRATION_TEST_VOTING_TOKEN')
 
     def postBody = [
         state      : state,
@@ -37,9 +38,7 @@ def notifyGithub(state, description, hash) {
         context    : "integration-tests"
     ]
 
-    http.post(path: '/', body: postBody, requestContentType: URLENC) { resp ->
+    def response = http.post(path: '', body: postBody, requestContentType: URLENC)
 
-        println "POST Success: ${resp.statusLine}"
-        assert resp.statusLine.statusCode == 201
-    }
+    println response.status
 }
