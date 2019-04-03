@@ -24,7 +24,10 @@ def notifyGithub(state, description, hash) {
 
     def http = new HTTPBuilder("https://api.github" +
         ".com/repos/o-liver/jenkins-library/statuses/${hash}")
-    http.auth.basic System.getenv('INTEGRATION_TEST_VOTING_USER'), System.getenv('INTEGRATION_TEST_VOTING_TOKEN')
+    def usernamepassword64 = "${System.getenv('INTEGRATION_TEST_VOTING_USER')}:${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
+        .bytes.encodeBase64().toString()
+    http.setHeaders([Authorization: "Basic ${usernamepassword64}"])
+//    http.auth.basic System.getenv('INTEGRATION_TEST_VOTING_USER'), System.getenv('INTEGRATION_TEST_VOTING_TOKEN')
 
     def postBody = [
         state      : state,
