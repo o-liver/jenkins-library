@@ -21,7 +21,6 @@ notifyGithub("pending", "Integration tests in progress.", COMMIT_HASH_FOR_STATUS
 
 def notifyGithub(state, description, hash) {
     println "[INFO] Notifying about state '${state}' for commit '${hash}'."
-    println "XXXXXXXXXX 'TRAVIS_BUILD_WEB_URL': ${System.getenv('TRAVIS_BUILD_WEB_URL')}"
 
     def http = new RESTClient("https://api.github" +
         ".com/repos/o-liver/jenkins-library/statuses/${hash}")
