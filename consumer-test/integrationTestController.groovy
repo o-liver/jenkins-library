@@ -1,7 +1,6 @@
 @Grab(group = 'org.codehaus.groovy.modules.http-builder', module = 'http-builder', version = '0.7')
-import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.RESTClient
-import static groovyx.net.http.ContentType.URLENC
+import static groovyx.net.http.ContentType.JSON
 
 /*
 In case the build is performed for a pull request TRAVIS_COMMIT is a merge
@@ -25,7 +24,7 @@ def notifyGithub(state, description, hash) {
     println "XXXXXXXXXX 'TRAVIS_BUILD_WEB_URL': ${System.getenv('TRAVIS_BUILD_WEB_URL')}"
 
     def http = new RESTClient("https://api.github" +
-        ".com/repos/o-liver/jenkins-library/")
+        ".com/repos/o-liver/jenkins-library/statuses/${hash}")
     http.headers['User-Agent'] = 'groovy-script'
     http.headers['Authorization'] = "token ${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
 
@@ -36,7 +35,8 @@ def notifyGithub(state, description, hash) {
         context    : "integration-tests"
     ]
 
-    def response = http.post(path: "statuses/${hash}", body: postBody, requestContentType: URLENC)
+    http.post(body: postBody, requestContentType: JSON) { response ->
+        assert response.statusLine.statusCode == 201
+    }
 
-    println response.status
 }
