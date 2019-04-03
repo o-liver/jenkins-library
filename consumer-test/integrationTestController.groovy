@@ -26,11 +26,8 @@ def notifyGithub(state, description, hash) {
 
     def http = new RESTClient("https://api.github" +
         ".com/repos/o-liver/jenkins-library/")
-//    def usernamepassword64 = "${System.getenv('INTEGRATION_TEST_VOTING_USER')}:${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
-//        .bytes.encodeBase64().toString()
-//    http.setHeaders([Authorization: "Basic ${usernamepassword64}"])
-    http.auth.basic('o-liver', '7aab2d4007034b961c0dfc2d858e2b240198ee31')
-//    http.headers['Authorization'] = 'Basic '+"${System.getenv('INTEGRATION_TEST_VOTING_USER')}:${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}".getBytes('iso-8859-1').encodeBase64()
+    http.headers['User-Agent'] = 'groovy-script'
+    http.headers['Authorization'] = "token ${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
 
     def postBody = [
         state      : state,
