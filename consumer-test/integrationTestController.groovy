@@ -1,5 +1,7 @@
+import groovy.io.FileType
 @Grab(group = 'org.codehaus.groovy.modules.http-builder', module = 'http-builder', version = '0.7')
 import groovyx.net.http.RESTClient
+
 import static groovyx.net.http.ContentType.JSON
 
 /*
@@ -24,6 +26,8 @@ if (WORKSPACES_ROOT.exists()) {
     WORKSPACES_ROOT.deleteDir()
 }
 
+def testCases = listYamlInDirRecursive('testCases')
+
 
 
 def notifyGithub(state, description, hash) {
@@ -45,4 +49,14 @@ def notifyGithub(state, description, hash) {
         assert response.statusLine.statusCode == 201
     }
 
+}
+
+static def listYamlInDirRecursive(String dirname) {
+    def dir = new File(dirname)
+    def yamlFiles = []
+    dir.eachFileRecurse(FileType.FILES) { file ->
+        if (file.getName().endsWith('.yml'))
+            yamlFiles << file
+    }
+    return yamlFiles
 }
