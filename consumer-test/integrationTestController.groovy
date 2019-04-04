@@ -21,13 +21,17 @@ println "commit sha: ${COMMIT_HASH_FOR_STATUS_NOTIFICATIONS}"
 
 notifyGithub("pending", "Integration tests in progress.", COMMIT_HASH_FOR_STATUS_NOTIFICATIONS)
 
-def WORKSPACES_ROOT = new File('workspaces')
-if (WORKSPACES_ROOT.exists()) {
-    WORKSPACES_ROOT.deleteDir()
-}
-
+def workspacesRootDir = new File('workspaces')
+deleteDirIfExists(workspacesRootDir)
 def testCases = listYamlInDirRecursive('testCases')
-
+testCases.each { file ->
+    def testCaseMatches = (file.toString() =~ /^[\w\-]+\\/([\w\-]+)\\/([\w\-]+)\..*\u0024/)
+    area = testCaseMatches[0][1]
+    testCase = testCaseMatches[0][2]
+    def testCaseRootDir = new File("${workspacesRootDir}/${area}/${testCase}")
+    deleteDirIfExists(testCaseRootDir)
+    testCaseRootDir.mkdirs()
+}
 
 
 def notifyGithub(state, description, hash) {
@@ -49,6 +53,12 @@ def notifyGithub(state, description, hash) {
         assert response.statusLine.statusCode == 201
     }
 
+}
+
+static def deleteDirIfExists(File dirname) {
+    if (dirname.exists()) {
+        dirname.deleteDir()
+    }
 }
 
 static def listYamlInDirRecursive(String dirname) {
