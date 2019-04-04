@@ -15,11 +15,11 @@ In this case there is no merge commit between any base branch and HEAD of a PR b
 The commit which we need for notifying about a build status is in this case simply
 TRAVIS_COMMIT itself.
 */
-def COMMIT_HASH_FOR_STATUS_NOTIFICATIONS = System.getenv('TRAVIS_PULL_REQUEST_SHA') ?: System.getenv('TRAVIS_COMMIT')
+def commitHash = System.getenv('TRAVIS_PULL_REQUEST_SHA') ?: System.getenv('TRAVIS_COMMIT')
 
-println "commit sha: ${COMMIT_HASH_FOR_STATUS_NOTIFICATIONS}"
+println "commit sha: ${commitHash}"
 
-notifyGithub("pending", "Integration tests in progress.", COMMIT_HASH_FOR_STATUS_NOTIFICATIONS)
+notifyGithub("pending", "Integration tests in progress.", commitHash)
 
 def workspacesRootDir = new File('workspaces')
 deleteDirIfExists(workspacesRootDir)
