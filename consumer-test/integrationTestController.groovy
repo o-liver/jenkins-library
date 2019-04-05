@@ -22,19 +22,7 @@ println "commit sha: ${commitHash}"
 
 notifyGithub("pending", "Integration tests in progress.", commitHash)
 
-def workspacesRootDir = new File('workspaces')
-deleteDirIfExists(workspacesRootDir)
-def testCases = listYamlInDirRecursive('testCases')
-def threads = []
-testCases.each { file ->
-    def testCaseMatches = (file.toString() =~ /^[\w\-]+\\/([\w\-]+)\\/([\w\-]+)\..*\u0024/)
-    area = testCaseMatches[0][1]
-    testCase = testCaseMatches[0][2]
-    def testCaseRootDir = new File("${workspacesRootDir}/${area}/${testCase}")
-    deleteDirIfExists(testCaseRootDir)
-    testCaseRootDir.mkdirs()
-    threads << new TestRunnerThread(testCase)
-}
+def threads = listThreadsOfTestCasesToRun('workspaces', 'testCases')
 threads.each { it ->
     it.start()
     it.join()
@@ -62,10 +50,12 @@ def notifyGithub(state, description, hash) {
 
 }
 
-static def deleteDirIfExists(File dirname) {
-    if (dirname.exists()) {
-        dirname.deleteDir()
+static def makeEmptyDir(String dirName) {
+    def dir = new File(dirName)
+    if (dir.exists()) {
+        dir.deleteDir()
     }
+    dir.mkdirs()
 }
 
 static def listYamlInDirRecursive(String dirname) {
@@ -76,4 +66,20 @@ static def listYamlInDirRecursive(String dirname) {
             yamlFiles << file
     }
     return yamlFiles
+}
+
+def listThreadsOfTestCasesToRun(String rootDirName, String testCasesDirName) {
+    makeEmptyDir(rootDirName)
+
+    def testCases = listYamlInDirRecursive(testCasesDirName)
+    def threads = []
+    testCases.each { file ->
+        def testCaseMatches = (file.toString() =~ /^[\w\-]+\\/([\w\-]+)\\/([\w\-]+)\..*\u0024/)
+        area = testCaseMatches[0][1]
+        testCase = testCaseMatches[0][2]
+        def testCaseRootDir = "${rootDirName}/${area}/${testCase}"
+        makeEmptyDir(testCaseRootDir)
+        threads << new TestRunnerThread(testCase)
+    }
+    return threads
 }
