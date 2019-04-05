@@ -20,8 +20,8 @@ def commitHash = System.getenv('TRAVIS_PULL_REQUEST_SHA') ?: System.getenv('TRAV
 
 notifyGithub("pending", "Integration tests in progress.", commitHash)
 
-def threads = listThreadsOfTestCasesToRun('workspaces', 'testCases')
-threads.each { it ->
+def testCaseThreads = listThreadsOfTestCases('workspaces', 'testCases')
+testCaseThreads.each { it ->
     it.start()
     it.join()
 }
@@ -48,7 +48,7 @@ def notifyGithub(state, description, hash) {
 
 }
 
-static def makeEmptyDir(String dirName) {
+static def newEmptyDir(String dirName) {
     def dir = new File(dirName)
     if (dir.exists()) {
         dir.deleteDir()
@@ -66,8 +66,8 @@ static def listYamlInDirRecursive(String dirname) {
     return yamlFiles
 }
 
-def listThreadsOfTestCasesToRun(String rootDirName, String testCasesDirName) {
-    makeEmptyDir(rootDirName)
+def listThreadsOfTestCases(String rootDirName, String testCasesDirName) {
+    newEmptyDir(rootDirName)
 
     def testCases = listYamlInDirRecursive(testCasesDirName)
     def threads = []
@@ -77,8 +77,8 @@ def listThreadsOfTestCasesToRun(String rootDirName, String testCasesDirName) {
         area = testCaseMatches[0][1]
         testCase = testCaseMatches[0][2]
         def testCaseRootDir = "${rootDirName}/${area}/${testCase}"
-        makeEmptyDir(testCaseRootDir)
-        threads << new TestRunnerThread(testCase)
+        newEmptyDir(testCaseRootDir)
+        threads << new TestRunnerThread(area, testCase)
     }
     return threads
 }
