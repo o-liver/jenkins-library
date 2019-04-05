@@ -1,7 +1,9 @@
 import TestRunnerThread
+import ITUtils
 
-evaluate(new File("./ITUtils.groovy"))
-utils = new ITUtils()
+def WORKSPACES_ROOT = 'workspaces'
+def TEST_CASES_DIR = 'testCases'
+
 /*
 In case the build is performed for a pull request TRAVIS_COMMIT is a merge
 commit between the base branch and the PR branch HEAD. That commit is actually built.
@@ -15,9 +17,9 @@ TRAVIS_COMMIT itself.
 */
 def commitHash = System.getenv('TRAVIS_PULL_REQUEST_SHA') ?: System.getenv('TRAVIS_COMMIT')
 
-utils.notifyGithub("pending", "Integration tests in progress.", commitHash)
+ITUtils.notifyGithub("pending", "Integration tests in progress.", commitHash)
 
-def testCaseThreads = listThreadsOfTestCases('workspaces', 'testCases')
+def testCaseThreads = listThreadsOfTestCases(WORKSPACES_ROOT, TEST_CASES_DIR)
 testCaseThreads.each { it ->
     it.start()
     it.join()
@@ -25,19 +27,18 @@ testCaseThreads.each { it ->
 
 
 
-def listThreadsOfTestCases(String rootDirName, String testCasesDirName) {
-    utils.newEmptyDir(rootDirName)
+def listThreadsOfTestCases(String workspacesRootDir, String testCasesDirName) {
+    ITUtils.newEmptyDir(workspacesRootDir)
 
-    def testCases = utils.listYamlInDirRecursive(testCasesDirName)
+    //Each dir that includes a yml file is a test case
+    def testCases = ITUtils.listYamlInDirRecursive(testCasesDirName)
     def threads = []
     testCases.each { file ->
         // Regex pattern expects a folder structure such as '/rootDir/areaDir/testCase.extension'
         def testCaseMatches = (file.toString() =~ /^[\w\-]+\\/([\w\-]+)\\/([\w\-]+)\..*\u0024/)
         area = testCaseMatches[0][1]
         testCase = testCaseMatches[0][2]
-        def testCaseRootDir = "${rootDirName}/${area}/${testCase}"
-        utils.newEmptyDir(testCaseRootDir)
-        threads << new TestRunnerThread(area, testCase)
+        threads << new TestRunnerThread(workspacesRootDir, area, testCase)
     }
     return threads
 }
