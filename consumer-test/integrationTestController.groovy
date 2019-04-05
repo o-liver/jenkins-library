@@ -74,6 +74,7 @@ def listThreadsOfTestCasesToRun(String rootDirName, String testCasesDirName) {
     def testCases = listYamlInDirRecursive(testCasesDirName)
     def threads = []
     testCases.each { file ->
+        // Regex pattern expects a folder structure such as '/rootDir/areaDir/testCase.extension'
         def testCaseMatches = (file.toString() =~ /^[\w\-]+\\/([\w\-]+)\\/([\w\-]+)\..*\u0024/)
         area = testCaseMatches[0][1]
         testCase = testCaseMatches[0][2]
