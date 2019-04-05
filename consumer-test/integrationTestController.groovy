@@ -18,8 +18,6 @@ TRAVIS_COMMIT itself.
 */
 def commitHash = System.getenv('TRAVIS_PULL_REQUEST_SHA') ?: System.getenv('TRAVIS_COMMIT')
 
-println "commit sha: ${commitHash}"
-
 notifyGithub("pending", "Integration tests in progress.", commitHash)
 
 def threads = listThreadsOfTestCasesToRun('workspaces', 'testCases')
