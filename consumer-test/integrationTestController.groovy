@@ -1,10 +1,7 @@
 import TestRunnerThread
-import groovy.io.FileType
-@Grab(group = 'org.codehaus.groovy.modules.http-builder', module = 'http-builder', version = '0.7')
-import groovyx.net.http.RESTClient
 
-import static groovyx.net.http.ContentType.JSON
-
+evaluate(new File("./ITUtils.groovy"))
+utils = new ITUtils()
 /*
 In case the build is performed for a pull request TRAVIS_COMMIT is a merge
 commit between the base branch and the PR branch HEAD. That commit is actually built.
@@ -18,7 +15,7 @@ TRAVIS_COMMIT itself.
 */
 def commitHash = System.getenv('TRAVIS_PULL_REQUEST_SHA') ?: System.getenv('TRAVIS_COMMIT')
 
-notifyGithub("pending", "Integration tests in progress.", commitHash)
+utils.notifyGithub("pending", "Integration tests in progress.", commitHash)
 
 def testCaseThreads = listThreadsOfTestCases('workspaces', 'testCases')
 testCaseThreads.each { it ->
@@ -27,49 +24,11 @@ testCaseThreads.each { it ->
 }
 
 
-def notifyGithub(state, description, hash) {
-    println "[INFO] Notifying about state '${state}' for commit '${hash}'."
-
-    def http = new RESTClient("https://api.github" +
-        ".com/repos/o-liver/jenkins-library/statuses/${hash}")
-    http.headers['User-Agent'] = 'groovy-script'
-    http.headers['Authorization'] = "token ${System.getenv('INTEGRATION_TEST_VOTING_TOKEN')}"
-
-    def postBody = [
-        state      : state,
-        target_url : System.getenv('TRAVIS_BUILD_WEB_URL'),
-        description: description,
-        context    : "integration-tests"
-    ]
-
-    http.post(body: postBody, requestContentType: JSON) { response ->
-        assert response.statusLine.statusCode == 201
-    }
-
-}
-
-static def newEmptyDir(String dirName) {
-    def dir = new File(dirName)
-    if (dir.exists()) {
-        dir.deleteDir()
-    }
-    dir.mkdirs()
-}
-
-static def listYamlInDirRecursive(String dirname) {
-    def dir = new File(dirname)
-    def yamlFiles = []
-    dir.eachFileRecurse(FileType.FILES) { file ->
-        if (file.getName().endsWith('.yml'))
-            yamlFiles << file
-    }
-    return yamlFiles
-}
 
 def listThreadsOfTestCases(String rootDirName, String testCasesDirName) {
-    newEmptyDir(rootDirName)
+    utils.newEmptyDir(rootDirName)
 
-    def testCases = listYamlInDirRecursive(testCasesDirName)
+    def testCases = utils.listYamlInDirRecursive(testCasesDirName)
     def threads = []
     testCases.each { file ->
         // Regex pattern expects a folder structure such as '/rootDir/areaDir/testCase.extension'
@@ -77,7 +36,7 @@ def listThreadsOfTestCases(String rootDirName, String testCasesDirName) {
         area = testCaseMatches[0][1]
         testCase = testCaseMatches[0][2]
         def testCaseRootDir = "${rootDirName}/${area}/${testCase}"
-        newEmptyDir(testCaseRootDir)
+        utils.newEmptyDir(testCaseRootDir)
         threads << new TestRunnerThread(area, testCase)
     }
     return threads
