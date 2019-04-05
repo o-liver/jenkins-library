@@ -1,3 +1,4 @@
+import TestRunnerThread
 import groovy.io.FileType
 @Grab(group = 'org.codehaus.groovy.modules.http-builder', module = 'http-builder', version = '0.7')
 import groovyx.net.http.RESTClient
@@ -24,6 +25,7 @@ notifyGithub("pending", "Integration tests in progress.", commitHash)
 def workspacesRootDir = new File('workspaces')
 deleteDirIfExists(workspacesRootDir)
 def testCases = listYamlInDirRecursive('testCases')
+def threads = []
 testCases.each { file ->
     def testCaseMatches = (file.toString() =~ /^[\w\-]+\\/([\w\-]+)\\/([\w\-]+)\..*\u0024/)
     area = testCaseMatches[0][1]
@@ -31,6 +33,11 @@ testCases.each { file ->
     def testCaseRootDir = new File("${workspacesRootDir}/${area}/${testCase}")
     deleteDirIfExists(testCaseRootDir)
     testCaseRootDir.mkdirs()
+    threads << new TestRunnerThread(testCase)
+}
+threads.each { it ->
+    it.start()
+    it.join()
 }
 
 
