@@ -44,4 +44,17 @@ class ITUtils {
         }
         return yamlFiles
     }
+
+    static executeShell(String command) {
+        def stdOut = new StringBuilder()
+        def process = command.execute()
+        process.consumeProcessOutputStream(stdOut)
+        process.waitForOrKill(10000) //Allow process to run for max 10 seconds
+        def exitCode = process.exitValue()
+        if (exitCode>0) {
+            throw new RuntimeException(
+                "Shell command '${command}' exited with exit code ${exitCode}")
+        }
+        return stdOut.toString().trim()
+    }
 }

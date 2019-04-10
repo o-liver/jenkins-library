@@ -3,6 +3,8 @@ import ITUtils
 class TestRunnerThread extends Thread {
 
     static def workspacesRootDir
+    static def libraryVersionUnderTest
+    static def repositoryUnderTest
     def area
     def testCase
     def testCaseRootDir
@@ -16,11 +18,12 @@ class TestRunnerThread extends Thread {
         this.testCaseRootDir = "${workspacesRootDir}/${area}/${testCase}"
         this.testCaseWorkspace = "${testCaseRootDir}/workspace"
 
+        ITUtils.newEmptyDir(this.testCaseRootDir)
     }
 
     public void run() {
         println "[INFO] Test case '${testCase}' in area '${area}' launched."
-        ITUtils.newEmptyDir(this.testCaseRootDir)
+        ITUtils.executeShell("git clone -b ${testCase} https://github.com/sap/cloud-s4-sdk-book ${testCaseWorkspace}")
         println "[INFO] Waiting for test case '${testCase}' in area '${area}'."
         println "[INFO] Test case '${testCase}' in area '${area}' finished."
     }

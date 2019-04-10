@@ -20,6 +20,8 @@ ITUtils.notifyGithub("pending", "Integration tests in progress.", commitHash)
 
 ITUtils.newEmptyDir(WORKSPACES_ROOT)
 TestRunnerThread.workspacesRootDir = WORKSPACES_ROOT
+TestRunnerThread.libraryVersionUnderTest = ITUtils.executeShell("git log --format=\"%H\" -n 1")
+TestRunnerThread.repositoryUnderTest = System.getenv('TRAVIS_REPO_SLUG:-o-liver/jenkins-library')
 
 def testCaseThreads = listTestCaseThreads()
 testCaseThreads.each { it ->
