@@ -1,8 +1,7 @@
-import TestRunnerThread
 import ITUtils
 
-def WORKSPACES_ROOT = 'workspaces'
-def TEST_CASES_DIR = 'testCases'
+WORKSPACES_ROOT = 'workspaces'
+TEST_CASES_DIR = 'testCases'
 
 /*
 In case the build is performed for a pull request TRAVIS_COMMIT is a merge
@@ -19,7 +18,10 @@ def commitHash = System.getenv('TRAVIS_PULL_REQUEST_SHA') ?: System.getenv('TRAV
 
 ITUtils.notifyGithub("pending", "Integration tests in progress.", commitHash)
 
-def testCaseThreads = listThreadsOfTestCases(WORKSPACES_ROOT, TEST_CASES_DIR)
+ITUtils.newEmptyDir(WORKSPACES_ROOT)
+TestRunnerThread.workspacesRootDir = WORKSPACES_ROOT
+
+def testCaseThreads = listTestCaseThreads()
 testCaseThreads.each { it ->
     it.start()
     it.join()
@@ -27,18 +29,13 @@ testCaseThreads.each { it ->
 
 
 
-def listThreadsOfTestCases(String workspacesRootDir, String testCasesDirName) {
-    ITUtils.newEmptyDir(workspacesRootDir)
+def listTestCaseThreads() {
 
     //Each dir that includes a yml file is a test case
-    def testCases = ITUtils.listYamlInDirRecursive(testCasesDirName)
+    def testCases = ITUtils.listYamlInDirRecursive(TEST_CASES_DIR)
     def threads = []
     testCases.each { file ->
-        // Regex pattern expects a folder structure such as '/rootDir/areaDir/testCase.extension'
-        def testCaseMatches = (file.toString() =~ /^[\w\-]+\\/([\w\-]+)\\/([\w\-]+)\..*\u0024/)
-        area = testCaseMatches[0][1]
-        testCase = testCaseMatches[0][2]
-        threads << new TestRunnerThread(workspacesRootDir, area, testCase)
+        threads << new TestRunnerThread(file.toString())
     }
     return threads
 }
