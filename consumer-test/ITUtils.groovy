@@ -20,7 +20,7 @@ class ITUtils {
         return yamlFiles
     }
 
-    static executeShell(String command) {
+    static def executeShell(String command) {
         def stdOut = new StringBuilder()
         def process = command.execute()
         process.consumeProcessOutputStream(stdOut)

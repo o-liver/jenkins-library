@@ -21,9 +21,19 @@ class TestRunnerThread extends Thread {
 
     public void run() {
         println "[INFO] Test case '${testCase}' in area '${area}' launched."
-        ITUtils.newEmptyDir(this.testCaseRootDir)
+
+        ITUtils.newEmptyDir(testCaseRootDir)
         ITUtils.executeShell("git clone -b ${testCase} https://github.com/sap/cloud-s4-sdk-book ${testCaseWorkspace}")
-        println "[INFO] Waiting for test case '${testCase}' in area '${area}'."
+        addJenkinsYmlToWorkspace()
+
         println "[INFO] Test case '${testCase}' in area '${area}' finished."
+    }
+
+    // Configure path to library-repository under test in Jenkins config
+    private void addJenkinsYmlToWorkspace() {
+        def sourceFile = 'jenkins.yml'
+        def sourceText = new File(sourceFile).text.replaceAll('__REPO_SLUG__', repositoryUnderTest)
+        def target = new File("${testCaseWorkspace}/${sourceFile}")
+        target.write(sourceText)
     }
 }
