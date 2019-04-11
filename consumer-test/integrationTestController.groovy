@@ -25,7 +25,7 @@ notifyGithub("pending", "Integration tests in progress.", commitHash)
 ITUtils.newEmptyDir(WORKSPACES_ROOT)
 TestRunnerThread.workspacesRootDir = WORKSPACES_ROOT
 TestRunnerThread.libraryVersionUnderTest = ITUtils.executeShell("git log --format=\"%H\" -n 1")
-TestRunnerThread.repositoryUnderTest = System.getenv('TRAVIS_REPO_SLUG:-o-liver/jenkins-library')
+TestRunnerThread.repositoryUnderTest = System.getenv('TRAVIS_REPO_SLUG') ?: 'SAP/jenkins-library'
 
 //This auxiliary thread is needed in order to produce some output while the
 //test are running. Otherwise the job will be canceled after 10 minutes without output.
