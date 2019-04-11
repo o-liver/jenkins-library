@@ -25,6 +25,7 @@ class TestRunnerThread extends Thread {
         ITUtils.newEmptyDir(testCaseRootDir)
         ITUtils.executeShell("git clone -b ${testCase} https://github.com/sap/cloud-s4-sdk-book ${testCaseWorkspace}")
         addJenkinsYmlToWorkspace()
+        manipulateJenkinsfile()
 
         println "[INFO] Test case '${testCase}' in area '${area}' finished."
     }
@@ -35,5 +36,13 @@ class TestRunnerThread extends Thread {
         def sourceText = new File(sourceFile).text.replaceAll('__REPO_SLUG__', repositoryUnderTest)
         def target = new File("${testCaseWorkspace}/${sourceFile}")
         target.write(sourceText)
+    }
+
+    // Force usage of library version under test by setting it in the Jenkinsfile which is then the first definition and thus has the highest precedence
+    private void manipulateJenkinsfile() {
+        def jenkinsfile = new File("${testCaseWorkspace}/Jenkinsfile")
+        def manipulatedText = "@Library(\"piper-library-os@${libraryVersionUnderTest}\") _\n" +
+            jenkinsfile.text
+        jenkinsfile.write(manipulatedText)
     }
 }
