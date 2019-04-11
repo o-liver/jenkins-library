@@ -26,6 +26,7 @@ class TestRunnerThread extends Thread {
         ITUtils.executeShell("git clone -b ${testCase} https://github.com/sap/cloud-s4-sdk-book ${testCaseWorkspace}")
         addJenkinsYmlToWorkspace()
         manipulateJenkinsfile()
+        println ITUtils.executeShell("cat ${testCaseWorkspace}/Jenkinsfile")
 
         println "[INFO] Test case '${testCase}' in area '${area}' finished."
     }
