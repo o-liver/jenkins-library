@@ -26,7 +26,10 @@ class TestRunnerThread extends Thread {
         ITUtils.executeShell("git clone -b ${testCase} https://github.com/sap/cloud-s4-sdk-book ${testCaseWorkspace}")
         addJenkinsYmlToWorkspace()
         manipulateJenkinsfile()
-        println ITUtils.executeShell("cat ${testCaseWorkspace}/Jenkinsfile")
+
+        //Commit the changed version because artifactSetVersion expects the git repo not to be dirty
+        ITUtils.executeShell(["git", "-C", "${testCaseWorkspace}", "commit", "--all", "--author=piper-testing-bot " +
+            "<piper-testing-bot@example.com>", "--message=Set piper lib version for test"])
 
         println "[INFO] Test case '${testCase}' in area '${area}' finished."
     }
