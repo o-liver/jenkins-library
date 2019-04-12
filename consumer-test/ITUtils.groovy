@@ -23,8 +23,8 @@ class ITUtils {
     static def executeShell(command) {
         def stdOut = new StringBuilder(), stdErr = new StringBuilder()
         def process = command.execute()
-        process.consumeProcessOutput(stdOut, stdErr)
-        process.waitForOrKill(30000) //Allow process to run for max 30 seconds
+        process.waitForProcessOutput(stdOut, stdErr)
+//        process.waitForOrKill(30000) //Allow process to run for max 30 seconds
         def exitCode = process.exitValue()
         if (exitCode>0) {
             throw new RuntimeException(
