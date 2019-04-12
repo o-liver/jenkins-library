@@ -20,15 +20,15 @@ class ITUtils {
         return yamlFiles
     }
 
-    static def executeShell(String command) {
-        def stdOut = new StringBuilder()
+    static def executeShell(command) {
+        def stdOut = new StringBuilder(), stdErr = new StringBuilder()
         def process = command.execute()
-        process.consumeProcessOutputStream(stdOut)
-        process.waitForOrKill(10000) //Allow process to run for max 10 seconds
+        process.consumeProcessOutput(stdOut, stdErr)
+        process.waitForOrKill(30000) //Allow process to run for max 30 seconds
         def exitCode = process.exitValue()
         if (exitCode>0) {
             throw new RuntimeException(
-                "Shell command '${command}' exited with exit code ${exitCode}")
+                "Shell command '${command}' exited with exit code ${exitCode}. Error: '${stdErr}'")
         }
         return stdOut.toString().trim()
     }
