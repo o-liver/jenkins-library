@@ -24,11 +24,12 @@ class ITUtils {
         def stdOut = new StringBuilder(), stdErr = new StringBuilder()
         def process = command.execute()
         process.waitForProcessOutput(stdOut, stdErr)
-//        process.waitForOrKill(30000) //Allow process to run for max 30 seconds
-        def exitCode = process.exitValue()
+        int exitCode = process.exitValue()
         if (exitCode>0) {
-            throw new RuntimeException(
-                "Shell command '${command}' exited with exit code ${exitCode}. Error: '${stdErr}'")
+            println "Shell execution exited with code ${exitCode}."
+            println "Shell command was: '${command}'"
+            println "Shell error: '${stdErr}'"
+            System.exit(exitCode)
         }
         return stdOut.toString().trim()
     }
