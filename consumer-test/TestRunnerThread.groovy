@@ -70,7 +70,7 @@ class TestRunnerThread extends Thread {
             println "[${testCase}] Shell command was: '${command}'"
             println "[${testCase}] Console output: ${stdOut}"
             println "[${testCase}] Console error: '${stdErr}'"
-            ITUtils.notifyGithub("failure", "Integration tests failed.")
+            ITUtils.notifyGithub("failure", "The integration tests failed.")
             System.exit(exitCode)
         }
     }

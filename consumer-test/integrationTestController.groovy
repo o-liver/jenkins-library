@@ -19,9 +19,9 @@ ITUtils.commitHash = System.getenv('TRAVIS_PULL_REQUEST_SHA') ?: System.getenv('
 ITUtils.notifyGithub("pending", "Integration tests are in progress.")
 
 ITUtils.newEmptyDir(WORKSPACES_ROOT)
-TestRunnerThread.workspacesRootDir = WORKSPACES_ROOT
-TestRunnerThread.libraryVersionUnderTest = "git log --format=%H -n 1".execute().text.trim()
-TestRunnerThread.repositoryUnderTest = System.getenv('TRAVIS_REPO_SLUG') ?: 'SAP/jenkins-library'
+ITUtils.workspacesRootDir = WORKSPACES_ROOT
+ITUtils.libraryVersionUnderTest = "git log --format=%H -n 1".execute().text.trim()
+ITUtils.repositoryUnderTest = System.getenv('TRAVIS_REPO_SLUG') ?: 'SAP/jenkins-library'
 
 //This auxiliary thread is needed in order to produce some output while the
 //test are running. Otherwise the job will be canceled after 10 minutes without output.
@@ -37,6 +37,8 @@ testCaseThreads.each { it ->
 }
 
 auxiliaryThread.join()
+
+ITUtils.notifyGithub("success", "The integration tests succeeded.")
 
 
 def listTestCaseThreads() {
