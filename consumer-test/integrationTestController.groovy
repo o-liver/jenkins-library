@@ -30,10 +30,10 @@ TestRunnerThread.repositoryUnderTest = System.getenv('TRAVIS_REPO_SLUG') ?: 'SAP
 
 //This auxiliary thread is needed in order to produce some output while the
 //test are running. Otherwise the job will be canceled after 10 minutes without output.
-def auxiliaryThread = Thread.start {
-    sleep(10000)
-    println "[INFO] Integration tests still running."
-}
+//def auxiliaryThread = Thread.start {
+//    sleep(10000)
+//    println "[INFO] Integration tests still running."
+//}
 
 def testCaseThreads = listTestCaseThreads()
 testCaseThreads.each { it ->
@@ -41,7 +41,7 @@ testCaseThreads.each { it ->
     it.join()
 }
 
-auxiliaryThread.join()
+//auxiliaryThread.join()
 
 
 static def notifyGithub(state, description, hash) {
