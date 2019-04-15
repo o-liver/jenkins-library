@@ -2,9 +2,6 @@ import ITUtils
 
 class TestRunnerThread extends Thread {
 
-    static def workspacesRootDir
-    static def libraryVersionUnderTest
-    static def repositoryUnderTest
     def area
     def testCase
     def testCaseRootDir
@@ -15,7 +12,7 @@ class TestRunnerThread extends Thread {
         def testCaseMatches = (testCaseFilePath.toString() =~ /^[\w\-]+\\/([\w\-]+)\\/([\w\-]+)\..*\u0024/)
         this.area = testCaseMatches[0][1]
         this.testCase = testCaseMatches[0][2]
-        this.testCaseRootDir = "${workspacesRootDir}/${area}/${testCase}"
+        this.testCaseRootDir = "${ITUtils.workspacesRootDir}/${area}/${testCase}"
         this.testCaseWorkspace = "${testCaseRootDir}/workspace"
     }
 
@@ -45,7 +42,8 @@ class TestRunnerThread extends Thread {
     // Configure path to library-repository under test in Jenkins config
     private void addJenkinsYmlToWorkspace() {
         def sourceFile = 'jenkins.yml'
-        def sourceText = new File(sourceFile).text.replaceAll('__REPO_SLUG__', repositoryUnderTest)
+        def sourceText = new File(sourceFile).text.replaceAll(
+            '__REPO_SLUG__', ITUtils.repositoryUnderTest)
         def target = new File("${testCaseWorkspace}/${sourceFile}")
         target.write(sourceText)
     }
@@ -53,7 +51,8 @@ class TestRunnerThread extends Thread {
     // Force usage of library version under test by setting it in the Jenkinsfile which is then the first definition and thus has the highest precedence
     private void manipulateJenkinsfile() {
         def jenkinsfile = new File("${testCaseWorkspace}/Jenkinsfile")
-        def manipulatedText = "@Library(\"piper-library-os@${libraryVersionUnderTest}\") _\n" +
+        def manipulatedText =
+            "@Library(\"piper-library-os@${ITUtils.libraryVersionUnderTest}\") _\n" +
             jenkinsfile.text
         jenkinsfile.write(manipulatedText)
     }
@@ -71,6 +70,7 @@ class TestRunnerThread extends Thread {
             println "[${testCase}] Shell command was: '${command}'"
             println "[${testCase}] Console output: ${stdOut}"
             println "[${testCase}] Console error: '${stdErr}'"
+            ITUtils.notifyGithub("failure", "Integration tests failed.")
             System.exit(exitCode)
         }
     }
