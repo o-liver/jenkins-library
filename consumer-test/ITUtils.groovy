@@ -21,8 +21,12 @@ class ITUtils {
     }
 
     static def executeShell(area, command) {
+        println "Executing shell command: '${command}' from area '${area}'."
         def stdOut = new StringBuilder(), stdErr = new StringBuilder()
         def process = command.execute()
+//        new File("log.txt").withWriter { writer ->
+//            process.consumeProcessOutputStream(writer)
+//        }
         process.waitForProcessOutput(stdOut, stdErr)
         int exitCode = process.exitValue()
         if (exitCode>0) {

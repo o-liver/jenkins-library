@@ -34,8 +34,8 @@ class TestRunnerThread extends Thread {
                                     "--author=piper-testing-bot <piper-testing-bot@example.com>",
                                     "--message=Set piper lib version for test"])
 
-        String filerunnerLog = ITUtils.executeShell(area, "docker run -v /var/run/docker" +
-            ".sock:/var/run/docker.sock " +
+        String filerunnerLog = ITUtils.executeShell(area, "docker run " +
+            "-v /var/run/docker.sock:/var/run/docker.sock " +
             "-v ${System.getenv('PWD')}/${testCaseWorkspace}:/workspace -v /tmp -e " +
             "CASC_JENKINS_CONFIG=/workspace/jenkins.yml -e CX_INFRA_IT_CF_USERNAME -e " +
             "CX_INFRA_IT_CF_PASSWORD -e BRANCH_NAME=${testCase} ppiper/jenkinsfile-runner")
