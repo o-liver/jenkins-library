@@ -67,10 +67,10 @@ class TestRunnerThread extends Thread {
         process.waitForProcessOutput(stdOut, stdErr)
         int exitCode = process.exitValue()
         if (exitCode>0) {
-            println "Trouble in test case '${testCase}': Shell exited with code ${exitCode}."
-            println "Shell command was: '${command}'"
-            println "Console output: ${stdOut}"
-            println "Console error: '${stdErr}'"
+            println "[${testCase}] Shell exited with code ${exitCode}."
+            println "[${testCase}] Shell command was: '${command}'"
+            println "[${testCase}] Console output: ${stdOut}"
+            println "[${testCase}] Console error: '${stdErr}'"
             System.exit(exitCode)
         }
     }
