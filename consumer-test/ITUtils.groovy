@@ -20,22 +20,4 @@ class ITUtils {
         return yamlFiles
     }
 
-    static def executeShell(testCase, command) {
-        println "Executing shell command: '${command}'; from test case: '${testCase}'."
-        def stdOut = new StringBuilder(), stdErr = new StringBuilder()
-        def process = command.execute()
-//        new File("log.txt").withWriter { writer ->
-//            process.consumeProcessOutputStream(writer)
-//        }
-        process.waitForProcessOutput(stdOut, stdErr)
-        int exitCode = process.exitValue()
-        if (exitCode>0) {
-            println "Trouble in test case '${testCase}': Shell exited with code ${exitCode}."
-            println "Shell command was: '${command}'"
-            println "Console output: ${stdOut}"
-            println "Console error: '${stdErr}'"
-            System.exit(exitCode)
-        }
-        return stdOut.toString().trim()
-    }
 }
