@@ -23,18 +23,18 @@ class TestRunnerThread extends Thread {
         println "[INFO] Test case '${testCase}' in area '${area}' launched."
 
         ITUtils.newEmptyDir(testCaseRootDir)
-        ITUtils.executeShell(area,
+        ITUtils.executeShell(testCase,
             "git clone -b ${testCase} https://github.com/sap/cloud-s4-sdk-book " +
                 "${testCaseWorkspace}")
         addJenkinsYmlToWorkspace()
         manipulateJenkinsfile()
 
         //Commit the changed version because artifactSetVersion expects the git repo not to be dirty
-        ITUtils.executeShell(area, ["git", "-C", "${testCaseWorkspace}", "commit", "--all",
+        ITUtils.executeShell(testCase, ["git", "-C", "${testCaseWorkspace}", "commit", "--all",
                                     "--author=piper-testing-bot <piper-testing-bot@example.com>",
                                     "--message=Set piper lib version for test"])
 
-        String filerunnerLog = ITUtils.executeShell(area, "docker run " +
+        String filerunnerLog = ITUtils.executeShell(testCase, "docker run " +
             "-v /var/run/docker.sock:/var/run/docker.sock " +
             "-v ${System.getenv('PWD')}/${testCaseWorkspace}:/workspace -v /tmp -e " +
             "CASC_JENKINS_CONFIG=/workspace/jenkins.yml -e CX_INFRA_IT_CF_USERNAME -e " +

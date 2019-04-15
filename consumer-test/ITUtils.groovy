@@ -20,8 +20,8 @@ class ITUtils {
         return yamlFiles
     }
 
-    static def executeShell(area, command) {
-        println "Executing shell command: '${command}' from area '${area}'."
+    static def executeShell(testCase, command) {
+        println "Executing shell command: '${command}'; from test case: '${testCase}'."
         def stdOut = new StringBuilder(), stdErr = new StringBuilder()
         def process = command.execute()
 //        new File("log.txt").withWriter { writer ->
@@ -30,7 +30,7 @@ class ITUtils {
         process.waitForProcessOutput(stdOut, stdErr)
         int exitCode = process.exitValue()
         if (exitCode>0) {
-            println "Trouble in area '${area}': Shell exited with code ${exitCode}."
+            println "Trouble in test case '${testCase}': Shell exited with code ${exitCode}."
             println "Shell command was: '${command}'"
             println "Console output: ${stdOut}"
             println "Console error: '${stdErr}'"
