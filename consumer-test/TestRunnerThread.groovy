@@ -58,7 +58,7 @@ class TestRunnerThread extends Thread {
         jenkinsfile.write(manipulatedText)
     }
 
-    private static void executeShell(command) {
+    private void executeShell(command) {
         def stdOut = new StringBuilder(), stdErr = new StringBuilder()
         def process = command.execute()
 //        new File("log.txt").withWriter { writer ->
