@@ -39,7 +39,7 @@ class TestRunnerThread extends Thread {
             "-v ${System.getenv('PWD')}/${testCaseWorkspace}:/workspace -v /tmp -e " +
             "CASC_JENKINS_CONFIG=/workspace/jenkins.yml -e CX_INFRA_IT_CF_USERNAME -e " +
             "CX_INFRA_IT_CF_PASSWORD -e BRANCH_NAME=${testCase} ppiper/jenkinsfile-runner"
-        cmd.execute()
+        println cmd.execute().text
 //        new File("${testCaseRootDir}/log.txt").write(filerunnerLog)
 
         println "[INFO] Test case '${testCase}' in area '${area}' finished."
