@@ -20,13 +20,13 @@ class ITUtils {
         return yamlFiles
     }
 
-    static def executeShell(command) {
+    static def executeShell(area, command) {
         def stdOut = new StringBuilder(), stdErr = new StringBuilder()
         def process = command.execute()
         process.waitForProcessOutput(stdOut, stdErr)
         int exitCode = process.exitValue()
         if (exitCode>0) {
-            println "Shell execution exited with code ${exitCode}."
+            println "Trouble in area '${area}': Shell exited with code ${exitCode}."
             println "Shell command was: '${command}'"
             println "Shell error: '${stdErr}'"
             System.exit(exitCode)

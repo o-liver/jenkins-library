@@ -23,16 +23,19 @@ class TestRunnerThread extends Thread {
         println "[INFO] Test case '${testCase}' in area '${area}' launched."
 
         ITUtils.newEmptyDir(testCaseRootDir)
-        ITUtils.executeShell("git clone -b ${testCase} https://github.com/sap/cloud-s4-sdk-book ${testCaseWorkspace}")
+        ITUtils.executeShell(area,
+            "git clone -b ${testCase} https://github.com/sap/cloud-s4-sdk-book " +
+                "${testCaseWorkspace}")
         addJenkinsYmlToWorkspace()
         manipulateJenkinsfile()
 
         //Commit the changed version because artifactSetVersion expects the git repo not to be dirty
-        ITUtils.executeShell(["git", "-C", "${testCaseWorkspace}", "commit", "--all", "--author=piper-testing-bot " +
-            "<piper-testing-bot@example.com>", "--message=Set piper lib version for test"])
+        ITUtils.executeShell(area, ["git", "-C", "${testCaseWorkspace}", "commit", "--all",
+                                    "--author=piper-testing-bot <piper-testing-bot@example.com>",
+                                    "--message=Set piper lib version for test"])
 
-        ITUtils.executeShell("docker run -v /var/run/docker.sock:/var/run/docker.sock -v " +
-            "${System.getenv('PWD')}/${testCaseWorkspace}:/workspace -v /tmp -e " +
+        ITUtils.executeShell(area, "docker run -v /var/run/docker.sock:/var/run/docker.sock " +
+            "-v ${System.getenv('PWD')}/${testCaseWorkspace}:/workspace -v /tmp -e " +
             "CASC_JENKINS_CONFIG=/workspace/jenkins.yml -e CX_INFRA_IT_CF_USERNAME -e " +
             "CX_INFRA_IT_CF_PASSWORD -e BRANCH_NAME=${testCase} ppiper/jenkinsfile-runner")
 
