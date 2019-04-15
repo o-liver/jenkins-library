@@ -28,7 +28,8 @@ class ITUtils {
         if (exitCode>0) {
             println "Trouble in area '${area}': Shell exited with code ${exitCode}."
             println "Shell command was: '${command}'"
-            println "Shell error: '${stdErr}'"
+            println "Console output: ${stdOut}"
+            println "Console error: '${stdErr}'"
             System.exit(exitCode)
         }
         return stdOut.toString().trim()
