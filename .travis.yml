@@ -30,8 +30,8 @@ jobs:
         - JACOCO_SOURCE_PATH="src vars test" ./cc-test-reporter format-coverage target/site/jacoco/jacoco.xml --input-type jacoco
         - ./cc-test-reporter upload-coverage
     - name: Consumer Tests
-      if: repo = "SAP/jenkins-library" && ( (type != pull_request && branch =~ /^master$|^it\/.*$/) || (type == pull_request && head_repo = "SAP/jenkins-library" && head_branch =~ /^it\/.*$/) )
-      script: cd consumer-test && groovy consumerTestController.groovy
+      if: repo = "o-liver/jenkins-library" && ( (type != pull_request && branch =~ /^master$|^it\/.*$/) || (type == pull_request && head_repo = "SAP/jenkins-library" && head_branch =~ /^it\/.*$/) )
+      script: cd consumer-test && groovy consumerTestController.groovy -l -s testCases/scs/ui5-neo.yml
 
     - stage: Docs
       name: Build & Deploy

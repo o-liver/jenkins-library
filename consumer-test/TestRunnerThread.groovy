@@ -103,7 +103,7 @@ class TestRunnerThread extends Thread {
 
     void printOutput() {
         println "\n[INFO] stdout output from test case ${uniqueName}:"
-        stdOut?.eachLine { line, i ->
+        stdOut.eachLine { line, i ->
             println "${i} [${uniqueName}] ${line}"
             lastPrintedStdOutLine = i
         }
