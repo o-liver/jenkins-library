@@ -34,10 +34,14 @@ class DefaultValueCache implements Serializable {
     List getCustomDefaults() {
         def result = []
         result.addAll(customDefaults)
+        println("We are inside getCustomDefault method")
+        result.each{ k, v -> println "INDEX IS THIS ${k}: VALUE IS THIS ${v}" }
         return result
     }
 
     static void prepare(Script steps, Map parameters = [:]) {
+        steps.echo "Parameter required" + parameters.each{ k, v -> println "INDEX ${k}: VALUE ${v}" }
+
         if (parameters == null) parameters = [:]
         if (!getInstance() || parameters.customDefaults || parameters.customDefaultsFromFiles) {
             List defaultsFromResources = ['default_pipeline_environment.yml']
@@ -51,10 +55,21 @@ class DefaultValueCache implements Serializable {
             defaultValues = addDefaultsFromLibraryResources(steps, defaultValues, defaultsFromResources)
             defaultValues = addDefaultsFromFiles(steps, defaultValues, defaultsFromFiles)
 
+            steps.echo "PRINT defaultValues HERE"
+            defaultValues.each{ k, v -> println "${k}:${v}" }
+
             // The "customDefault" parameter is used for storing which extra defaults need to be
             // passed to piper-go. The library resource 'default_pipeline_environment.yml' shall
             // be excluded, since the go steps have their own in-built defaults in their yaml files.
+
+            steps.echo "customDefaults List xxx + ${customDefaults}"
+
             createInstance(defaultValues, customDefaults + defaultsFromFiles)
+            //def result_test=getCustomDefaults()
+            //steps.echo "yyy ${result_test}"
+
+            steps.echo "xxxxxxxxxx ${instance.getCustomDefaults()}"
+            steps.echo "THIS IS DEFAULT VALUES ${defaultValues}"
         }
     }
 
