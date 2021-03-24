@@ -330,12 +330,13 @@ private String generatePodSpec(Map config) {
         spec      : [:]
     ]
     podSpec.spec += getAdditionalPodProperties(config)
-    podSpec.spec.containers = getContainerList(config)
-    podSpec.spec.securityContext = getSecurityContext(config)
-
+    echo "spec is this + ${podSpec}"
+    podSpec.spec.containers += getContainerList(config)
+    echo "spec.containers is this + ${podSpec}"
+    podSpec.spec.securityContext += getSecurityContext(config)
+    echo "spec.securityContext is this + ${podSpec}"
     return new JsonUtils().groovyObjectToPrettyJsonString(podSpec)
 }
-
 
 private String stashWorkspace(config, prefix, boolean chown = false, boolean stashBack = false) {
     def stashName = "${prefix}-${config.uniqueId}"
@@ -381,7 +382,7 @@ private Map getAdditionalPodProperties(Map config) {
     if(podProperties) {
         echo "Additional pod properties found (${podProperties.keySet()})." +
         ' Providing additional pod properties is some kind of expert mode. In case of any problems caused by these' +
-        ' additional properties only limited support can be provided.'
+        ' additional properties only limited support can be provided. TEST IS RUNNING'
     }
     return podProperties
 }
