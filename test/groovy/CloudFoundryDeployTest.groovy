@@ -1366,7 +1366,7 @@ class CloudFoundryDeployTest extends BasePiperTest {
                 if (entry == [type:'token', id:'Mta.ExtensionCredential~Credential_Id1', env:['MTA_EXTENSION_CREDENTIAL_CREDENTIAL_ID1'], resolveCredentialsId:false]) {
                     found = true
             }
-	    }
+        }
         assertTrue(found)
     }
 

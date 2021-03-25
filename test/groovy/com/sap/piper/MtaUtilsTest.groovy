@@ -171,57 +171,57 @@ class MtaUtilsTest extends BasePiperTest {
     private missingNameInJson() {
         return  '''
                 {
-				  "version": "1.0.3",
-				  "description": "Webshop application for test purposes",
-				  "private": true,
-				  "devDependencies": {
-				  		"grunt": "1.0.1",
-				   		"@sap/grunt-sapui5-bestpractice-build": "^1.3.17"
-				  }
-				}
+                  "version": "1.0.3",
+                  "description": "Webshop application for test purposes",
+                  "private": true,
+                  "devDependencies": {
+                          "grunt": "1.0.1",
+                           "@sap/grunt-sapui5-bestpractice-build": "^1.3.17"
+                  }
+                }
                 '''
     }
 
     private emptyNameInJson() {
         return  '''
                 {
-				  "name": "",
-				  "version": "1.0.3",
-				  "description": "Webshop application for test purposes",
-				  "private": true,
-				  "devDependencies": {
-				    "grunt": "1.0.1",
-				    "@sap/grunt-sapui5-bestpractice-build": "^1.3.17"
-				  }
-				}
+                  "name": "",
+                  "version": "1.0.3",
+                  "description": "Webshop application for test purposes",
+                  "private": true,
+                  "devDependencies": {
+                    "grunt": "1.0.1",
+                    "@sap/grunt-sapui5-bestpractice-build": "^1.3.17"
+                  }
+                }
                 '''
     }
     private missingVersionInJson() {
         return  '''
                 {
-				  "name": "com.mycompany.northwind",
-				  "description": "Webshop application for test purposes",
-				  "private": true,
-				  "devDependencies": {
-				    "grunt": "1.0.1",
-				    "@sap/grunt-sapui5-bestpractice-build": "^1.3.17"
-				  }
-				}
+                  "name": "com.mycompany.northwind",
+                  "description": "Webshop application for test purposes",
+                  "private": true,
+                  "devDependencies": {
+                    "grunt": "1.0.1",
+                    "@sap/grunt-sapui5-bestpractice-build": "^1.3.17"
+                  }
+                }
                 '''
     }
 
     private emptyVersionInJson() {
         return  '''
                 {
-				  	"name": "com.mycompany.northwind",
-					"version": "",
-				  	"description": "Webshop application for test purposes",
-				  	"private": true,
-				  	"devDependencies": {
-				   		"grunt": "1.0.1",
-				    		"@sap/grunt-sapui5-bestpractice-build": "^1.3.17"
-				  	}
-				}
+                      "name": "com.mycompany.northwind",
+                    "version": "",
+                      "description": "Webshop application for test purposes",
+                      "private": true,
+                      "devDependencies": {
+                           "grunt": "1.0.1",
+                            "@sap/grunt-sapui5-bestpractice-build": "^1.3.17"
+                      }
+                }
                 '''
     }
 }

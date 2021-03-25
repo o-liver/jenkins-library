@@ -58,7 +58,7 @@ public class MtaBuildTest extends BasePiperTest {
         assert calledWithParameters.buildTarget == 'CF'
 
         assert calledWithStepName == 'mtaBuild'
-	assert calledWithMetadata == 'metadata/mtaBuild.yaml'
+    assert calledWithMetadata == 'metadata/mtaBuild.yaml'
         assert calledWithCredentials.isEmpty()
 
     }

@@ -16,6 +16,6 @@ public class Rules {
             .around(new JenkinsResetDefaultCacheRule())
             .around(new JenkinsInfluxDataRule())
             .around(new JenkinsErrorRule(testCase))
-			.around(new JenkinsEnvironmentRule(testCase))
+            .around(new JenkinsEnvironmentRule(testCase))
     }
 }
