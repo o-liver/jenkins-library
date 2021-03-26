@@ -331,10 +331,8 @@ private String generatePodSpec(Map config) {
     ]
     podSpec.spec += getAdditionalPodProperties(config)
     echo "spec is this + ${podSpec}"
-    podSpec.spec.containers += getContainerList(config)
-    echo "spec.containers is this + ${podSpec}"
-    podSpec.spec.securityContext += getSecurityContext(config)
-    echo "spec.securityContext is this + ${podSpec}"
+    podSpec.spec.containers = getContainerList(config)
+    podSpec.spec.securityContext = getSecurityContext(config)
     return new JsonUtils().groovyObjectToPrettyJsonString(podSpec)
 }
 
