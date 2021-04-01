@@ -283,6 +283,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
      */
     try {
         SidecarUtils sidecarUtils = new SidecarUtils(script)
+        
         def stashContent = config.stashContent
         if (config.containerName && stashContent.isEmpty()) {
             stashContent = [stashWorkspace(config, 'workspace')]
@@ -321,6 +322,7 @@ void executeOnPod(Map config, utils, Closure body, Script script) {
 
 private String generatePodSpec(Map config) {
     def containers = getContainerList(config)
+    
     def podSpec = [
         apiVersion: "v1",
         kind      : "Pod",
@@ -331,6 +333,8 @@ private String generatePodSpec(Map config) {
     ]
     podSpec.spec += getAdditionalPodProperties(config)
     echo "spec is this + ${podSpec}"
+    podSpec.spec.initContainer = getInitContainerList(config)
+    echo "initContainer + ${podSpec}"
     podSpec.spec.containers = getContainerList(config)
     podSpec.spec.securityContext = getSecurityContext(config)
     return new JsonUtils().groovyObjectToPrettyJsonString(podSpec)
@@ -380,7 +384,7 @@ private Map getAdditionalPodProperties(Map config) {
     if(podProperties) {
         echo "Additional pod properties found (${podProperties.keySet()})." +
         ' Providing additional pod properties is some kind of expert mode. In case of any problems caused by these' +
-        ' additional properties only limited support can be provided. TEST IS RUNNING'
+        ' additional properties only limited support can be provided.TEST IS RUNNING'
     }
     return podProperties
 }
@@ -415,7 +419,7 @@ private List getContainerList(config) {
             name : jnlpContainerName,
             image: env.JENKINS_JNLP_IMAGE ?: config.jenkinsKubernetes.jnlpAgent
         ]
-
+        // get resources here ? 
         def resources = getResources(jnlpContainerName, config)
         if(resources) {
             jnlpSpec.resources = resources
@@ -471,6 +475,7 @@ private List getContainerList(config) {
         }
         result.push(containerSpec)
     }
+    
     if (config.sidecarImage) {
         def sideCarContainerName = config.sidecarName.toLowerCase()
         def containerSpec = [
@@ -488,6 +493,20 @@ private List getContainerList(config) {
         result.push(containerSpec)
     }
     return result
+}
+//get initContainer
+private List getInitContainerList(config) {
+    if (config.initContainerImage) {
+        def initContainerName = config.initContainerImage.toLowerCase()
+        def containerSpec = [
+            name           : initContainerName,
+            image          : config.initContainerImage,
+            imagePullPolicy: config.initContainerImage ? "Always" : "IfNotPresent",
+            env            : getContainerEnvs(config, config.initContainerImage, config.initContainerEnvVars, config.initContainerWorkspace),
+            command        : config.initContainerCommand
+        ]
+        result.push(containerSpec)
+    }
 }
 
 private Map getResources(String containerName, Map config) {
