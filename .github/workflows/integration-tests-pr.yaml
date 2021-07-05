@@ -3,6 +3,8 @@ name: Integration Tests (Pull Request)
 on:
   issue_comment:
     types: [created]
+  repository_dispatch:
+    types: run-it
 
 jobs:
 
