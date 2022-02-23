@@ -5,51 +5,52 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"reflect"
 	"strings"
+	"path/filepath"
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/gcs"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
-	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/bmatcuk/doublestar"
+	"github.com/SAP/jenkins-library/pkg/gcs"
+	"github.com/SAP/jenkins-library/pkg/piperenv"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type sonarExecuteScanOptions struct {
-	Instance                  string   `json:"instance,omitempty"`
-	ServerURL                 string   `json:"serverUrl,omitempty"`
-	Token                     string   `json:"token,omitempty"`
-	Organization              string   `json:"organization,omitempty"`
+	Instance string `json:"instance,omitempty"`
+	ServerURL string `json:"serverUrl,omitempty"`
+	Token string `json:"token,omitempty"`
+	Organization string `json:"organization,omitempty"`
 	CustomTLSCertificateLinks []string `json:"customTlsCertificateLinks,omitempty"`
-	SonarScannerDownloadURL   string   `json:"sonarScannerDownloadUrl,omitempty"`
-	VersioningModel           string   `json:"versioningModel,omitempty" validate:"possible-values=major major-minor semantic full"`
-	Version                   string   `json:"version,omitempty"`
-	CustomScanVersion         string   `json:"customScanVersion,omitempty"`
-	ProjectKey                string   `json:"projectKey,omitempty"`
-	CoverageExclusions        []string `json:"coverageExclusions,omitempty"`
-	InferJavaBinaries         bool     `json:"inferJavaBinaries,omitempty"`
-	InferJavaLibraries        bool     `json:"inferJavaLibraries,omitempty"`
-	Options                   []string `json:"options,omitempty"`
-	BranchName                string   `json:"branchName,omitempty"`
-	InferBranchName           bool     `json:"inferBranchName,omitempty"`
-	ChangeID                  string   `json:"changeId,omitempty"`
-	ChangeBranch              string   `json:"changeBranch,omitempty"`
-	ChangeTarget              string   `json:"changeTarget,omitempty"`
-	PullRequestProvider       string   `json:"pullRequestProvider,omitempty" validate:"possible-values=GitHub"`
-	Owner                     string   `json:"owner,omitempty"`
-	Repository                string   `json:"repository,omitempty"`
-	GithubToken               string   `json:"githubToken,omitempty"`
-	DisableInlineComments     bool     `json:"disableInlineComments,omitempty"`
-	LegacyPRHandling          bool     `json:"legacyPRHandling,omitempty"`
-	GithubAPIURL              string   `json:"githubApiUrl,omitempty"`
-	M2Path                    string   `json:"m2Path,omitempty"`
+	SonarScannerDownloadURL string `json:"sonarScannerDownloadUrl,omitempty"`
+	VersioningModel string `json:"versioningModel,omitempty" validate:"possible-values=major major-minor semantic full"`
+	Version string `json:"version,omitempty"`
+	CustomScanVersion string `json:"customScanVersion,omitempty"`
+	ProjectKey string `json:"projectKey,omitempty"`
+	CoverageExclusions []string `json:"coverageExclusions,omitempty"`
+	InferJavaBinaries bool `json:"inferJavaBinaries,omitempty"`
+	InferJavaLibraries bool `json:"inferJavaLibraries,omitempty"`
+	Options []string `json:"options,omitempty"`
+	BranchName string `json:"branchName,omitempty"`
+	InferBranchName bool `json:"inferBranchName,omitempty"`
+	ChangeID string `json:"changeId,omitempty"`
+	ChangeBranch string `json:"changeBranch,omitempty"`
+	ChangeTarget string `json:"changeTarget,omitempty"`
+	PullRequestProvider string `json:"pullRequestProvider,omitempty" validate:"possible-values=GitHub"`
+	Owner string `json:"owner,omitempty"`
+	Repository string `json:"repository,omitempty"`
+	GithubToken string `json:"githubToken,omitempty"`
+	DisableInlineComments bool `json:"disableInlineComments,omitempty"`
+	LegacyPRHandling bool `json:"legacyPRHandling,omitempty"`
+	GithubAPIURL string `json:"githubApiUrl,omitempty"`
+	M2Path string `json:"m2Path,omitempty"`
 }
+
 
 type sonarExecuteScanReports struct {
 }
@@ -97,11 +98,11 @@ type sonarExecuteScanInflux struct {
 	}
 	sonarqube_data struct {
 		fields struct {
-			blocker_issues  int
+			blocker_issues int
 			critical_issues int
-			major_issues    int
-			minor_issues    int
-			info_issues     int
+			major_issues int
+			minor_issues int
+			info_issues int
 		}
 		tags struct {
 		}
@@ -109,18 +110,18 @@ type sonarExecuteScanInflux struct {
 }
 
 func (i *sonarExecuteScanInflux) persist(path, resourceName string) {
-	measurementContent := []struct {
+	measurementContent := []struct{
 		measurement string
 		valType     string
 		name        string
 		value       interface{}
 	}{
-		{valType: config.InfluxField, measurement: "step_data", name: "sonar", value: i.step_data.fields.sonar},
-		{valType: config.InfluxField, measurement: "sonarqube_data", name: "blocker_issues", value: i.sonarqube_data.fields.blocker_issues},
-		{valType: config.InfluxField, measurement: "sonarqube_data", name: "critical_issues", value: i.sonarqube_data.fields.critical_issues},
-		{valType: config.InfluxField, measurement: "sonarqube_data", name: "major_issues", value: i.sonarqube_data.fields.major_issues},
-		{valType: config.InfluxField, measurement: "sonarqube_data", name: "minor_issues", value: i.sonarqube_data.fields.minor_issues},
-		{valType: config.InfluxField, measurement: "sonarqube_data", name: "info_issues", value: i.sonarqube_data.fields.info_issues},
+		{valType: config.InfluxField, measurement: "step_data" , name: "sonar", value: i.step_data.fields.sonar},
+		{valType: config.InfluxField, measurement: "sonarqube_data" , name: "blocker_issues", value: i.sonarqube_data.fields.blocker_issues},
+		{valType: config.InfluxField, measurement: "sonarqube_data" , name: "critical_issues", value: i.sonarqube_data.fields.critical_issues},
+		{valType: config.InfluxField, measurement: "sonarqube_data" , name: "major_issues", value: i.sonarqube_data.fields.major_issues},
+		{valType: config.InfluxField, measurement: "sonarqube_data" , name: "minor_issues", value: i.sonarqube_data.fields.minor_issues},
+		{valType: config.InfluxField, measurement: "sonarqube_data" , name: "info_issues", value: i.sonarqube_data.fields.info_issues},
 	}
 
 	errCount := 0
@@ -135,6 +136,7 @@ func (i *sonarExecuteScanInflux) persist(path, resourceName string) {
 		log.Entry().Error("failed to persist Influx environment")
 	}
 }
+
 
 // SonarExecuteScanCommand Executes the Sonar scanner
 func SonarExecuteScanCommand() *cobra.Command {
@@ -152,7 +154,7 @@ func SonarExecuteScanCommand() *cobra.Command {
 	var createSonarExecuteScanCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Executes the Sonar scanner",
-		Long:  `The step executes the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) cli command to scan the defined sources and publish the results to a SonarQube instance.`,
+		Long: `The step executes the [sonar-scanner](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner) cli command to scan the defined sources and publish the results to a SonarQube instance.`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -198,7 +200,7 @@ func SonarExecuteScanCommand() *cobra.Command {
 			stepTelemetryData := telemetry.CustomData{}
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
-				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
 				influx.persist(GeneralConfig.EnvRootPath, "influx")
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
@@ -215,10 +217,10 @@ func SonarExecuteScanCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			sonarExecuteScan(stepConfig, &stepTelemetryData, &influx)
 			stepTelemetryData.ErrorCode = "0"
@@ -265,301 +267,304 @@ func addSonarExecuteScanFlags(cmd *cobra.Command, stepConfig *sonarExecuteScanOp
 func sonarExecuteScanMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "sonarExecuteScan",
-			Aliases:     []config.Alias{},
+			Name:    "sonarExecuteScan",
+			Aliases: []config.Alias{},
 			Description: "Executes the Sonar scanner",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "sonarTokenCredentialsId", Description: "Jenkins 'Secret text' credentials ID containing the token used to authenticate with the Sonar Server.", Type: "jenkins"},
-					{Name: "githubTokenCredentialsId", Description: "Jenkins 'Secret text' credentials ID containing the token used to authenticate with the Github Server.", Type: "jenkins"},
+					{Name: "sonarTokenCredentialsId",Description: "Jenkins 'Secret text' credentials ID containing the token used to authenticate with the Sonar Server.",Type: "jenkins",
+					}, 
+					{Name: "githubTokenCredentialsId",Description: "Jenkins 'Secret text' credentials ID containing the token used to authenticate with the Github Server.",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "instance",
+						Name:      "instance",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `SonarCloud`,
-					},
-					{
-						Name:        "serverUrl",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "host"}, {Name: "sonarServerUrl"}},
-						Default:     os.Getenv("PIPER_serverUrl"),
-					},
-					{
-						Name: "token",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:    "sonarVaultSecretName",
-								Type:    "vaultSecret",
-								Default: "sonar",
-							},
-
-							{
-								Name: "sonarTokenCredentialsId",
-								Type: "secret",
-							},
-						},
-						Scope:     []string{"PARAMETERS"},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "sonarToken"}},
+						Aliases:   []config.Alias{},
+						Default:   `SonarCloud`,
+					},
+					{
+						Name:      "serverUrl",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "host"},{Name: "sonarServerUrl"},},
+						Default:   os.Getenv("PIPER_serverUrl"),
+					},
+					{
+						Name:      "token",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"sonarVaultSecretName",
+								Type: "vaultSecret",
+								Default: "sonar",
+							},
+                        
+							{
+								Name:"sonarTokenCredentialsId",
+								Type: "secret",
+							},
+                        },
+						Scope:     []string{"PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "sonarToken"},},
 						Default:   os.Getenv("PIPER_token"),
 					},
 					{
-						Name:        "organization",
+						Name:      "organization",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_organization"),
-					},
-					{
-						Name:        "customTlsCertificateLinks",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
-					},
-					{
-						Name:        "sonarScannerDownloadUrl",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip`,
-					},
-					{
-						Name:        "versioningModel",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STAGES", "STEPS", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `major`,
-					},
-					{
-						Name: "version",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:  "commonPipelineEnvironment",
-								Param: "artifactVersion",
-							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "projectVersion", Deprecated: true}},
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_organization"),
+					},
+					{
+						Name:      "customTlsCertificateLinks",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
+					},
+					{
+						Name:      "sonarScannerDownloadUrl",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip`,
+					},
+					{
+						Name:      "versioningModel",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"GENERAL","STAGES","STEPS","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `major`,
+					},
+					{
+						Name:      "version",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"commonPipelineEnvironment",
+								Param: "artifactVersion",
+							},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "projectVersion", Deprecated: true},},
 						Default:   os.Getenv("PIPER_version"),
 					},
 					{
-						Name:        "customScanVersion",
+						Name:      "customScanVersion",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STAGES", "STEPS", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_customScanVersion"),
-					},
-					{
-						Name:        "projectKey",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_projectKey"),
-					},
-					{
-						Name:        "coverageExclusions",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
-					},
-					{
-						Name:        "inferJavaBinaries",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
-					},
-					{
-						Name:        "inferJavaLibraries",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
-					},
-					{
-						Name:        "options",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "sonarProperties", Deprecated: true}},
-						Default:     []string{},
-					},
-					{
-						Name:        "branchName",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_branchName"),
-					},
-					{
-						Name:        "inferBranchName",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
-					},
-					{
-						Name:        "changeId",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_changeId"),
-					},
-					{
-						Name:        "changeBranch",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_changeBranch"),
-					},
-					{
-						Name:        "changeTarget",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_changeTarget"),
-					},
-					{
-						Name:        "pullRequestProvider",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `GitHub`,
-					},
-					{
-						Name: "owner",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:  "commonPipelineEnvironment",
-								Param: "github/owner",
-							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"GENERAL","STAGES","STEPS","PARAMETERS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "githubOrg"}},
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_customScanVersion"),
+					},
+					{
+						Name:      "projectKey",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_projectKey"),
+					},
+					{
+						Name:      "coverageExclusions",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
+					},
+					{
+						Name:      "inferJavaBinaries",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
+					},
+					{
+						Name:      "inferJavaLibraries",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
+					},
+					{
+						Name:      "options",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "sonarProperties", Deprecated: true},},
+						Default:   []string{},
+					},
+					{
+						Name:      "branchName",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_branchName"),
+					},
+					{
+						Name:      "inferBranchName",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
+					},
+					{
+						Name:      "changeId",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_changeId"),
+					},
+					{
+						Name:      "changeBranch",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_changeBranch"),
+					},
+					{
+						Name:      "changeTarget",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_changeTarget"),
+					},
+					{
+						Name:      "pullRequestProvider",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `GitHub`,
+					},
+					{
+						Name:      "owner",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"commonPipelineEnvironment",
+								Param: "github/owner",
+							},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "githubOrg"},},
 						Default:   os.Getenv("PIPER_owner"),
 					},
 					{
-						Name: "repository",
+						Name:      "repository",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "github/repository",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "githubRepo"}},
+						Aliases:   []config.Alias{{Name: "githubRepo"},},
 						Default:   os.Getenv("PIPER_repository"),
 					},
 					{
-						Name: "githubToken",
+						Name:      "githubToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name: "githubTokenCredentialsId",
+								Name:"githubTokenCredentialsId",
 								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "githubVaultSecretName",
-								Type:    "vaultSecret",
+								Name:"githubVaultSecretName",
+								Type: "vaultSecret",
 								Default: "github",
 							},
-						},
-						Scope:     []string{"PARAMETERS"},
+                        },
+						Scope:     []string{"PARAMETERS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "access_token"}},
+						Aliases:   []config.Alias{{Name: "access_token"},},
 						Default:   os.Getenv("PIPER_githubToken"),
 					},
 					{
-						Name:        "disableInlineComments",
+						Name:      "disableInlineComments",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "legacyPRHandling",
+						Name:      "legacyPRHandling",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "githubApiUrl",
+						Name:      "githubApiUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `https://api.github.com`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `https://api.github.com`,
 					},
 					{
-						Name:        "m2Path",
+						Name:      "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
-						Default:     os.Getenv("PIPER_m2Path"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
+						Default:   os.Getenv("PIPER_m2Path"),
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "sonar", Image: "sonarsource/sonar-scanner-cli:4.6"},
+				{Name: "sonar",Image: "sonarsource/sonar-scanner-cli:4.6",
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -567,16 +572,16 @@ func sonarExecuteScanMetadata() config.StepData {
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/sonarscan.json", "type": "sonarqube"},
-							{"filePattern": "**/sonarscan-result.json", "type": "sonarqube"},
+							{"filePattern": "**/sonarscan.json","type": "sonarqube",},
+							{"filePattern": "**/sonarscan-result.json","type": "sonarqube",},
 						},
 					},
 					{
 						Name: "influx",
 						Type: "influx",
 						Parameters: []map[string]interface{}{
-							{"name": "step_data", "fields": []map[string]string{{"name": "sonar"}}},
-							{"name": "sonarqube_data", "fields": []map[string]string{{"name": "blocker_issues"}, {"name": "critical_issues"}, {"name": "major_issues"}, {"name": "minor_issues"}, {"name": "info_issues"}}},
+							{"name": "step_data","fields": []map[string]string{ {"name": "sonar"}, },},
+							{"name": "sonarqube_data","fields": []map[string]string{ {"name": "blocker_issues"},  {"name": "critical_issues"},  {"name": "major_issues"},  {"name": "minor_issues"},  {"name": "info_issues"}, },},
 						},
 					},
 				},

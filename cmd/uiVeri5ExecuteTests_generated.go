@@ -10,22 +10,23 @@ import (
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/gcs"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
-	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/bmatcuk/doublestar"
+	"github.com/SAP/jenkins-library/pkg/gcs"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type uiVeri5ExecuteTestsOptions struct {
-	InstallCommand string   `json:"installCommand,omitempty"`
-	RunCommand     string   `json:"runCommand,omitempty"`
-	RunOptions     []string `json:"runOptions,omitempty"`
-	TestOptions    string   `json:"testOptions,omitempty"`
-	TestServerURL  string   `json:"testServerUrl,omitempty"`
+	InstallCommand string `json:"installCommand,omitempty"`
+	RunCommand string `json:"runCommand,omitempty"`
+	RunOptions []string `json:"runOptions,omitempty"`
+	TestOptions string `json:"testOptions,omitempty"`
+	TestServerURL string `json:"testServerUrl,omitempty"`
 }
+
 
 type uiVeri5ExecuteTestsReports struct {
 }
@@ -64,6 +65,7 @@ func (p *uiVeri5ExecuteTestsReports) persist(stepConfig uiVeri5ExecuteTestsOptio
 	}
 }
 
+
 // UiVeri5ExecuteTestsCommand Executes UI5 e2e tests using uiVeri5
 func UiVeri5ExecuteTestsCommand() *cobra.Command {
 	const STEP_NAME = "uiVeri5ExecuteTests"
@@ -79,7 +81,7 @@ func UiVeri5ExecuteTestsCommand() *cobra.Command {
 	var createUiVeri5ExecuteTestsCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Executes UI5 e2e tests using uiVeri5",
-		Long:  `In this step the ([UIVeri5 tests](https://github.com/SAP/ui5-uiveri5)) are executed.`,
+		Long: `In this step the ([UIVeri5 tests](https://github.com/SAP/ui5-uiveri5)) are executed.`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -123,7 +125,7 @@ func UiVeri5ExecuteTestsCommand() *cobra.Command {
 			stepTelemetryData := telemetry.CustomData{}
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
-				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -139,10 +141,10 @@ func UiVeri5ExecuteTestsCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			uiVeri5ExecuteTests(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -170,69 +172,73 @@ func addUiVeri5ExecuteTestsFlags(cmd *cobra.Command, stepConfig *uiVeri5ExecuteT
 func uiVeri5ExecuteTestsMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "uiVeri5ExecuteTests",
-			Aliases:     []config.Alias{},
+			Name:    "uiVeri5ExecuteTests",
+			Aliases: []config.Alias{},
 			Description: "Executes UI5 e2e tests using uiVeri5",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Resources: []config.StepResources{
-					{Name: "buildDescriptor", Type: "stash"},
-					{Name: "tests", Type: "stash"},
+					{Name: "buildDescriptor",Type: "stash",
+					},
+					{Name: "tests",Type: "stash",
+					},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "installCommand",
+						Name:      "installCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     `npm install @ui5/uiveri5 --global --quiet`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   `npm install @ui5/uiveri5 --global --quiet`,
 					},
 					{
-						Name:        "runCommand",
+						Name:      "runCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     `/home/node/.npm-global/bin/uiveri5`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   `/home/node/.npm-global/bin/uiveri5`,
 					},
 					{
-						Name:        "runOptions",
+						Name:      "runOptions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     []string{`--seleniumAddress=http://localhost:4444/wd/hub`},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   []string{`--seleniumAddress=http://localhost:4444/wd/hub`},
 					},
 					{
-						Name:        "testOptions",
+						Name:      "testOptions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_testOptions"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_testOptions"),
 					},
 					{
-						Name:        "testServerUrl",
+						Name:      "testServerUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_testServerUrl"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_testServerUrl"),
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "uiVeri5", Image: "node:lts-stretch", EnvVars: []config.EnvVar{{Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}, {Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"}}, WorkingDir: "/home/node"},
+				{Name: "uiVeri5",Image: "node:lts-stretch",EnvVars: []config.EnvVar{ {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"},  {Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"}, },WorkingDir: "/home/node",
+				}, 
 			},
 			Sidecars: []config.Container{
-				{Name: "selenium", Image: "selenium/standalone-chrome", EnvVars: []config.EnvVar{{Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"}, {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}}},
+				{Name: "selenium",Image: "selenium/standalone-chrome",EnvVars: []config.EnvVar{ {Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"},  {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}, },
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -240,9 +246,9 @@ func uiVeri5ExecuteTestsMetadata() config.StepData {
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/TEST-*.xml", "type": "acceptance-test"},
-							{"filePattern": "**/requirement.mapping", "type": "requirement-mapping"},
-							{"filePattern": "**/delivery.mapping", "type": "delivery-mapping"},
+							{"filePattern": "**/TEST-*.xml","type": "acceptance-test",},
+							{"filePattern": "**/requirement.mapping","type": "requirement-mapping",},
+							{"filePattern": "**/delivery.mapping","type": "delivery-mapping",},
 						},
 					},
 				},

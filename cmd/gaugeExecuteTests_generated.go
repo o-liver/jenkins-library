@@ -5,28 +5,29 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"reflect"
 	"strings"
+	"path/filepath"
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/gcs"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
-	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/bmatcuk/doublestar"
+	"github.com/SAP/jenkins-library/pkg/gcs"
+	"github.com/SAP/jenkins-library/pkg/piperenv"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type gaugeExecuteTestsOptions struct {
 	InstallCommand string `json:"installCommand,omitempty"`
 	LanguageRunner string `json:"languageRunner,omitempty"`
-	RunCommand     string `json:"runCommand,omitempty"`
-	TestOptions    string `json:"testOptions,omitempty"`
+	RunCommand string `json:"runCommand,omitempty"`
+	TestOptions string `json:"testOptions,omitempty"`
 }
+
 
 type gaugeExecuteTestsInflux struct {
 	step_data struct {
@@ -39,13 +40,13 @@ type gaugeExecuteTestsInflux struct {
 }
 
 func (i *gaugeExecuteTestsInflux) persist(path, resourceName string) {
-	measurementContent := []struct {
+	measurementContent := []struct{
 		measurement string
 		valType     string
 		name        string
 		value       interface{}
 	}{
-		{valType: config.InfluxField, measurement: "step_data", name: "gauge", value: i.step_data.fields.gauge},
+		{valType: config.InfluxField, measurement: "step_data" , name: "gauge", value: i.step_data.fields.gauge},
 	}
 
 	errCount := 0
@@ -97,6 +98,7 @@ func (p *gaugeExecuteTestsReports) persist(stepConfig gaugeExecuteTestsOptions, 
 		log.Entry().Errorf("failed to persist reports: %v", err)
 	}
 }
+
 
 // GaugeExecuteTestsCommand Installs gauge and executes specified gauge tests.
 func GaugeExecuteTestsCommand() *cobra.Command {
@@ -169,7 +171,7 @@ You can use the [sample projects](https://github.com/getgauge/gauge-mvn-archetyp
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
 				influx.persist(GeneralConfig.EnvRootPath, "influx")
-				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -185,10 +187,10 @@ You can use the [sample projects](https://github.com/getgauge/gauge-mvn-archetyp
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			gaugeExecuteTests(stepConfig, &stepTelemetryData, &influx)
 			stepTelemetryData.ErrorCode = "0"
@@ -213,63 +215,68 @@ func addGaugeExecuteTestsFlags(cmd *cobra.Command, stepConfig *gaugeExecuteTests
 func gaugeExecuteTestsMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "gaugeExecuteTests",
-			Aliases:     []config.Alias{},
+			Name:    "gaugeExecuteTests",
+			Aliases: []config.Alias{},
 			Description: "Installs gauge and executes specified gauge tests.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "seleniumHubCredentialsId", Description: "Defines the id of the user/password credentials to be used to connect to a Selenium Hub. The credentials are provided in the environment variables `PIPER_SELENIUM_HUB_USER` and `PIPER_SELENIUM_HUB_PASSWORD`.", Type: "jenkins"},
+					{Name: "seleniumHubCredentialsId",Description: "Defines the id of the user/password credentials to be used to connect to a Selenium Hub. The credentials are provided in the environment variables `PIPER_SELENIUM_HUB_USER` and `PIPER_SELENIUM_HUB_PASSWORD`.",Type: "jenkins",
+					}, 
 				},
 				Resources: []config.StepResources{
-					{Name: "buildDescriptor", Type: "stash"},
-					{Name: "tests", Type: "stash"},
+					{Name: "buildDescriptor",Type: "stash",
+					},
+					{Name: "tests",Type: "stash",
+					},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "installCommand",
+						Name:      "installCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_installCommand"),
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_installCommand"),
 					},
 					{
-						Name:        "languageRunner",
+						Name:      "languageRunner",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_languageRunner"),
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_languageRunner"),
 					},
 					{
-						Name:        "runCommand",
+						Name:      "runCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_runCommand"),
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_runCommand"),
 					},
 					{
-						Name:        "testOptions",
+						Name:      "testOptions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_testOptions"),
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_testOptions"),
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "gauge", Image: "node:lts-stretch", EnvVars: []config.EnvVar{{Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}, {Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"}}, WorkingDir: "/home/node"},
+				{Name: "gauge",Image: "node:lts-stretch",EnvVars: []config.EnvVar{ {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"},  {Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"}, },WorkingDir: "/home/node",
+				}, 
 			},
 			Sidecars: []config.Container{
-				{Name: "selenium", Image: "selenium/standalone-chrome", EnvVars: []config.EnvVar{{Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"}, {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}}},
+				{Name: "selenium",Image: "selenium/standalone-chrome",EnvVars: []config.EnvVar{ {Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"},  {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}, },
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -277,16 +284,16 @@ func gaugeExecuteTestsMetadata() config.StepData {
 						Name: "influx",
 						Type: "influx",
 						Parameters: []map[string]interface{}{
-							{"name": "step_data", "fields": []map[string]string{{"name": "gauge"}}},
+							{"name": "step_data","fields": []map[string]string{ {"name": "gauge"}, },},
 						},
 					},
 					{
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/TEST-*.xml", "type": "acceptance-test"},
-							{"filePattern": "**/requirement.mapping", "type": "requirement-mapping"},
-							{"filePattern": "**/delivery.mapping", "type": "delivery-mapping"},
+							{"filePattern": "**/TEST-*.xml","type": "acceptance-test",},
+							{"filePattern": "**/requirement.mapping","type": "requirement-mapping",},
+							{"filePattern": "**/delivery.mapping","type": "delivery-mapping",},
 						},
 					},
 				},

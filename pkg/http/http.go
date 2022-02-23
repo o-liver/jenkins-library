@@ -669,10 +669,10 @@ func (c *Client) SetBearerToken(oauthBaseUrl, clientID, clientSecret string) err
 // an error is returned.
 func (c *Client) GetBearerToken(oauthBaseUrl, clientID, clientSecret string) (token AuthToken, err error) {
 	const method = http.MethodGet
-	const urlPathAndQuery = "/oauth/token/?grant_type=client_credentials&response_type=token"
+	//const urlPathAndQuery = ""//"/oauth/token/?grant_type=client_credentials&response_type=token"
 
-	oauthBaseUrl = strings.TrimSuffix(oauthBaseUrl, "/")
-	entireUrl := fmt.Sprintf("%v%v", oauthBaseUrl, urlPathAndQuery)
+	//oauthBaseUrl = strings.TrimSuffix(oauthBaseUrl, "/")
+	entireUrl := fmt.Sprintf("%v", oauthBaseUrl/*, urlPathAndQuery*/)
 
 	clientOptions := ClientOptions{
 		Username: clientID,

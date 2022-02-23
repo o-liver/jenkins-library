@@ -10,39 +10,40 @@ import (
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/gcs"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
-	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/bmatcuk/doublestar"
+	"github.com/SAP/jenkins-library/pkg/gcs"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type golangBuildOptions struct {
-	BuildFlags                   []string `json:"buildFlags,omitempty"`
-	CgoEnabled                   bool     `json:"cgoEnabled,omitempty"`
-	CoverageFormat               string   `json:"coverageFormat,omitempty" validate:"possible-values=cobertura html"`
-	CreateBOM                    bool     `json:"createBOM,omitempty"`
-	CustomTLSCertificateLinks    []string `json:"customTlsCertificateLinks,omitempty"`
-	ExcludeGeneratedFromCoverage bool     `json:"excludeGeneratedFromCoverage,omitempty"`
-	LdflagsTemplate              string   `json:"ldflagsTemplate,omitempty"`
-	Output                       string   `json:"output,omitempty"`
-	Packages                     []string `json:"packages,omitempty"`
-	Publish                      bool     `json:"publish,omitempty"`
-	TargetRepositoryPassword     string   `json:"targetRepositoryPassword,omitempty"`
-	TargetRepositoryUser         string   `json:"targetRepositoryUser,omitempty"`
-	TargetRepositoryURL          string   `json:"targetRepositoryURL,omitempty"`
-	ReportCoverage               bool     `json:"reportCoverage,omitempty"`
-	RunTests                     bool     `json:"runTests,omitempty"`
-	RunIntegrationTests          bool     `json:"runIntegrationTests,omitempty"`
-	TargetArchitectures          []string `json:"targetArchitectures,omitempty"`
-	TestOptions                  []string `json:"testOptions,omitempty"`
-	TestResultFormat             string   `json:"testResultFormat,omitempty" validate:"possible-values=junit standard"`
-	PrivateModules               string   `json:"privateModules,omitempty"`
-	PrivateModulesGitToken       string   `json:"privateModulesGitToken,omitempty"`
-	ArtifactVersion              string   `json:"artifactVersion,omitempty"`
+	BuildFlags []string `json:"buildFlags,omitempty"`
+	CgoEnabled bool `json:"cgoEnabled,omitempty"`
+	CoverageFormat string `json:"coverageFormat,omitempty" validate:"possible-values=cobertura html"`
+	CreateBOM bool `json:"createBOM,omitempty"`
+	CustomTLSCertificateLinks []string `json:"customTlsCertificateLinks,omitempty"`
+	ExcludeGeneratedFromCoverage bool `json:"excludeGeneratedFromCoverage,omitempty"`
+	LdflagsTemplate string `json:"ldflagsTemplate,omitempty"`
+	Output string `json:"output,omitempty"`
+	Packages []string `json:"packages,omitempty"`
+	Publish bool `json:"publish,omitempty"`
+	TargetRepositoryPassword string `json:"targetRepositoryPassword,omitempty"`
+	TargetRepositoryUser string `json:"targetRepositoryUser,omitempty"`
+	TargetRepositoryURL string `json:"targetRepositoryURL,omitempty"`
+	ReportCoverage bool `json:"reportCoverage,omitempty"`
+	RunTests bool `json:"runTests,omitempty"`
+	RunIntegrationTests bool `json:"runIntegrationTests,omitempty"`
+	TargetArchitectures []string `json:"targetArchitectures,omitempty"`
+	TestOptions []string `json:"testOptions,omitempty"`
+	TestResultFormat string `json:"testResultFormat,omitempty" validate:"possible-values=junit standard"`
+	PrivateModules string `json:"privateModules,omitempty"`
+	PrivateModulesGitToken string `json:"privateModulesGitToken,omitempty"`
+	ArtifactVersion string `json:"artifactVersion,omitempty"`
 }
+
 
 type golangBuildReports struct {
 }
@@ -80,6 +81,7 @@ func (p *golangBuildReports) persist(stepConfig golangBuildOptions, gcpJsonKeyFi
 		log.Entry().Errorf("failed to persist reports: %v", err)
 	}
 }
+
 
 // GolangBuildCommand This step will execute a golang build.
 func GolangBuildCommand() *cobra.Command {
@@ -148,7 +150,7 @@ If the build is successful the resulting artifact can be uploaded to e.g. a bina
 			stepTelemetryData := telemetry.CustomData{}
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
-				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -164,10 +166,10 @@ If the build is successful the resulting artifact can be uploaded to e.g. a bina
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			golangBuild(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -210,240 +212,241 @@ func addGolangBuildFlags(cmd *cobra.Command, stepConfig *golangBuildOptions) {
 func golangBuildMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "golangBuild",
-			Aliases:     []config.Alias{},
+			Name:    "golangBuild",
+			Aliases: []config.Alias{},
 			Description: "This step will execute a golang build.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "golangPrivateModulesGitTokenCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing username/password for http access to your git repos where your go private modules are stored.", Type: "jenkins"},
+					{Name: "golangPrivateModulesGitTokenCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing username/password for http access to your git repos where your go private modules are stored.",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "buildFlags",
+						Name:      "buildFlags",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "cgoEnabled",
+						Name:      "cgoEnabled",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "coverageFormat",
+						Name:      "coverageFormat",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `html`,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `html`,
 					},
 					{
-						Name:        "createBOM",
+						Name:      "createBOM",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "customTlsCertificateLinks",
+						Name:      "customTlsCertificateLinks",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "excludeGeneratedFromCoverage",
+						Name:      "excludeGeneratedFromCoverage",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "ldflagsTemplate",
+						Name:      "ldflagsTemplate",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_ldflagsTemplate"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_ldflagsTemplate"),
 					},
 					{
-						Name:        "output",
+						Name:      "output",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_output"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_output"),
 					},
 					{
-						Name:        "packages",
+						Name:      "packages",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "publish",
+						Name:      "publish",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name: "targetRepositoryPassword",
+						Name:      "targetRepositoryPassword",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/repositoryPassword",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_targetRepositoryPassword"),
 					},
 					{
-						Name: "targetRepositoryUser",
+						Name:      "targetRepositoryUser",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/repositoryUsername",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_targetRepositoryUser"),
 					},
 					{
-						Name: "targetRepositoryURL",
+						Name:      "targetRepositoryURL",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/repositoryUrl",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_targetRepositoryURL"),
 					},
 					{
-						Name:        "reportCoverage",
+						Name:      "reportCoverage",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "runTests",
+						Name:      "runTests",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "runIntegrationTests",
+						Name:      "runIntegrationTests",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "targetArchitectures",
+						Name:      "targetArchitectures",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "[]string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     []string{`linux,amd64`},
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "[]string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   []string{`linux,amd64`},
 					},
 					{
-						Name:        "testOptions",
+						Name:      "testOptions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "testResultFormat",
+						Name:      "testResultFormat",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `junit`,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `junit`,
 					},
 					{
-						Name:        "privateModules",
+						Name:      "privateModules",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_privateModules"),
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_privateModules"),
 					},
 					{
-						Name: "privateModulesGitToken",
+						Name:      "privateModulesGitToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name: "golangPrivateModulesGitTokenCredentialsId",
+								Name:"golangPrivateModulesGitTokenCredentialsId",
 								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "golangPrivateModulesGitTokenVaultSecret",
-								Type:    "vaultSecret",
+								Name:"golangPrivateModulesGitTokenVaultSecret",
+								Type: "vaultSecret",
 								Default: "golang",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_privateModulesGitToken"),
 					},
 					{
-						Name: "artifactVersion",
+						Name:      "artifactVersion",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "artifactVersion",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
@@ -452,7 +455,8 @@ func golangBuildMetadata() config.StepData {
 				},
 			},
 			Containers: []config.Container{
-				{Name: "golang", Image: "golang:1", Options: []config.Option{{Name: "-u", Value: "0"}}},
+				{Name: "golang",Image: "golang:1",Options: []config.Option{ {Name: "-u", Value: "0"}, },
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -460,9 +464,9 @@ func golangBuildMetadata() config.StepData {
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/bom.xml", "type": "sbom"},
-							{"filePattern": "**/TEST-*.xml", "type": "junit"},
-							{"filePattern": "**/cobertura-coverage.xml", "type": "cobertura-coverage"},
+							{"filePattern": "**/bom.xml","type": "sbom",},
+							{"filePattern": "**/TEST-*.xml","type": "junit",},
+							{"filePattern": "**/cobertura-coverage.xml","type": "cobertura-coverage",},
 						},
 					},
 				},

@@ -9,19 +9,21 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type integrationArtifactTriggerIntegrationTestOptions struct {
-	IntegrationFlowServiceKey         string `json:"integrationFlowServiceKey,omitempty"`
-	IntegrationFlowID                 string `json:"integrationFlowId,omitempty"`
+	IntegrationFlowServiceKey string `json:"integrationFlowServiceKey,omitempty"`
+	IntegrationFlowID string `json:"integrationFlowId,omitempty"`
 	IntegrationFlowServiceEndpointURL string `json:"integrationFlowServiceEndpointUrl,omitempty"`
-	ContentType                       string `json:"contentType,omitempty"`
-	MessageBodyPath                   string `json:"messageBodyPath,omitempty"`
+	ContentType string `json:"contentType,omitempty"`
+	MessageBodyPath string `json:"messageBodyPath,omitempty"`
 }
+
+
 
 // IntegrationArtifactTriggerIntegrationTestCommand Test the service endpoint of your iFlow
 func IntegrationArtifactTriggerIntegrationTestCommand() *cobra.Command {
@@ -37,7 +39,7 @@ func IntegrationArtifactTriggerIntegrationTestCommand() *cobra.Command {
 	var createIntegrationArtifactTriggerIntegrationTestCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Test the service endpoint of your iFlow",
-		Long:  `With this step you can test your intergration flow  exposed by SAP Cloud Platform Integration on a tenant using OData API.Learn more about the SAP Cloud Integration remote API for getting service endpoint of deployed integration artifact [here](https://help.sap.com/viewer/368c481cd6954bdfa5d0435479fd4eaf/Cloud/en-US/d1679a80543f46509a7329243b595bdb.html).`,
+		Long: `With this step you can test your intergration flow  exposed by SAP Cloud Platform Integration on a tenant using OData API.Learn more about the SAP Cloud Integration remote API for getting service endpoint of deployed integration artifact [here](https://help.sap.com/viewer/368c481cd6954bdfa5d0435479fd4eaf/Cloud/en-US/d1679a80543f46509a7329243b595bdb.html).`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -97,10 +99,10 @@ func IntegrationArtifactTriggerIntegrationTestCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			integrationArtifactTriggerIntegrationTest(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -128,74 +130,76 @@ func addIntegrationArtifactTriggerIntegrationTestFlags(cmd *cobra.Command, stepC
 func integrationArtifactTriggerIntegrationTestMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "integrationArtifactTriggerIntegrationTest",
-			Aliases:     []config.Alias{},
+			Name:    "integrationArtifactTriggerIntegrationTest",
+			Aliases: []config.Alias{},
 			Description: "Test the service endpoint of your iFlow",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "integrationFlowServiceKeyCredentialsId", Description: "Jenkins secret text credential ID containing the service key to the Process Integration Runtime service instance of plan 'integration-flow'", Type: "jenkins"},
+					{Name: "integrationFlowServiceKeyCredentialsId",Description: "Jenkins secret text credential ID containing the service key to the Process Integration Runtime service instance of plan 'integration-flow'",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name: "integrationFlowServiceKey",
+						Name:      "integrationFlowServiceKey",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "integrationFlowServiceKeyCredentialsId",
+								Name:"integrationFlowServiceKeyCredentialsId",
 								Param: "integrationFlowServiceKey",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS"},
+                        },
+						Scope:     []string{"PARAMETERS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_integrationFlowServiceKey"),
 					},
 					{
-						Name:        "integrationFlowId",
+						Name:      "integrationFlowId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_integrationFlowId"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_integrationFlowId"),
 					},
 					{
-						Name: "integrationFlowServiceEndpointUrl",
+						Name:      "integrationFlowServiceEndpointUrl",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/integrationFlowServiceEndpoint",
 							},
-						},
-						Scope:     []string{"PARAMETERS"},
+                        },
+						Scope:     []string{"PARAMETERS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_integrationFlowServiceEndpointUrl"),
 					},
 					{
-						Name:        "contentType",
+						Name:      "contentType",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_contentType"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_contentType"),
 					},
 					{
-						Name:        "messageBodyPath",
+						Name:      "messageBodyPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_messageBodyPath"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_messageBodyPath"),
 					},
 				},
 			},
+			
 		},
 	}
 	return theMetaData

@@ -9,23 +9,25 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type mavenExecuteOptions struct {
-	PomPath                     string   `json:"pomPath,omitempty"`
-	Goals                       []string `json:"goals,omitempty"`
-	Defines                     []string `json:"defines,omitempty"`
-	Flags                       []string `json:"flags,omitempty"`
-	ReturnStdout                bool     `json:"returnStdout,omitempty"`
-	ProjectSettingsFile         string   `json:"projectSettingsFile,omitempty"`
-	GlobalSettingsFile          string   `json:"globalSettingsFile,omitempty"`
-	M2Path                      string   `json:"m2Path,omitempty"`
-	LogSuccessfulMavenTransfers bool     `json:"logSuccessfulMavenTransfers,omitempty"`
+	PomPath string `json:"pomPath,omitempty"`
+	Goals []string `json:"goals,omitempty"`
+	Defines []string `json:"defines,omitempty"`
+	Flags []string `json:"flags,omitempty"`
+	ReturnStdout bool `json:"returnStdout,omitempty"`
+	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
+	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
+	M2Path string `json:"m2Path,omitempty"`
+	LogSuccessfulMavenTransfers bool `json:"logSuccessfulMavenTransfers,omitempty"`
 }
+
+
 
 // MavenExecuteCommand This step allows to run maven commands
 func MavenExecuteCommand() *cobra.Command {
@@ -41,7 +43,7 @@ func MavenExecuteCommand() *cobra.Command {
 	var createMavenExecuteCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "This step allows to run maven commands",
-		Long:  `This step runs a maven command based on the parameters provided to the step.`,
+		Long: `This step runs a maven command based on the parameters provided to the step.`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -100,10 +102,10 @@ func MavenExecuteCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			mavenExecute(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -133,99 +135,101 @@ func addMavenExecuteFlags(cmd *cobra.Command, stepConfig *mavenExecuteOptions) {
 func mavenExecuteMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "mavenExecute",
-			Aliases:     []config.Alias{},
+			Name:    "mavenExecute",
+			Aliases: []config.Alias{},
 			Description: "This step allows to run maven commands",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:        "pomPath",
+						Name:      "pomPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_pomPath"),
+						Scope:     []string{"PARAMETERS","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_pomPath"),
 					},
 					{
-						Name:        "goals",
+						Name:      "goals",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS"},
-						Type:        "[]string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS",},
+						Type:      "[]string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "defines",
+						Name:      "defines",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "flags",
+						Name:      "flags",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "returnStdout",
+						Name:      "returnStdout",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "projectSettingsFile",
+						Name:      "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
-						Default:     os.Getenv("PIPER_projectSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
+						Default:   os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:        "globalSettingsFile",
+						Name:      "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/globalSettingsFile"}},
-						Default:     os.Getenv("PIPER_globalSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
+						Default:   os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:        "m2Path",
+						Name:      "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
-						Default:     os.Getenv("PIPER_m2Path"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
+						Default:   os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name:        "logSuccessfulMavenTransfers",
+						Name:      "logSuccessfulMavenTransfers",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/logSuccessfulMavenTransfers"}},
-						Default:     false,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/logSuccessfulMavenTransfers"},},
+						Default:   false,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "mvn", Image: "maven:3.6-jdk-8"},
+				{Name: "mvn",Image: "maven:3.6-jdk-8",
+				}, 
 			},
+			
 		},
 	}
 	return theMetaData

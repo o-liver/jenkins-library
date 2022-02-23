@@ -11,52 +11,53 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type artifactPrepareVersionOptions struct {
-	BuildTool              string `json:"buildTool,omitempty" validate:"possible-values=custom docker dub golang gradle maven mta npm pip sbt yarn"`
-	CommitUserName         string `json:"commitUserName,omitempty"`
-	CustomVersionField     string `json:"customVersionField,omitempty"`
-	CustomVersionSection   string `json:"customVersionSection,omitempty"`
+	BuildTool string `json:"buildTool,omitempty" validate:"possible-values=custom docker dub golang gradle maven mta npm pip sbt yarn"`
+	CommitUserName string `json:"commitUserName,omitempty"`
+	CustomVersionField string `json:"customVersionField,omitempty"`
+	CustomVersionSection string `json:"customVersionSection,omitempty"`
 	CustomVersioningScheme string `json:"customVersioningScheme,omitempty" validate:"possible-values=docker maven pep440 semver2"`
-	DockerVersionSource    string `json:"dockerVersionSource,omitempty"`
-	FetchCoordinates       bool   `json:"fetchCoordinates,omitempty"`
-	FilePath               string `json:"filePath,omitempty"`
-	GlobalSettingsFile     string `json:"globalSettingsFile,omitempty"`
-	IncludeCommitID        bool   `json:"includeCommitId,omitempty"`
-	M2Path                 string `json:"m2Path,omitempty"`
-	Password               string `json:"password,omitempty"`
-	ProjectSettingsFile    string `json:"projectSettingsFile,omitempty"`
-	ShortCommitID          bool   `json:"shortCommitId,omitempty"`
-	TagPrefix              string `json:"tagPrefix,omitempty"`
-	UnixTimestamp          bool   `json:"unixTimestamp,omitempty"`
-	Username               string `json:"username,omitempty"`
-	VersioningTemplate     string `json:"versioningTemplate,omitempty"`
-	VersioningType         string `json:"versioningType,omitempty" validate:"possible-values=cloud cloud_noTag library"`
+	DockerVersionSource string `json:"dockerVersionSource,omitempty"`
+	FetchCoordinates bool `json:"fetchCoordinates,omitempty"`
+	FilePath string `json:"filePath,omitempty"`
+	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
+	IncludeCommitID bool `json:"includeCommitId,omitempty"`
+	M2Path string `json:"m2Path,omitempty"`
+	Password string `json:"password,omitempty"`
+	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
+	ShortCommitID bool `json:"shortCommitId,omitempty"`
+	TagPrefix string `json:"tagPrefix,omitempty"`
+	UnixTimestamp bool `json:"unixTimestamp,omitempty"`
+	Username string `json:"username,omitempty"`
+	VersioningTemplate string `json:"versioningTemplate,omitempty"`
+	VersioningType string `json:"versioningType,omitempty" validate:"possible-values=cloud cloud_noTag library"`
 }
 
+
 type artifactPrepareVersionCommonPipelineEnvironment struct {
-	artifactVersion         string
+	artifactVersion string
 	originalArtifactVersion string
-	artifactID              string
-	groupID                 string
-	packaging               string
-	git                     struct {
-		commitID      string
-		headCommitID  string
+	artifactID string
+	groupID string
+	packaging string
+	git struct {
+		commitID string
+		headCommitID string
 		commitMessage string
 	}
 }
 
 func (p *artifactPrepareVersionCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct {
+	content := []struct{
 		category string
-		name     string
-		value    interface{}
+		name string
+		value interface{}
 	}{
 		{category: "", name: "artifactVersion", value: p.artifactVersion},
 		{category: "", name: "originalArtifactVersion", value: p.originalArtifactVersion},
@@ -80,6 +81,7 @@ func (p *artifactPrepareVersionCommonPipelineEnvironment) persist(path, resource
 		log.Entry().Error("failed to persist Piper environment")
 	}
 }
+
 
 // ArtifactPrepareVersionCommand Prepares and potentially updates the artifact's version before building the artifact.
 func ArtifactPrepareVersionCommand() *cobra.Command {
@@ -220,10 +222,10 @@ Define ` + "`" + `buildTool: custom` + "`" + `, ` + "`" + `filePath: <path to yo
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			artifactPrepareVersion(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -263,216 +265,219 @@ func addArtifactPrepareVersionFlags(cmd *cobra.Command, stepConfig *artifactPrep
 func artifactPrepareVersionMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "artifactPrepareVersion",
-			Aliases:     []config.Alias{{Name: "artifactSetVersion", Deprecated: false}, {Name: "setVersion", Deprecated: true}},
+			Name:    "artifactPrepareVersion",
+			Aliases: []config.Alias{{Name: "artifactSetVersion", Deprecated: false},{Name: "setVersion", Deprecated: true},},
 			Description: "Prepares and potentially updates the artifact's version before building the artifact.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "gitHttpsCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing username/password for http access to your git repository.", Type: "jenkins"},
-					{Name: "gitSshKeyCredentialsId", Description: "Jenkins 'SSH Username with private key' credentials ID ssh key for accessing your git repository. You can find details about how to generate an ssh key in the [GitHub documentation](https://docs.github.com/en/enterprise/2.15/user/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).", Type: "jenkins", Aliases: []config.Alias{{Name: "gitCredentialsId", Deprecated: true}}},
+					{Name: "gitHttpsCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing username/password for http access to your git repository.",Type: "jenkins",
+					}, 
+					{Name: "gitSshKeyCredentialsId",Description: "Jenkins 'SSH Username with private key' credentials ID ssh key for accessing your git repository. You can find details about how to generate an ssh key in the [GitHub documentation](https://docs.github.com/en/enterprise/2.15/user/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).",Type: "jenkins",Aliases: []config.Alias{ {Name: "gitCredentialsId", Deprecated: true}, },
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "buildTool",
+						Name:      "buildTool",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_buildTool"),
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_buildTool"),
 					},
 					{
-						Name:        "commitUserName",
+						Name:      "commitUserName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "gitUserName"}},
-						Default:     `Project Piper`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "gitUserName"},},
+						Default:   `Project Piper`,
 					},
 					{
-						Name:        "customVersionField",
+						Name:      "customVersionField",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_customVersionField"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_customVersionField"),
 					},
 					{
-						Name:        "customVersionSection",
+						Name:      "customVersionSection",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_customVersionSection"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_customVersionSection"),
 					},
 					{
-						Name:        "customVersioningScheme",
+						Name:      "customVersioningScheme",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `maven`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `maven`,
 					},
 					{
-						Name:        "dockerVersionSource",
+						Name:      "dockerVersionSource",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_dockerVersionSource"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_dockerVersionSource"),
 					},
 					{
-						Name:        "fetchCoordinates",
+						Name:      "fetchCoordinates",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "filePath",
+						Name:      "filePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_filePath"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_filePath"),
 					},
 					{
-						Name:        "globalSettingsFile",
+						Name:      "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/globalSettingsFile"}},
-						Default:     os.Getenv("PIPER_globalSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
+						Default:   os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:        "includeCommitId",
+						Name:      "includeCommitId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "m2Path",
+						Name:      "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
-						Default:     os.Getenv("PIPER_m2Path"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
+						Default:   os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name: "password",
+						Name:      "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "gitHttpsCredentialsId",
+								Name:"gitHttpsCredentialsId",
 								Param: "password",
-								Type:  "secret",
+								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "gitHttpsCredentialVaultSecretName",
-								Type:    "vaultSecret",
+								Name:"gitHttpsCredentialVaultSecretName",
+								Type: "vaultSecret",
 								Default: "gitHttpsCredential",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:        "projectSettingsFile",
+						Name:      "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
-						Default:     os.Getenv("PIPER_projectSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
+						Default:   os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:        "shortCommitId",
+						Name:      "shortCommitId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "tagPrefix",
+						Name:      "tagPrefix",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `build_`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `build_`,
 					},
 					{
-						Name:        "unixTimestamp",
+						Name:      "unixTimestamp",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name: "username",
+						Name:      "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "gitHttpsCredentialsId",
+								Name:"gitHttpsCredentialsId",
 								Param: "username",
-								Type:  "secret",
+								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "gitHttpsCredentialVaultSecretName",
-								Type:    "vaultSecret",
+								Name:"gitHttpsCredentialVaultSecretName",
+								Type: "vaultSecret",
 								Default: "gitHttpsCredential",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name:        "versioningTemplate",
+						Name:      "versioningTemplate",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_versioningTemplate"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_versioningTemplate"),
 					},
 					{
-						Name:        "versioningType",
+						Name:      "versioningType",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `cloud`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `cloud`,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Image: "maven:3.6-jdk-8", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "maven"}}}}},
+				{Image: "maven:3.6-jdk-8",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "maven" }, } }, },
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -480,14 +485,14 @@ func artifactPrepareVersionMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "artifactVersion"},
-							{"name": "originalArtifactVersion"},
-							{"name": "artifactId"},
-							{"name": "groupId"},
-							{"name": "packaging"},
-							{"name": "git/commitId"},
-							{"name": "git/headCommitId"},
-							{"name": "git/commitMessage"},
+							{"name": "artifactVersion",},
+							{"name": "originalArtifactVersion",},
+							{"name": "artifactId",},
+							{"name": "groupId",},
+							{"name": "packaging",},
+							{"name": "git/commitId",},
+							{"name": "git/headCommitId",},
+							{"name": "git/commitMessage",},
 						},
 					},
 				},

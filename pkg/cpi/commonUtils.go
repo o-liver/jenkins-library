@@ -51,8 +51,8 @@ type HttpFileUploadRequestParameters struct {
 	HTTPErr                                                   error
 }
 
-// ServiceKey contains information about a CPI service key
-type ServiceKey struct {
+// CPIServiceKey contains information about a CPI service key
+type CPIServiceKey struct {
 	OAuth OAuth `json:"oauth"`
 }
 
@@ -65,15 +65,35 @@ type OAuth struct {
 }
 
 // ReadCpiServiceKey unmarshalls the give json service key string.
-func ReadCpiServiceKey(serviceKeyJSON string) (cpiServiceKey ServiceKey, err error) {
+func ReadCpiServiceKey(serviceKeyJSON string) (cpiServiceKey CPIServiceKey, err error) {
 	// parse
 	err = json.Unmarshal([]byte(serviceKeyJSON), &cpiServiceKey)
 	if err != nil {
-		err = errors.Wrap(err, "error unmarshalling serviceKey")
+		err = errors.Wrap(err, "error unmarshalling CPI serviceKey")
 		return
 	}
 
 	log.Entry().Info("CPI serviceKey read successfully")
+	return
+}
+
+type ANSServiceKey struct {
+	Url          string `json:"url"`
+	ClientId     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+	OauthUrl     string `json:"oauth_url"`
+}
+
+// ReadANSServiceKey unmarshalls the given json service key string.
+func ReadANSServiceKey(serviceKeyJSON string) (ansServiceKey ANSServiceKey, err error) {
+	// parse
+	err = json.Unmarshal([]byte(serviceKeyJSON), &ansServiceKey)
+	if err != nil {
+		err = errors.Wrap(err, "error unmarshalling ANS serviceKey")
+		return
+	}
+
+	log.Entry().Info("ANS serviceKey read successfully")
 	return
 }
 

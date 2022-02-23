@@ -11,20 +11,21 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type abapAddonAssemblyKitReleasePackagesOptions struct {
 	AbapAddonAssemblyKitEndpoint string `json:"abapAddonAssemblyKitEndpoint,omitempty"`
-	Username                     string `json:"username,omitempty"`
-	Password                     string `json:"password,omitempty"`
-	AddonDescriptor              string `json:"addonDescriptor,omitempty"`
-	MaxRuntimeInMinutes          int    `json:"maxRuntimeInMinutes,omitempty"`
-	PollingIntervalInSeconds     int    `json:"pollingIntervalInSeconds,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	AddonDescriptor string `json:"addonDescriptor,omitempty"`
+	MaxRuntimeInMinutes int `json:"maxRuntimeInMinutes,omitempty"`
+	PollingIntervalInSeconds int `json:"pollingIntervalInSeconds,omitempty"`
 }
+
 
 type abapAddonAssemblyKitReleasePackagesCommonPipelineEnvironment struct {
 	abap struct {
@@ -33,10 +34,10 @@ type abapAddonAssemblyKitReleasePackagesCommonPipelineEnvironment struct {
 }
 
 func (p *abapAddonAssemblyKitReleasePackagesCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct {
+	content := []struct{
 		category string
-		name     string
-		value    interface{}
+		name string
+		value interface{}
 	}{
 		{category: "abap", name: "addonDescriptor", value: p.abap.addonDescriptor},
 	}
@@ -53,6 +54,7 @@ func (p *abapAddonAssemblyKitReleasePackagesCommonPipelineEnvironment) persist(p
 		log.Entry().Error("failed to persist Piper environment")
 	}
 }
+
 
 // AbapAddonAssemblyKitReleasePackagesCommand This step releases the physical Delivery Packages
 func AbapAddonAssemblyKitReleasePackagesCommand() *cobra.Command {
@@ -132,10 +134,10 @@ For Terminology refer to the [Scenario Description](https://www.project-piper.io
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			abapAddonAssemblyKitReleasePackages(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -165,74 +167,75 @@ func addAbapAddonAssemblyKitReleasePackagesFlags(cmd *cobra.Command, stepConfig 
 func abapAddonAssemblyKitReleasePackagesMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "abapAddonAssemblyKitReleasePackages",
-			Aliases:     []config.Alias{},
+			Name:    "abapAddonAssemblyKitReleasePackages",
+			Aliases: []config.Alias{},
 			Description: "This step releases the physical Delivery Packages",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "abapAddonAssemblyKitCredentialsId", Description: "Credential stored in Jenkins for the Addon Assembly Kit as a Service (AAKaaS) system", Type: "jenkins"},
+					{Name: "abapAddonAssemblyKitCredentialsId",Description: "Credential stored in Jenkins for the Addon Assembly Kit as a Service (AAKaaS) system",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "abapAddonAssemblyKitEndpoint",
+						Name:      "abapAddonAssemblyKitEndpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     `https://apps.support.sap.com`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   `https://apps.support.sap.com`,
 					},
 					{
-						Name:        "username",
+						Name:      "username",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_username"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name:        "password",
+						Name:      "password",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_password"),
+						Scope:     []string{"PARAMETERS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name: "addonDescriptor",
+						Name:      "addonDescriptor",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "abap/addonDescriptor",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_addonDescriptor"),
 					},
 					{
-						Name:        "maxRuntimeInMinutes",
+						Name:      "maxRuntimeInMinutes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     5,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   5,
 					},
 					{
-						Name:        "pollingIntervalInSeconds",
+						Name:      "pollingIntervalInSeconds",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     30,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   30,
 					},
 				},
 			},
@@ -242,7 +245,7 @@ func abapAddonAssemblyKitReleasePackagesMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "abap/addonDescriptor"},
+							{"name": "abap/addonDescriptor",},
 						},
 					},
 				},

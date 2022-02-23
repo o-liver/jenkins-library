@@ -9,17 +9,19 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type pipelineCreateScanSummaryOptions struct {
-	FailedOnly     bool   `json:"failedOnly,omitempty"`
+	FailedOnly bool `json:"failedOnly,omitempty"`
 	OutputFilePath string `json:"outputFilePath,omitempty"`
-	PipelineLink   string `json:"pipelineLink,omitempty"`
+	PipelineLink string `json:"pipelineLink,omitempty"`
 }
+
+
 
 // PipelineCreateScanSummaryCommand Collect scan result information anc create a summary report
 func PipelineCreateScanSummaryCommand() *cobra.Command {
@@ -96,10 +98,10 @@ It is for example used to create a markdown file which can be used to create a G
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			pipelineCreateScanSummary(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -122,42 +124,43 @@ func addPipelineCreateScanSummaryFlags(cmd *cobra.Command, stepConfig *pipelineC
 func pipelineCreateScanSummaryMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "pipelineCreateScanSummary",
-			Aliases:     []config.Alias{},
+			Name:    "pipelineCreateScanSummary",
+			Aliases: []config.Alias{},
 			Description: "Collect scan result information anc create a summary report",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:        "failedOnly",
+						Name:      "failedOnly",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "outputFilePath",
+						Name:      "outputFilePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `scanSummary.md`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `scanSummary.md`,
 					},
 					{
-						Name:        "pipelineLink",
+						Name:      "pipelineLink",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_pipelineLink"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_pipelineLink"),
 					},
 				},
 			},
+			
 		},
 	}
 	return theMetaData

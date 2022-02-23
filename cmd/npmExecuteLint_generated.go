@@ -9,18 +9,20 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type npmExecuteLintOptions struct {
-	Install            bool   `json:"install,omitempty"`
-	RunScript          string `json:"runScript,omitempty"`
-	FailOnError        bool   `json:"failOnError,omitempty"`
+	Install bool `json:"install,omitempty"`
+	RunScript string `json:"runScript,omitempty"`
+	FailOnError bool `json:"failOnError,omitempty"`
 	DefaultNpmRegistry string `json:"defaultNpmRegistry,omitempty"`
 }
+
+
 
 // NpmExecuteLintCommand Execute ci-lint script on all npm packages in a project or execute default linting
 func NpmExecuteLintCommand() *cobra.Command {
@@ -96,10 +98,10 @@ either use ESLint configurations present in the project or use the provided gene
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			npmExecuteLint(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -123,54 +125,56 @@ func addNpmExecuteLintFlags(cmd *cobra.Command, stepConfig *npmExecuteLintOption
 func npmExecuteLintMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "npmExecuteLint",
-			Aliases:     []config.Alias{{Name: "executeNpm", Deprecated: false}},
+			Name:    "npmExecuteLint",
+			Aliases: []config.Alias{{Name: "executeNpm", Deprecated: false},},
 			Description: "Execute ci-lint script on all npm packages in a project or execute default linting",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:        "install",
+						Name:      "install",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "runScript",
+						Name:      "runScript",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `ci-lint`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `ci-lint`,
 					},
 					{
-						Name:        "failOnError",
+						Name:      "failOnError",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "defaultNpmRegistry",
+						Name:      "defaultNpmRegistry",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "npm/defaultNpmRegistry"}},
-						Default:     os.Getenv("PIPER_defaultNpmRegistry"),
+						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "npm/defaultNpmRegistry"},},
+						Default:   os.Getenv("PIPER_defaultNpmRegistry"),
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "node", Image: "node:lts-stretch"},
+				{Name: "node",Image: "node:lts-stretch",
+				}, 
 			},
+			
 		},
 	}
 	return theMetaData

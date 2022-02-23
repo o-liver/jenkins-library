@@ -9,23 +9,25 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type gctsCreateRepositoryOptions struct {
-	Username            string `json:"username,omitempty"`
-	Password            string `json:"password,omitempty"`
-	Repository          string `json:"repository,omitempty"`
-	Host                string `json:"host,omitempty"`
-	Client              string `json:"client,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	Repository string `json:"repository,omitempty"`
+	Host string `json:"host,omitempty"`
+	Client string `json:"client,omitempty"`
 	RemoteRepositoryURL string `json:"remoteRepositoryURL,omitempty"`
-	Role                string `json:"role,omitempty" validate:"possible-values=SOURCE TARGET"`
-	VSID                string `json:"vSID,omitempty"`
-	Type                string `json:"type,omitempty" validate:"possible-values=GIT"`
+	Role string `json:"role,omitempty" validate:"possible-values=SOURCE TARGET"`
+	VSID string `json:"vSID,omitempty"`
+	Type string `json:"type,omitempty" validate:"possible-values=GIT"`
 }
+
+
 
 // GctsCreateRepositoryCommand Creates a Git repository on an ABAP system
 func GctsCreateRepositoryCommand() *cobra.Command {
@@ -41,7 +43,7 @@ func GctsCreateRepositoryCommand() *cobra.Command {
 	var createGctsCreateRepositoryCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Creates a Git repository on an ABAP system",
-		Long:  `Creates a local Git repository on an ABAP system if it does not already exist.`,
+		Long: `Creates a local Git repository on an ABAP system if it does not already exist.`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -102,10 +104,10 @@ func GctsCreateRepositoryCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			gctsCreateRepository(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -139,111 +141,113 @@ func addGctsCreateRepositoryFlags(cmd *cobra.Command, stepConfig *gctsCreateRepo
 func gctsCreateRepositoryMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "gctsCreateRepository",
-			Aliases:     []config.Alias{},
+			Name:    "gctsCreateRepository",
+			Aliases: []config.Alias{},
 			Description: "Creates a Git repository on an ABAP system",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "abapCredentialsId", Description: "Jenkins credentials ID containing username and password for authentication to the ABAP system on which you want to create the repository", Type: "jenkins"},
+					{Name: "abapCredentialsId",Description: "Jenkins credentials ID containing username and password for authentication to the ABAP system on which you want to create the repository",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name: "username",
+						Name:      "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "abapCredentialsId",
+								Name:"abapCredentialsId",
 								Param: "username",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name: "password",
+						Name:      "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "abapCredentialsId",
+								Name:"abapCredentialsId",
 								Param: "password",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:        "repository",
+						Name:      "repository",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_repository"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_repository"),
 					},
 					{
-						Name:        "host",
+						Name:      "host",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_host"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_host"),
 					},
 					{
-						Name:        "client",
+						Name:      "client",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_client"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_client"),
 					},
 					{
-						Name:        "remoteRepositoryURL",
+						Name:      "remoteRepositoryURL",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_remoteRepositoryURL"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_remoteRepositoryURL"),
 					},
 					{
-						Name:        "role",
+						Name:      "role",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `SOURCE`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `SOURCE`,
 					},
 					{
-						Name:        "vSID",
+						Name:      "vSID",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_vSID"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_vSID"),
 					},
 					{
-						Name:        "type",
+						Name:      "type",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `GIT`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `GIT`,
 					},
 				},
 			},
+			
 		},
 	}
 	return theMetaData

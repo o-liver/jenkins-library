@@ -9,27 +9,29 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type mavenExecuteStaticCodeChecksOptions struct {
-	SpotBugs                     bool     `json:"spotBugs,omitempty"`
-	Pmd                          bool     `json:"pmd,omitempty"`
-	MavenModulesExcludes         []string `json:"mavenModulesExcludes,omitempty"`
-	SpotBugsExcludeFilterFile    string   `json:"spotBugsExcludeFilterFile,omitempty"`
-	SpotBugsIncludeFilterFile    string   `json:"spotBugsIncludeFilterFile,omitempty"`
-	SpotBugsMaxAllowedViolations int      `json:"spotBugsMaxAllowedViolations,omitempty"`
-	PmdFailurePriority           int      `json:"pmdFailurePriority,omitempty"`
-	PmdMaxAllowedViolations      int      `json:"pmdMaxAllowedViolations,omitempty"`
-	ProjectSettingsFile          string   `json:"projectSettingsFile,omitempty"`
-	GlobalSettingsFile           string   `json:"globalSettingsFile,omitempty"`
-	M2Path                       string   `json:"m2Path,omitempty"`
-	LogSuccessfulMavenTransfers  bool     `json:"logSuccessfulMavenTransfers,omitempty"`
-	InstallArtifacts             bool     `json:"installArtifacts,omitempty"`
+	SpotBugs bool `json:"spotBugs,omitempty"`
+	Pmd bool `json:"pmd,omitempty"`
+	MavenModulesExcludes []string `json:"mavenModulesExcludes,omitempty"`
+	SpotBugsExcludeFilterFile string `json:"spotBugsExcludeFilterFile,omitempty"`
+	SpotBugsIncludeFilterFile string `json:"spotBugsIncludeFilterFile,omitempty"`
+	SpotBugsMaxAllowedViolations int `json:"spotBugsMaxAllowedViolations,omitempty"`
+	PmdFailurePriority int `json:"pmdFailurePriority,omitempty"`
+	PmdMaxAllowedViolations int `json:"pmdMaxAllowedViolations,omitempty"`
+	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
+	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
+	M2Path string `json:"m2Path,omitempty"`
+	LogSuccessfulMavenTransfers bool `json:"logSuccessfulMavenTransfers,omitempty"`
+	InstallArtifacts bool `json:"installArtifacts,omitempty"`
 }
+
+
 
 // MavenExecuteStaticCodeChecksCommand Execute static code checks for Maven based projects. The plugins SpotBugs and PMD are used.
 func MavenExecuteStaticCodeChecksCommand() *cobra.Command {
@@ -111,10 +113,10 @@ For PMD the failure priority and the max allowed violations are configurable via
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			mavenExecuteStaticCodeChecks(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -147,135 +149,137 @@ func addMavenExecuteStaticCodeChecksFlags(cmd *cobra.Command, stepConfig *mavenE
 func mavenExecuteStaticCodeChecksMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "mavenExecuteStaticCodeChecks",
-			Aliases:     []config.Alias{{Name: "mavenExecute", Deprecated: false}},
+			Name:    "mavenExecuteStaticCodeChecks",
+			Aliases: []config.Alias{{Name: "mavenExecute", Deprecated: false},},
 			Description: "Execute static code checks for Maven based projects. The plugins SpotBugs and PMD are used.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:        "spotBugs",
+						Name:      "spotBugs",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "pmd",
+						Name:      "pmd",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "mavenModulesExcludes",
+						Name:      "mavenModulesExcludes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "spotBugsExcludeFilterFile",
+						Name:      "spotBugsExcludeFilterFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "spotBugs/excludeFilterFile"}},
-						Default:     os.Getenv("PIPER_spotBugsExcludeFilterFile"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "spotBugs/excludeFilterFile"},},
+						Default:   os.Getenv("PIPER_spotBugsExcludeFilterFile"),
 					},
 					{
-						Name:        "spotBugsIncludeFilterFile",
+						Name:      "spotBugsIncludeFilterFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "spotBugs/includeFilterFile"}},
-						Default:     os.Getenv("PIPER_spotBugsIncludeFilterFile"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "spotBugs/includeFilterFile"},},
+						Default:   os.Getenv("PIPER_spotBugsIncludeFilterFile"),
 					},
 					{
-						Name:        "spotBugsMaxAllowedViolations",
+						Name:      "spotBugsMaxAllowedViolations",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "spotBugs/maxAllowedViolations"}},
-						Default:     0,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "spotBugs/maxAllowedViolations"},},
+						Default:   0,
 					},
 					{
-						Name:        "pmdFailurePriority",
+						Name:      "pmdFailurePriority",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "pmd/failurePriority"}},
-						Default:     0,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "pmd/failurePriority"},},
+						Default:   0,
 					},
 					{
-						Name:        "pmdMaxAllowedViolations",
+						Name:      "pmdMaxAllowedViolations",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "pmd/maxAllowedViolations"}},
-						Default:     0,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "pmd/maxAllowedViolations"},},
+						Default:   0,
 					},
 					{
-						Name:        "projectSettingsFile",
+						Name:      "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
-						Default:     os.Getenv("PIPER_projectSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
+						Default:   os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:        "globalSettingsFile",
+						Name:      "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/globalSettingsFile"}},
-						Default:     os.Getenv("PIPER_globalSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
+						Default:   os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:        "m2Path",
+						Name:      "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
-						Default:     os.Getenv("PIPER_m2Path"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
+						Default:   os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name:        "logSuccessfulMavenTransfers",
+						Name:      "logSuccessfulMavenTransfers",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/logSuccessfulMavenTransfers"}},
-						Default:     false,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/logSuccessfulMavenTransfers"},},
+						Default:   false,
 					},
 					{
-						Name:        "installArtifacts",
+						Name:      "installArtifacts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "mvn", Image: "maven:3.6-jdk-8"},
+				{Name: "mvn",Image: "maven:3.6-jdk-8",
+				}, 
 			},
+			
 		},
 	}
 	return theMetaData

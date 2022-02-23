@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -34,12 +33,12 @@ func apiKeyValueMapDownload(config apiKeyValueMapDownloadOptions, telemetryData 
 func runApiKeyValueMapDownload(config *apiKeyValueMapDownloadOptions, telemetryData *telemetry.CustomData, httpClient piperhttp.API) error {
 	header := make(http.Header)
 	header.Add("Accept", "application/json")
-	serviceKey, err := cpi.ReadCpiServiceKey(config.APIServiceKey)
+	serviceKey, err := cpi.ReadANSServiceKey(GeneralConfig.ANSServiceKey)
 	if err != nil {
 		return err
 	}
-	downloadkeyValueMapArtifactURL := fmt.Sprintf("%s/apiportal/api/1.0/Management.svc/KeyMapEntries('%s')", serviceKey.OAuth.Host, config.KeyValueMapName)
-	err = httpClient.SetBearerToken(serviceKey.OAuth.OAuthTokenProviderURL, serviceKey.OAuth.ClientID, serviceKey.OAuth.ClientSecret)
+	downloadkeyValueMapArtifactURL := "" //fmt.Sprintf("%s/apiportal/api/1.0/Management.svc/KeyMapEntries('%s')", serviceKey.Host, config.KeyValueMapName)
+	err = httpClient.SetBearerToken(serviceKey.OauthUrl, serviceKey.ClientId, serviceKey.ClientSecret)
 	if err != nil {
 		return errors.Wrap(err, "failed to fetch Bearer Token")
 	}

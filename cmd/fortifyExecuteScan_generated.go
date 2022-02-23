@@ -11,71 +11,72 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type fortifyExecuteScanOptions struct {
-	AdditionalScanParameters        []string `json:"additionalScanParameters,omitempty"`
-	Assignees                       []string `json:"assignees,omitempty"`
-	AuthToken                       string   `json:"authToken,omitempty"`
-	BuildDescriptorExcludeList      []string `json:"buildDescriptorExcludeList,omitempty"`
-	CustomScanVersion               string   `json:"customScanVersion,omitempty"`
-	GithubToken                     string   `json:"githubToken,omitempty"`
-	AutoCreate                      bool     `json:"autoCreate,omitempty"`
-	ModulePath                      string   `json:"modulePath,omitempty"`
-	PythonRequirementsFile          string   `json:"pythonRequirementsFile,omitempty"`
-	AutodetectClasspath             bool     `json:"autodetectClasspath,omitempty"`
-	MustAuditIssueGroups            string   `json:"mustAuditIssueGroups,omitempty"`
-	SpotAuditIssueGroups            string   `json:"spotAuditIssueGroups,omitempty"`
-	PythonRequirementsInstallSuffix string   `json:"pythonRequirementsInstallSuffix,omitempty"`
-	PythonVersion                   string   `json:"pythonVersion,omitempty"`
-	UploadResults                   bool     `json:"uploadResults,omitempty"`
-	Version                         string   `json:"version,omitempty"`
-	BuildDescriptorFile             string   `json:"buildDescriptorFile,omitempty"`
-	CommitID                        string   `json:"commitId,omitempty"`
-	CommitMessage                   string   `json:"commitMessage,omitempty"`
-	GithubAPIURL                    string   `json:"githubApiUrl,omitempty"`
-	Owner                           string   `json:"owner,omitempty"`
-	Repository                      string   `json:"repository,omitempty"`
-	Memory                          string   `json:"memory,omitempty"`
-	UpdateRulePack                  bool     `json:"updateRulePack,omitempty"`
-	ReportDownloadEndpoint          string   `json:"reportDownloadEndpoint,omitempty"`
-	PollingMinutes                  int      `json:"pollingMinutes,omitempty"`
-	QuickScan                       bool     `json:"quickScan,omitempty"`
-	Translate                       string   `json:"translate,omitempty"`
-	Src                             []string `json:"src,omitempty"`
-	Exclude                         []string `json:"exclude,omitempty"`
-	APIEndpoint                     string   `json:"apiEndpoint,omitempty"`
-	ReportType                      string   `json:"reportType,omitempty"`
-	PythonAdditionalPath            []string `json:"pythonAdditionalPath,omitempty"`
-	ArtifactURL                     string   `json:"artifactUrl,omitempty"`
-	ConsiderSuspicious              bool     `json:"considerSuspicious,omitempty"`
-	ConvertToSarif                  bool     `json:"convertToSarif,omitempty"`
-	FprUploadEndpoint               string   `json:"fprUploadEndpoint,omitempty"`
-	ProjectName                     string   `json:"projectName,omitempty"`
-	Reporting                       bool     `json:"reporting,omitempty"`
-	ServerURL                       string   `json:"serverUrl,omitempty"`
-	PullRequestMessageRegexGroup    int      `json:"pullRequestMessageRegexGroup,omitempty"`
-	DeltaMinutes                    int      `json:"deltaMinutes,omitempty"`
-	SpotCheckMinimum                int      `json:"spotCheckMinimum,omitempty"`
-	FprDownloadEndpoint             string   `json:"fprDownloadEndpoint,omitempty"`
-	VersioningModel                 string   `json:"versioningModel,omitempty" validate:"possible-values=major major-minor semantic full"`
-	PythonInstallCommand            string   `json:"pythonInstallCommand,omitempty"`
-	ReportTemplateID                int      `json:"reportTemplateId,omitempty"`
-	FilterSetTitle                  string   `json:"filterSetTitle,omitempty"`
-	PullRequestName                 string   `json:"pullRequestName,omitempty"`
-	PullRequestMessageRegex         string   `json:"pullRequestMessageRegex,omitempty"`
-	BuildTool                       string   `json:"buildTool,omitempty"`
-	ProjectSettingsFile             string   `json:"projectSettingsFile,omitempty"`
-	GlobalSettingsFile              string   `json:"globalSettingsFile,omitempty"`
-	M2Path                          string   `json:"m2Path,omitempty"`
-	VerifyOnly                      bool     `json:"verifyOnly,omitempty"`
-	InstallArtifacts                bool     `json:"installArtifacts,omitempty"`
-	CreateResultIssue               bool     `json:"createResultIssue,omitempty"`
+	AdditionalScanParameters []string `json:"additionalScanParameters,omitempty"`
+	Assignees []string `json:"assignees,omitempty"`
+	AuthToken string `json:"authToken,omitempty"`
+	BuildDescriptorExcludeList []string `json:"buildDescriptorExcludeList,omitempty"`
+	CustomScanVersion string `json:"customScanVersion,omitempty"`
+	GithubToken string `json:"githubToken,omitempty"`
+	AutoCreate bool `json:"autoCreate,omitempty"`
+	ModulePath string `json:"modulePath,omitempty"`
+	PythonRequirementsFile string `json:"pythonRequirementsFile,omitempty"`
+	AutodetectClasspath bool `json:"autodetectClasspath,omitempty"`
+	MustAuditIssueGroups string `json:"mustAuditIssueGroups,omitempty"`
+	SpotAuditIssueGroups string `json:"spotAuditIssueGroups,omitempty"`
+	PythonRequirementsInstallSuffix string `json:"pythonRequirementsInstallSuffix,omitempty"`
+	PythonVersion string `json:"pythonVersion,omitempty"`
+	UploadResults bool `json:"uploadResults,omitempty"`
+	Version string `json:"version,omitempty"`
+	BuildDescriptorFile string `json:"buildDescriptorFile,omitempty"`
+	CommitID string `json:"commitId,omitempty"`
+	CommitMessage string `json:"commitMessage,omitempty"`
+	GithubAPIURL string `json:"githubApiUrl,omitempty"`
+	Owner string `json:"owner,omitempty"`
+	Repository string `json:"repository,omitempty"`
+	Memory string `json:"memory,omitempty"`
+	UpdateRulePack bool `json:"updateRulePack,omitempty"`
+	ReportDownloadEndpoint string `json:"reportDownloadEndpoint,omitempty"`
+	PollingMinutes int `json:"pollingMinutes,omitempty"`
+	QuickScan bool `json:"quickScan,omitempty"`
+	Translate string `json:"translate,omitempty"`
+	Src []string `json:"src,omitempty"`
+	Exclude []string `json:"exclude,omitempty"`
+	APIEndpoint string `json:"apiEndpoint,omitempty"`
+	ReportType string `json:"reportType,omitempty"`
+	PythonAdditionalPath []string `json:"pythonAdditionalPath,omitempty"`
+	ArtifactURL string `json:"artifactUrl,omitempty"`
+	ConsiderSuspicious bool `json:"considerSuspicious,omitempty"`
+	ConvertToSarif bool `json:"convertToSarif,omitempty"`
+	FprUploadEndpoint string `json:"fprUploadEndpoint,omitempty"`
+	ProjectName string `json:"projectName,omitempty"`
+	Reporting bool `json:"reporting,omitempty"`
+	ServerURL string `json:"serverUrl,omitempty"`
+	PullRequestMessageRegexGroup int `json:"pullRequestMessageRegexGroup,omitempty"`
+	DeltaMinutes int `json:"deltaMinutes,omitempty"`
+	SpotCheckMinimum int `json:"spotCheckMinimum,omitempty"`
+	FprDownloadEndpoint string `json:"fprDownloadEndpoint,omitempty"`
+	VersioningModel string `json:"versioningModel,omitempty" validate:"possible-values=major major-minor semantic full"`
+	PythonInstallCommand string `json:"pythonInstallCommand,omitempty"`
+	ReportTemplateID int `json:"reportTemplateId,omitempty"`
+	FilterSetTitle string `json:"filterSetTitle,omitempty"`
+	PullRequestName string `json:"pullRequestName,omitempty"`
+	PullRequestMessageRegex string `json:"pullRequestMessageRegex,omitempty"`
+	BuildTool string `json:"buildTool,omitempty"`
+	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
+	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
+	M2Path string `json:"m2Path,omitempty"`
+	VerifyOnly bool `json:"verifyOnly,omitempty"`
+	InstallArtifacts bool `json:"installArtifacts,omitempty"`
+	CreateResultIssue bool `json:"createResultIssue,omitempty"`
 }
+
 
 type fortifyExecuteScanInflux struct {
 	step_data struct {
@@ -87,20 +88,20 @@ type fortifyExecuteScanInflux struct {
 	}
 	fortify_data struct {
 		fields struct {
-			projectName       string
-			projectVersion    string
-			projectVersionID  int64
-			violations        int
-			corporateTotal    int
-			corporateAudited  int
-			auditAllTotal     int
-			auditAllAudited   int
-			spotChecksTotal   int
+			projectName string
+			projectVersion string
+			projectVersionID int64
+			violations int
+			corporateTotal int
+			corporateAudited int
+			auditAllTotal int
+			auditAllAudited int
+			spotChecksTotal int
 			spotChecksAudited int
-			spotChecksGap     int
-			suspicious        int
-			exploitable       int
-			suppressed        int
+			spotChecksGap int
+			suspicious int
+			exploitable int
+			suppressed int
 		}
 		tags struct {
 		}
@@ -108,27 +109,27 @@ type fortifyExecuteScanInflux struct {
 }
 
 func (i *fortifyExecuteScanInflux) persist(path, resourceName string) {
-	measurementContent := []struct {
+	measurementContent := []struct{
 		measurement string
 		valType     string
 		name        string
 		value       interface{}
 	}{
-		{valType: config.InfluxField, measurement: "step_data", name: "fortify", value: i.step_data.fields.fortify},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "projectName", value: i.fortify_data.fields.projectName},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "projectVersion", value: i.fortify_data.fields.projectVersion},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "projectVersionId", value: i.fortify_data.fields.projectVersionID},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "violations", value: i.fortify_data.fields.violations},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "corporateTotal", value: i.fortify_data.fields.corporateTotal},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "corporateAudited", value: i.fortify_data.fields.corporateAudited},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "auditAllTotal", value: i.fortify_data.fields.auditAllTotal},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "auditAllAudited", value: i.fortify_data.fields.auditAllAudited},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "spotChecksTotal", value: i.fortify_data.fields.spotChecksTotal},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "spotChecksAudited", value: i.fortify_data.fields.spotChecksAudited},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "spotChecksGap", value: i.fortify_data.fields.spotChecksGap},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "suspicious", value: i.fortify_data.fields.suspicious},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "exploitable", value: i.fortify_data.fields.exploitable},
-		{valType: config.InfluxField, measurement: "fortify_data", name: "suppressed", value: i.fortify_data.fields.suppressed},
+		{valType: config.InfluxField, measurement: "step_data" , name: "fortify", value: i.step_data.fields.fortify},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "projectName", value: i.fortify_data.fields.projectName},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "projectVersion", value: i.fortify_data.fields.projectVersion},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "projectVersionId", value: i.fortify_data.fields.projectVersionID},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "violations", value: i.fortify_data.fields.violations},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "corporateTotal", value: i.fortify_data.fields.corporateTotal},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "corporateAudited", value: i.fortify_data.fields.corporateAudited},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "auditAllTotal", value: i.fortify_data.fields.auditAllTotal},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "auditAllAudited", value: i.fortify_data.fields.auditAllAudited},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "spotChecksTotal", value: i.fortify_data.fields.spotChecksTotal},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "spotChecksAudited", value: i.fortify_data.fields.spotChecksAudited},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "spotChecksGap", value: i.fortify_data.fields.spotChecksGap},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "suspicious", value: i.fortify_data.fields.suspicious},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "exploitable", value: i.fortify_data.fields.exploitable},
+		{valType: config.InfluxField, measurement: "fortify_data" , name: "suppressed", value: i.fortify_data.fields.suppressed},
 	}
 
 	errCount := 0
@@ -143,6 +144,7 @@ func (i *fortifyExecuteScanInflux) persist(path, resourceName string) {
 		log.Entry().Error("failed to persist Influx environment")
 	}
 }
+
 
 // FortifyExecuteScanCommand This step executes a Fortify scan on the specified project to perform static code analysis and check the source code for security flaws.
 func FortifyExecuteScanCommand() *cobra.Command {
@@ -232,10 +234,10 @@ Besides triggering a scan the step verifies the results after they have been upl
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			fortifyExecuteScan(stepConfig, &stepTelemetryData, &influx)
 			stepTelemetryData.ErrorCode = "0"
@@ -314,595 +316,602 @@ func addFortifyExecuteScanFlags(cmd *cobra.Command, stepConfig *fortifyExecuteSc
 func fortifyExecuteScanMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "fortifyExecuteScan",
-			Aliases:     []config.Alias{},
+			Name:    "fortifyExecuteScan",
+			Aliases: []config.Alias{},
 			Description: "This step executes a Fortify scan on the specified project to perform static code analysis and check the source code for security flaws.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "fortifyCredentialsId", Description: "Jenkins 'Secret text' credentials ID containing token to authenticate to Fortify SSC.", Type: "jenkins"},
-					{Name: "githubTokenCredentialsId", Description: "Jenkins 'Secret text' credentials ID containing token to authenticate to GitHub.", Type: "jenkins"},
+					{Name: "fortifyCredentialsId",Description: "Jenkins 'Secret text' credentials ID containing token to authenticate to Fortify SSC.",Type: "jenkins",
+					}, 
+					{Name: "githubTokenCredentialsId",Description: "Jenkins 'Secret text' credentials ID containing token to authenticate to GitHub.",Type: "jenkins",
+					}, 
 				},
 				Resources: []config.StepResources{
-					{Name: "commonPipelineEnvironment"},
-					{Name: "buildDescriptor", Type: "stash"},
-					{Name: "deployDescriptor", Type: "stash"},
-					{Name: "tests", Type: "stash"},
-					{Name: "opensourceConfiguration", Type: "stash"},
+					{Name: "commonPipelineEnvironment",
+					},
+					{Name: "buildDescriptor",Type: "stash",
+					},
+					{Name: "deployDescriptor",Type: "stash",
+					},
+					{Name: "tests",Type: "stash",
+					},
+					{Name: "opensourceConfiguration",Type: "stash",
+					},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "additionalScanParameters",
+						Name:      "additionalScanParameters",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "assignees",
+						Name:      "assignees",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{``},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{``},
 					},
 					{
-						Name: "authToken",
+						Name:      "authToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name: "fortifyCredentialsId",
+								Name:"fortifyCredentialsId",
 								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "fortifyVaultSecretName",
-								Type:    "vaultSecret",
+								Name:"fortifyVaultSecretName",
+								Type: "vaultSecret",
 								Default: "fortify",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_authToken"),
 					},
 					{
-						Name:        "buildDescriptorExcludeList",
+						Name:      "buildDescriptorExcludeList",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{`unit-tests/pom.xml`, `integration-tests/pom.xml`},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{`unit-tests/pom.xml`, `integration-tests/pom.xml`},
 					},
 					{
-						Name:        "customScanVersion",
+						Name:      "customScanVersion",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_customScanVersion"),
-					},
-					{
-						Name: "githubToken",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name: "githubTokenCredentialsId",
-								Type: "secret",
-							},
-
-							{
-								Name:    "githubVaultSecretName",
-								Type:    "vaultSecret",
-								Default: "github",
-							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "access_token"}},
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_customScanVersion"),
+					},
+					{
+						Name:      "githubToken",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"githubTokenCredentialsId",
+								Type: "secret",
+							},
+                        
+							{
+								Name:"githubVaultSecretName",
+								Type: "vaultSecret",
+								Default: "github",
+							},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "access_token"},},
 						Default:   os.Getenv("PIPER_githubToken"),
 					},
 					{
-						Name:        "autoCreate",
+						Name:      "autoCreate",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "modulePath",
+						Name:      "modulePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `./`,
-					},
-					{
-						Name:        "pythonRequirementsFile",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_pythonRequirementsFile"),
-					},
-					{
-						Name:        "autodetectClasspath",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
-					},
-					{
-						Name:        "mustAuditIssueGroups",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `Corporate Security Requirements, Audit All`,
-					},
-					{
-						Name:        "spotAuditIssueGroups",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `Spot Checks of Each Category`,
-					},
-					{
-						Name:        "pythonRequirementsInstallSuffix",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_pythonRequirementsInstallSuffix"),
-					},
-					{
-						Name:        "pythonVersion",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `python3`,
-					},
-					{
-						Name:        "uploadResults",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
-					},
-					{
-						Name: "version",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:  "commonPipelineEnvironment",
-								Param: "artifactVersion",
-							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "fortifyProjectVersion", Deprecated: true}},
+						Aliases:   []config.Alias{},
+						Default:   `./`,
+					},
+					{
+						Name:      "pythonRequirementsFile",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_pythonRequirementsFile"),
+					},
+					{
+						Name:      "autodetectClasspath",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
+					},
+					{
+						Name:      "mustAuditIssueGroups",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `Corporate Security Requirements, Audit All`,
+					},
+					{
+						Name:      "spotAuditIssueGroups",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `Spot Checks of Each Category`,
+					},
+					{
+						Name:      "pythonRequirementsInstallSuffix",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_pythonRequirementsInstallSuffix"),
+					},
+					{
+						Name:      "pythonVersion",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `python3`,
+					},
+					{
+						Name:      "uploadResults",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
+					},
+					{
+						Name:      "version",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"commonPipelineEnvironment",
+								Param: "artifactVersion",
+							},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "fortifyProjectVersion", Deprecated: true},},
 						Default:   os.Getenv("PIPER_version"),
 					},
 					{
-						Name:        "buildDescriptorFile",
+						Name:      "buildDescriptorFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `./pom.xml`,
-						Conditions:  []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "maven"}}}},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `./pom.xml`,
+						Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "maven" }, } }, },
 					},
 					{
-						Name:        "buildDescriptorFile",
+						Name:      "buildDescriptorFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `./setup.py`,
-						Conditions:  []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "pip"}}}},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `./setup.py`,
+						Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "pip" }, } }, },
 					},
 					{
-						Name: "commitId",
+						Name:      "commitId",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "git/commitId",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_commitId"),
 					},
 					{
-						Name: "commitMessage",
+						Name:      "commitMessage",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "git/commitMessage",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_commitMessage"),
 					},
 					{
-						Name:        "githubApiUrl",
+						Name:      "githubApiUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `https://api.github.com`,
-					},
-					{
-						Name: "owner",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:  "commonPipelineEnvironment",
-								Param: "github/owner",
-							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "githubOrg"}},
+						Aliases:   []config.Alias{},
+						Default:   `https://api.github.com`,
+					},
+					{
+						Name:      "owner",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"commonPipelineEnvironment",
+								Param: "github/owner",
+							},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "githubOrg"},},
 						Default:   os.Getenv("PIPER_owner"),
 					},
 					{
-						Name: "repository",
+						Name:      "repository",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "github/repository",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "githubRepo"}},
+						Aliases:   []config.Alias{{Name: "githubRepo"},},
 						Default:   os.Getenv("PIPER_repository"),
 					},
 					{
-						Name:        "memory",
+						Name:      "memory",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `-Xmx4G -Xms512M`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `-Xmx4G -Xms512M`,
 					},
 					{
-						Name:        "updateRulePack",
+						Name:      "updateRulePack",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "reportDownloadEndpoint",
+						Name:      "reportDownloadEndpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "fortifyReportDownloadEndpoint"}},
-						Default:     `/transfer/reportDownload.html`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "fortifyReportDownloadEndpoint"},},
+						Default:   `/transfer/reportDownload.html`,
 					},
 					{
-						Name:        "pollingMinutes",
+						Name:      "pollingMinutes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     30,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   30,
 					},
 					{
-						Name:        "quickScan",
+						Name:      "quickScan",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "translate",
+						Name:      "translate",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_translate"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_translate"),
 					},
 					{
-						Name:        "src",
+						Name:      "src",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "exclude",
+						Name:      "exclude",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "apiEndpoint",
+						Name:      "apiEndpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "fortifyApiEndpoint"}},
-						Default:     `/api/v1`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "fortifyApiEndpoint"},},
+						Default:   `/api/v1`,
 					},
 					{
-						Name:        "reportType",
+						Name:      "reportType",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `PDF`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `PDF`,
 					},
 					{
-						Name:        "pythonAdditionalPath",
+						Name:      "pythonAdditionalPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{`./lib`, `.`},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{`./lib`, `.`},
 					},
 					{
-						Name:        "artifactUrl",
+						Name:      "artifactUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_artifactUrl"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_artifactUrl"),
 					},
 					{
-						Name:        "considerSuspicious",
+						Name:      "considerSuspicious",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "convertToSarif",
+						Name:      "convertToSarif",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "fprUploadEndpoint",
+						Name:      "fprUploadEndpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "fortifyFprUploadEndpoint"}},
-						Default:     `/upload/resultFileUpload.html`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "fortifyFprUploadEndpoint"},},
+						Default:   `/upload/resultFileUpload.html`,
 					},
 					{
-						Name:        "projectName",
+						Name:      "projectName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "fortifyProjectName"}},
-						Default:     `{{list .GroupID .ArtifactID | join "-" | trimAll "-"}}`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "fortifyProjectName"},},
+						Default:   `{{list .GroupID .ArtifactID | join "-" | trimAll "-"}}`,
 					},
 					{
-						Name:        "reporting",
+						Name:      "reporting",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "serverUrl",
+						Name:      "serverUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{{Name: "fortifyServerUrl"}, {Name: "sscUrl", Deprecated: true}},
-						Default:     os.Getenv("PIPER_serverUrl"),
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "fortifyServerUrl"},{Name: "sscUrl", Deprecated: true},},
+						Default:   os.Getenv("PIPER_serverUrl"),
 					},
 					{
-						Name:        "pullRequestMessageRegexGroup",
+						Name:      "pullRequestMessageRegexGroup",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     1,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   1,
 					},
 					{
-						Name:        "deltaMinutes",
+						Name:      "deltaMinutes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     5,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   5,
 					},
 					{
-						Name:        "spotCheckMinimum",
+						Name:      "spotCheckMinimum",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     1,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   1,
 					},
 					{
-						Name:        "fprDownloadEndpoint",
+						Name:      "fprDownloadEndpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "fortifyFprDownloadEndpoint"}},
-						Default:     `/download/currentStateFprDownload.html`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "fortifyFprDownloadEndpoint"},},
+						Default:   `/download/currentStateFprDownload.html`,
 					},
 					{
-						Name:        "versioningModel",
+						Name:      "versioningModel",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "defaultVersioningModel", Deprecated: true}},
-						Default:     `major`,
+						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "defaultVersioningModel", Deprecated: true},},
+						Default:   `major`,
 					},
 					{
-						Name:        "pythonInstallCommand",
+						Name:      "pythonInstallCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `{{.Pip}} install --user .`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `{{.Pip}} install --user .`,
 					},
 					{
-						Name:        "reportTemplateId",
+						Name:      "reportTemplateId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     18,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   18,
 					},
 					{
-						Name:        "filterSetTitle",
+						Name:      "filterSetTitle",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `SAP`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `SAP`,
 					},
 					{
-						Name:        "pullRequestName",
+						Name:      "pullRequestName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_pullRequestName"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_pullRequestName"),
 					},
 					{
-						Name:        "pullRequestMessageRegex",
+						Name:      "pullRequestMessageRegex",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `.*Merge pull request #(\\d+) from.*`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `.*Merge pull request #(\\d+) from.*`,
 					},
 					{
-						Name:        "buildTool",
+						Name:      "buildTool",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `maven`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `maven`,
 					},
 					{
-						Name:        "projectSettingsFile",
+						Name:      "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
-						Default:     os.Getenv("PIPER_projectSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
+						Default:   os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:        "globalSettingsFile",
+						Name:      "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/globalSettingsFile"}},
-						Default:     os.Getenv("PIPER_globalSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
+						Default:   os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:        "m2Path",
+						Name:      "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
-						Default:     os.Getenv("PIPER_m2Path"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
+						Default:   os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name:        "verifyOnly",
+						Name:      "verifyOnly",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "installArtifacts",
+						Name:      "installArtifacts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name: "createResultIssue",
+						Name:      "createResultIssue",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/optimizedAndScheduled",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "bool",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
@@ -911,7 +920,8 @@ func fortifyExecuteScanMetadata() config.StepData {
 				},
 			},
 			Containers: []config.Container{
-				{},
+				{
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -919,8 +929,8 @@ func fortifyExecuteScanMetadata() config.StepData {
 						Name: "influx",
 						Type: "influx",
 						Parameters: []map[string]interface{}{
-							{"name": "step_data", "fields": []map[string]string{{"name": "fortify"}}},
-							{"name": "fortify_data", "fields": []map[string]string{{"name": "projectName"}, {"name": "projectVersion"}, {"name": "projectVersionId"}, {"name": "violations"}, {"name": "corporateTotal"}, {"name": "corporateAudited"}, {"name": "auditAllTotal"}, {"name": "auditAllAudited"}, {"name": "spotChecksTotal"}, {"name": "spotChecksAudited"}, {"name": "spotChecksGap"}, {"name": "suspicious"}, {"name": "exploitable"}, {"name": "suppressed"}}},
+							{"name": "step_data","fields": []map[string]string{ {"name": "fortify"}, },},
+							{"name": "fortify_data","fields": []map[string]string{ {"name": "projectName"},  {"name": "projectVersion"},  {"name": "projectVersionId"},  {"name": "violations"},  {"name": "corporateTotal"},  {"name": "corporateAudited"},  {"name": "auditAllTotal"},  {"name": "auditAllAudited"},  {"name": "spotChecksTotal"},  {"name": "spotChecksAudited"},  {"name": "spotChecksGap"},  {"name": "suspicious"},  {"name": "exploitable"},  {"name": "suppressed"}, },},
 						},
 					},
 				},

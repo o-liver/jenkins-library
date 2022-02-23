@@ -9,16 +9,18 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type apiProxyUploadOptions struct {
 	APIServiceKey string `json:"apiServiceKey,omitempty"`
-	FilePath      string `json:"filePath,omitempty"`
+	FilePath string `json:"filePath,omitempty"`
 }
+
+
 
 // ApiProxyUploadCommand Upload an api proxy artifact in to the API Portal
 func ApiProxyUploadCommand() *cobra.Command {
@@ -95,10 +97,10 @@ Learn more about the SAP API Management API for uploading an api proxy artifact 
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			apiProxyUpload(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -122,42 +124,44 @@ func addApiProxyUploadFlags(cmd *cobra.Command, stepConfig *apiProxyUploadOption
 func apiProxyUploadMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "apiProxyUpload",
-			Aliases:     []config.Alias{},
+			Name:    "apiProxyUpload",
+			Aliases: []config.Alias{},
 			Description: "Upload an api proxy artifact in to the API Portal",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "apimApiServiceKeyCredentialsId", Description: "Jenkins secret text credential ID containing the service key to the API Management Runtime service instance of plan 'api'", Type: "jenkins"},
+					{Name: "apimApiServiceKeyCredentialsId",Description: "Jenkins secret text credential ID containing the service key to the API Management Runtime service instance of plan 'api'",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name: "apiServiceKey",
+						Name:      "apiServiceKey",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "apimApiServiceKeyCredentialsId",
+								Name:"apimApiServiceKeyCredentialsId",
 								Param: "apiServiceKey",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS"},
+                        },
+						Scope:     []string{"PARAMETERS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_apiServiceKey"),
 					},
 					{
-						Name:        "filePath",
+						Name:      "filePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_filePath"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_filePath"),
 					},
 				},
 			},
+			
 		},
 	}
 	return theMetaData

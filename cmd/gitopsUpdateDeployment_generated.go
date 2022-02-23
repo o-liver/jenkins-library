@@ -9,27 +9,29 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type gitopsUpdateDeploymentOptions struct {
-	BranchName            string   `json:"branchName,omitempty"`
-	CommitMessage         string   `json:"commitMessage,omitempty"`
-	ServerURL             string   `json:"serverUrl,omitempty"`
-	Username              string   `json:"username,omitempty"`
-	Password              string   `json:"password,omitempty"`
-	FilePath              string   `json:"filePath,omitempty"`
-	ContainerName         string   `json:"containerName,omitempty"`
-	ContainerRegistryURL  string   `json:"containerRegistryUrl,omitempty"`
-	ContainerImageNameTag string   `json:"containerImageNameTag,omitempty"`
-	ChartPath             string   `json:"chartPath,omitempty"`
-	HelmValues            []string `json:"helmValues,omitempty"`
-	DeploymentName        string   `json:"deploymentName,omitempty"`
-	Tool                  string   `json:"tool,omitempty" validate:"possible-values=kubectl helm kustomize"`
+	BranchName string `json:"branchName,omitempty"`
+	CommitMessage string `json:"commitMessage,omitempty"`
+	ServerURL string `json:"serverUrl,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	FilePath string `json:"filePath,omitempty"`
+	ContainerName string `json:"containerName,omitempty"`
+	ContainerRegistryURL string `json:"containerRegistryUrl,omitempty"`
+	ContainerImageNameTag string `json:"containerImageNameTag,omitempty"`
+	ChartPath string `json:"chartPath,omitempty"`
+	HelmValues []string `json:"helmValues,omitempty"`
+	DeploymentName string `json:"deploymentName,omitempty"`
+	Tool string `json:"tool,omitempty" validate:"possible-values=kubectl helm kustomize"`
 }
+
+
 
 // GitopsUpdateDeploymentCommand Updates Kubernetes Deployment Manifest in an Infrastructure Git Repository
 func GitopsUpdateDeploymentCommand() *cobra.Command {
@@ -114,10 +116,10 @@ For *kustomize* the ` + "`" + `images` + "`" + ` section will be update with the
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			gitopsUpdateDeployment(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -158,165 +160,171 @@ func addGitopsUpdateDeploymentFlags(cmd *cobra.Command, stepConfig *gitopsUpdate
 func gitopsUpdateDeploymentMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "gitopsUpdateDeployment",
-			Aliases:     []config.Alias{},
+			Name:    "gitopsUpdateDeployment",
+			Aliases: []config.Alias{},
 			Description: "Updates Kubernetes Deployment Manifest in an Infrastructure Git Repository",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "gitHttpsCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing username/password for http access to your git repository.", Type: "jenkins"},
+					{Name: "gitHttpsCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing username/password for http access to your git repository.",Type: "jenkins",
+					}, 
 				},
 				Resources: []config.StepResources{
-					{Name: "deployDescriptor", Type: "stash"},
+					{Name: "deployDescriptor",Type: "stash",
+					},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "branchName",
+						Name:      "branchName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     `master`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   `master`,
 					},
 					{
-						Name:        "commitMessage",
+						Name:      "commitMessage",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_commitMessage"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_commitMessage"),
 					},
 					{
-						Name:        "serverUrl",
+						Name:      "serverUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{{Name: "githubServerUrl"}},
-						Default:     `https://github.com`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "githubServerUrl"},},
+						Default:   `https://github.com`,
 					},
 					{
-						Name: "username",
+						Name:      "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "gitHttpsCredentialsId",
+								Name:"gitHttpsCredentialsId",
 								Param: "username",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name: "password",
+						Name:      "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "gitHttpsCredentialsId",
+								Name:"gitHttpsCredentialsId",
 								Param: "password",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:        "filePath",
+						Name:      "filePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_filePath"),
-					},
-					{
-						Name:        "containerName",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_containerName"),
-					},
-					{
-						Name: "containerRegistryUrl",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:  "commonPipelineEnvironment",
-								Param: "container/registryUrl",
-							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "dockerRegistryUrl"}},
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_filePath"),
+					},
+					{
+						Name:      "containerName",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_containerName"),
+					},
+					{
+						Name:      "containerRegistryUrl",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"commonPipelineEnvironment",
+								Param: "container/registryUrl",
+							},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "dockerRegistryUrl"},},
 						Default:   os.Getenv("PIPER_containerRegistryUrl"),
 					},
 					{
-						Name: "containerImageNameTag",
+						Name:      "containerImageNameTag",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "container/imageNameTag",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "image", Deprecated: true}, {Name: "containerImage"}},
+						Aliases:   []config.Alias{{Name: "image", Deprecated: true},{Name: "containerImage"},},
 						Default:   os.Getenv("PIPER_containerImageNameTag"),
 					},
 					{
-						Name:        "chartPath",
+						Name:      "chartPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "helmChartPath"}},
-						Default:     os.Getenv("PIPER_chartPath"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "helmChartPath"},},
+						Default:   os.Getenv("PIPER_chartPath"),
 					},
 					{
-						Name:        "helmValues",
+						Name:      "helmValues",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "deploymentName",
+						Name:      "deploymentName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "helmDeploymentName"}},
-						Default:     os.Getenv("PIPER_deploymentName"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "helmDeploymentName"},},
+						Default:   os.Getenv("PIPER_deploymentName"),
 					},
 					{
-						Name:        "tool",
+						Name:      "tool",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     `kubectl`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   `kubectl`,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Image: "dtzar/helm-kubectl:3.3.4", WorkingDir: "/config", Options: []config.Option{{Name: "-u", Value: "0"}}, Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "tool", Value: "helm"}}}}},
-				{Image: "dtzar/helm-kubectl:2.17.0", WorkingDir: "/config", Options: []config.Option{{Name: "-u", Value: "0"}}, Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "tool", Value: "kubectl"}}}}},
-				{Image: "k8s.gcr.io/kustomize/kustomize:v3.8.7", WorkingDir: "/config", Options: []config.Option{{Name: "-u", Value: "0"}}, Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "tool", Value: "kustomize"}}}}},
+				{Image: "dtzar/helm-kubectl:3.3.4",WorkingDir: "/config",Options: []config.Option{ {Name: "-u", Value: "0"}, },Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "tool", Value: "helm" }, } }, },
+				}, 
+				{Image: "dtzar/helm-kubectl:2.17.0",WorkingDir: "/config",Options: []config.Option{ {Name: "-u", Value: "0"}, },Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "tool", Value: "kubectl" }, } }, },
+				}, 
+				{Image: "k8s.gcr.io/kustomize/kustomize:v3.8.7",WorkingDir: "/config",Options: []config.Option{ {Name: "-u", Value: "0"}, },Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "tool", Value: "kustomize" }, } }, },
+				}, 
 			},
+			
 		},
 	}
 	return theMetaData

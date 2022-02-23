@@ -9,21 +9,23 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type cloudFoundryDeleteServiceOptions struct {
-	CfAPIEndpoint       string `json:"cfApiEndpoint,omitempty"`
-	Username            string `json:"username,omitempty"`
-	Password            string `json:"password,omitempty"`
-	CfOrg               string `json:"cfOrg,omitempty"`
-	CfSpace             string `json:"cfSpace,omitempty"`
-	CfServiceInstance   string `json:"cfServiceInstance,omitempty"`
-	CfDeleteServiceKeys bool   `json:"cfDeleteServiceKeys,omitempty"`
+	CfAPIEndpoint string `json:"cfApiEndpoint,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	CfOrg string `json:"cfOrg,omitempty"`
+	CfSpace string `json:"cfSpace,omitempty"`
+	CfServiceInstance string `json:"cfServiceInstance,omitempty"`
+	CfDeleteServiceKeys bool `json:"cfDeleteServiceKeys,omitempty"`
 }
+
+
 
 // CloudFoundryDeleteServiceCommand DeleteCloudFoundryService
 func CloudFoundryDeleteServiceCommand() *cobra.Command {
@@ -39,7 +41,7 @@ func CloudFoundryDeleteServiceCommand() *cobra.Command {
 	var createCloudFoundryDeleteServiceCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "DeleteCloudFoundryService",
-		Long:  `Delete CloudFoundryService`,
+		Long: `Delete CloudFoundryService`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -100,10 +102,10 @@ func CloudFoundryDeleteServiceCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			cloudFoundryDeleteService(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -136,108 +138,111 @@ func addCloudFoundryDeleteServiceFlags(cmd *cobra.Command, stepConfig *cloudFoun
 func cloudFoundryDeleteServiceMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "cloudFoundryDeleteService",
-			Aliases:     []config.Alias{},
+			Name:    "cloudFoundryDeleteService",
+			Aliases: []config.Alias{},
 			Description: "DeleteCloudFoundryService",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "cfCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate to the Cloud Foundry API.", Type: "jenkins"},
+					{Name: "cfCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate to the Cloud Foundry API.",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "cfApiEndpoint",
+						Name:      "cfApiEndpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{{Name: "cloudFoundry/apiEndpoint"}},
-						Default:     os.Getenv("PIPER_cfApiEndpoint"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "cloudFoundry/apiEndpoint"},},
+						Default:   os.Getenv("PIPER_cfApiEndpoint"),
 					},
 					{
-						Name: "username",
+						Name:      "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "cfCredentialsId",
+								Name:"cfCredentialsId",
 								Param: "username",
-								Type:  "secret",
+								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "cloudfoundryVaultSecretName",
-								Type:    "vaultSecret",
+								Name:"cloudfoundryVaultSecretName",
+								Type: "vaultSecret",
 								Default: "cloudfoundry-$(org)-$(space)",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name: "password",
+						Name:      "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "cfCredentialsId",
+								Name:"cfCredentialsId",
 								Param: "password",
-								Type:  "secret",
+								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "cloudfoundryVaultSecretName",
-								Type:    "vaultSecret",
+								Name:"cloudfoundryVaultSecretName",
+								Type: "vaultSecret",
 								Default: "cloudfoundry-$(org)-$(space)",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:        "cfOrg",
+						Name:      "cfOrg",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{{Name: "cloudFoundry/org"}},
-						Default:     os.Getenv("PIPER_cfOrg"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "cloudFoundry/org"},},
+						Default:   os.Getenv("PIPER_cfOrg"),
 					},
 					{
-						Name:        "cfSpace",
+						Name:      "cfSpace",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{{Name: "cloudFoundry/space"}},
-						Default:     os.Getenv("PIPER_cfSpace"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "cloudFoundry/space"},},
+						Default:   os.Getenv("PIPER_cfSpace"),
 					},
 					{
-						Name:        "cfServiceInstance",
+						Name:      "cfServiceInstance",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{{Name: "cloudFoundry/serviceInstance"}},
-						Default:     os.Getenv("PIPER_cfServiceInstance"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "cloudFoundry/serviceInstance"},},
+						Default:   os.Getenv("PIPER_cfServiceInstance"),
 					},
 					{
-						Name:        "cfDeleteServiceKeys",
+						Name:      "cfDeleteServiceKeys",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "cloudFoundry/cfDeleteServiceKeys"}},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "cloudFoundry/cfDeleteServiceKeys"},},
+						Default:   false,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "cf", Image: "ppiper/cf-cli:7", WorkingDir: "/home/piper"},
+				{Name: "cf",Image: "ppiper/cf-cli:7",WorkingDir: "/home/piper",
+				}, 
 			},
+			
 		},
 	}
 	return theMetaData

@@ -9,23 +9,25 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type githubSetCommitStatusOptions struct {
-	APIURL      string `json:"apiUrl,omitempty"`
-	CommitID    string `json:"commitId,omitempty"`
-	Context     string `json:"context,omitempty"`
+	APIURL string `json:"apiUrl,omitempty"`
+	CommitID string `json:"commitId,omitempty"`
+	Context string `json:"context,omitempty"`
 	Description string `json:"description,omitempty"`
-	Owner       string `json:"owner,omitempty"`
-	Repository  string `json:"repository,omitempty"`
-	Status      string `json:"status,omitempty" validate:"possible-values=failure pending success"`
-	TargetURL   string `json:"targetUrl,omitempty"`
-	Token       string `json:"token,omitempty"`
+	Owner string `json:"owner,omitempty"`
+	Repository string `json:"repository,omitempty"`
+	Status string `json:"status,omitempty" validate:"possible-values=failure pending success"`
+	TargetURL string `json:"targetUrl,omitempty"`
+	Token string `json:"token,omitempty"`
 }
+
+
 
 // GithubSetCommitStatusCommand Set a status of a certain commit.
 func GithubSetCommitStatusCommand() *cobra.Command {
@@ -110,10 +112,10 @@ It can for example be used to create additional check indicators for a pull requ
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			githubSetCommitStatus(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -149,125 +151,127 @@ func addGithubSetCommitStatusFlags(cmd *cobra.Command, stepConfig *githubSetComm
 func githubSetCommitStatusMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "githubSetCommitStatus",
-			Aliases:     []config.Alias{},
+			Name:    "githubSetCommitStatus",
+			Aliases: []config.Alias{},
 			Description: "Set a status of a certain commit.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "githubTokenCredentialsId", Description: "Jenkins 'Secret text' credentials ID containing token to authenticate to GitHub.", Type: "jenkins"},
+					{Name: "githubTokenCredentialsId",Description: "Jenkins 'Secret text' credentials ID containing token to authenticate to GitHub.",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "apiUrl",
+						Name:      "apiUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{{Name: "githubApiUrl"}},
-						Default:     `https://api.github.com`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "githubApiUrl"},},
+						Default:   `https://api.github.com`,
 					},
 					{
-						Name: "commitId",
+						Name:      "commitId",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "git/commitId",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_commitId"),
 					},
 					{
-						Name:        "context",
+						Name:      "context",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_context"),
-					},
-					{
-						Name:        "description",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_description"),
-					},
-					{
-						Name: "owner",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:  "commonPipelineEnvironment",
-								Param: "github/owner",
-							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "githubOrg"}},
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_context"),
+					},
+					{
+						Name:      "description",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_description"),
+					},
+					{
+						Name:      "owner",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"commonPipelineEnvironment",
+								Param: "github/owner",
+							},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "githubOrg"},},
 						Default:   os.Getenv("PIPER_owner"),
 					},
 					{
-						Name: "repository",
+						Name:      "repository",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "github/repository",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "githubRepo"}},
+						Aliases:   []config.Alias{{Name: "githubRepo"},},
 						Default:   os.Getenv("PIPER_repository"),
 					},
 					{
-						Name:        "status",
+						Name:      "status",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_status"),
-					},
-					{
-						Name:        "targetUrl",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_targetUrl"),
-					},
-					{
-						Name: "token",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name: "githubTokenCredentialsId",
-								Type: "secret",
-							},
-
-							{
-								Name:    "githubVaultSecretName",
-								Type:    "vaultSecret",
-								Default: "github",
-							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "githubToken"}, {Name: "access_token"}},
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_status"),
+					},
+					{
+						Name:      "targetUrl",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_targetUrl"),
+					},
+					{
+						Name:      "token",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"githubTokenCredentialsId",
+								Type: "secret",
+							},
+                        
+							{
+								Name:"githubVaultSecretName",
+								Type: "vaultSecret",
+								Default: "github",
+							},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "githubToken"},{Name: "access_token"},},
 						Default:   os.Getenv("PIPER_token"),
 					},
 				},
 			},
+			
 		},
 	}
 	return theMetaData

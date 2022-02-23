@@ -9,21 +9,23 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type gctsRollbackOptions struct {
-	Username                  string `json:"username,omitempty"`
-	Password                  string `json:"password,omitempty"`
-	Repository                string `json:"repository,omitempty"`
-	Host                      string `json:"host,omitempty"`
-	Client                    string `json:"client,omitempty"`
-	Commit                    string `json:"commit,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	Repository string `json:"repository,omitempty"`
+	Host string `json:"host,omitempty"`
+	Client string `json:"client,omitempty"`
+	Commit string `json:"commit,omitempty"`
 	GithubPersonalAccessToken string `json:"githubPersonalAccessToken,omitempty"`
 }
+
+
 
 // GctsRollbackCommand Perfoms roll back of one (default) or several commit(s)
 func GctsRollbackCommand() *cobra.Command {
@@ -103,10 +105,10 @@ gctsRollback will rollback to the previously active commit in the local reposito
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			gctsRollback(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -138,92 +140,94 @@ func addGctsRollbackFlags(cmd *cobra.Command, stepConfig *gctsRollbackOptions) {
 func gctsRollbackMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "gctsRollback",
-			Aliases:     []config.Alias{},
+			Name:    "gctsRollback",
+			Aliases: []config.Alias{},
 			Description: "Perfoms roll back of one (default) or several commit(s)",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "abapCredentialsId", Description: "Jenkins credentials ID containing username and password for authentication to the ABAP system on which you want to perform the rollback", Type: "jenkins"},
-					{Name: "githubPersonalAccessTokenId", Description: "GitHub personal access token with at least read permissions for the remote repository", Type: "jenkins"},
+					{Name: "abapCredentialsId",Description: "Jenkins credentials ID containing username and password for authentication to the ABAP system on which you want to perform the rollback",Type: "jenkins",
+					}, 
+					{Name: "githubPersonalAccessTokenId",Description: "GitHub personal access token with at least read permissions for the remote repository",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name: "username",
+						Name:      "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "abapCredentialsId",
+								Name:"abapCredentialsId",
 								Param: "username",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name: "password",
+						Name:      "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "abapCredentialsId",
+								Name:"abapCredentialsId",
 								Param: "password",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:        "repository",
+						Name:      "repository",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_repository"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_repository"),
 					},
 					{
-						Name:        "host",
+						Name:      "host",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_host"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_host"),
 					},
 					{
-						Name:        "client",
+						Name:      "client",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_client"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_client"),
 					},
 					{
-						Name:        "commit",
+						Name:      "commit",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_commit"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_commit"),
 					},
 					{
-						Name: "githubPersonalAccessToken",
+						Name:      "githubPersonalAccessToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name: "githubPersonalAccessTokenId",
+								Name:"githubPersonalAccessTokenId",
 								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
@@ -231,6 +235,7 @@ func gctsRollbackMetadata() config.StepData {
 					},
 				},
 			},
+			
 		},
 	}
 	return theMetaData

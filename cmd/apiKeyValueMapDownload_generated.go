@@ -9,17 +9,19 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type apiKeyValueMapDownloadOptions struct {
-	APIServiceKey   string `json:"apiServiceKey,omitempty"`
+	APIServiceKey string `json:"apiServiceKey,omitempty"`
 	KeyValueMapName string `json:"keyValueMapName,omitempty"`
-	DownloadPath    string `json:"downloadPath,omitempty"`
+	DownloadPath string `json:"downloadPath,omitempty"`
 }
+
+
 
 // ApiKeyValueMapDownloadCommand Download a specific Key Value Map from the API Portal
 func ApiKeyValueMapDownloadCommand() *cobra.Command {
@@ -96,10 +98,10 @@ Learn more about the SAP API Management API for downloading an Key Value Map art
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			apiKeyValueMapDownload(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -125,51 +127,53 @@ func addApiKeyValueMapDownloadFlags(cmd *cobra.Command, stepConfig *apiKeyValueM
 func apiKeyValueMapDownloadMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "apiKeyValueMapDownload",
-			Aliases:     []config.Alias{},
+			Name:    "apiKeyValueMapDownload",
+			Aliases: []config.Alias{},
 			Description: "Download a specific Key Value Map from the API Portal",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "apimApiServiceKeyCredentialsId", Description: "Jenkins secret text credential ID containing the service key to the API Management Runtime service instance of plan 'api'", Type: "jenkins"},
+					{Name: "apimApiServiceKeyCredentialsId",Description: "Jenkins secret text credential ID containing the service key to the API Management Runtime service instance of plan 'api'",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name: "apiServiceKey",
+						Name:      "apiServiceKey",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "apimApiServiceKeyCredentialsId",
+								Name:"apimApiServiceKeyCredentialsId",
 								Param: "apiServiceKey",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS"},
+                        },
+						Scope:     []string{"PARAMETERS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_apiServiceKey"),
 					},
 					{
-						Name:        "keyValueMapName",
+						Name:      "keyValueMapName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_keyValueMapName"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_keyValueMapName"),
 					},
 					{
-						Name:        "downloadPath",
+						Name:      "downloadPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_downloadPath"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_downloadPath"),
 					},
 				},
 			},
+			
 		},
 	}
 	return theMetaData

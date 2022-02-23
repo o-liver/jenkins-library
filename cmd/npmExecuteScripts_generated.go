@@ -11,28 +11,29 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type npmExecuteScriptsOptions struct {
-	Install                    bool     `json:"install,omitempty"`
-	RunScripts                 []string `json:"runScripts,omitempty"`
-	DefaultNpmRegistry         string   `json:"defaultNpmRegistry,omitempty"`
-	VirtualFrameBuffer         bool     `json:"virtualFrameBuffer,omitempty"`
-	ScriptOptions              []string `json:"scriptOptions,omitempty"`
+	Install bool `json:"install,omitempty"`
+	RunScripts []string `json:"runScripts,omitempty"`
+	DefaultNpmRegistry string `json:"defaultNpmRegistry,omitempty"`
+	VirtualFrameBuffer bool `json:"virtualFrameBuffer,omitempty"`
+	ScriptOptions []string `json:"scriptOptions,omitempty"`
 	BuildDescriptorExcludeList []string `json:"buildDescriptorExcludeList,omitempty"`
-	BuildDescriptorList        []string `json:"buildDescriptorList,omitempty"`
-	CreateBOM                  bool     `json:"createBOM,omitempty"`
-	Publish                    bool     `json:"publish,omitempty"`
-	RepositoryURL              string   `json:"repositoryUrl,omitempty"`
-	RepositoryPassword         string   `json:"repositoryPassword,omitempty"`
-	RepositoryUsername         string   `json:"repositoryUsername,omitempty"`
-	BuildSettingsInfo          string   `json:"buildSettingsInfo,omitempty"`
-	PackBeforePublish          bool     `json:"packBeforePublish,omitempty"`
+	BuildDescriptorList []string `json:"buildDescriptorList,omitempty"`
+	CreateBOM bool `json:"createBOM,omitempty"`
+	Publish bool `json:"publish,omitempty"`
+	RepositoryURL string `json:"repositoryUrl,omitempty"`
+	RepositoryPassword string `json:"repositoryPassword,omitempty"`
+	RepositoryUsername string `json:"repositoryUsername,omitempty"`
+	BuildSettingsInfo string `json:"buildSettingsInfo,omitempty"`
+	PackBeforePublish bool `json:"packBeforePublish,omitempty"`
 }
+
 
 type npmExecuteScriptsCommonPipelineEnvironment struct {
 	custom struct {
@@ -41,10 +42,10 @@ type npmExecuteScriptsCommonPipelineEnvironment struct {
 }
 
 func (p *npmExecuteScriptsCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct {
+	content := []struct{
 		category string
-		name     string
-		value    interface{}
+		name string
+		value interface{}
 	}{
 		{category: "custom", name: "buildSettingsInfo", value: p.custom.buildSettingsInfo},
 	}
@@ -61,6 +62,7 @@ func (p *npmExecuteScriptsCommonPipelineEnvironment) persist(path, resourceName 
 		log.Entry().Error("failed to persist Piper environment")
 	}
 }
+
 
 // NpmExecuteScriptsCommand Execute npm run scripts on all npm packages in a project
 func NpmExecuteScriptsCommand() *cobra.Command {
@@ -154,10 +156,10 @@ and are exposed are environment variables that must be present in the environmen
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			npmExecuteScripts(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -191,166 +193,168 @@ func addNpmExecuteScriptsFlags(cmd *cobra.Command, stepConfig *npmExecuteScripts
 func npmExecuteScriptsMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "npmExecuteScripts",
-			Aliases:     []config.Alias{{Name: "executeNpm", Deprecated: false}},
+			Name:    "npmExecuteScripts",
+			Aliases: []config.Alias{{Name: "executeNpm", Deprecated: false},},
 			Description: "Execute npm run scripts on all npm packages in a project",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Resources: []config.StepResources{
-					{Name: "source", Type: "stash"},
+					{Name: "source",Type: "stash",
+					},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "install",
+						Name:      "install",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "runScripts",
+						Name:      "runScripts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "defaultNpmRegistry",
+						Name:      "defaultNpmRegistry",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "npm/defaultNpmRegistry"}},
-						Default:     os.Getenv("PIPER_defaultNpmRegistry"),
+						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "npm/defaultNpmRegistry"},},
+						Default:   os.Getenv("PIPER_defaultNpmRegistry"),
 					},
 					{
-						Name:        "virtualFrameBuffer",
+						Name:      "virtualFrameBuffer",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "scriptOptions",
+						Name:      "scriptOptions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "buildDescriptorExcludeList",
+						Name:      "buildDescriptorExcludeList",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{`deployment/**`},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{`deployment/**`},
 					},
 					{
-						Name:        "buildDescriptorList",
+						Name:      "buildDescriptorList",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "createBOM",
+						Name:      "createBOM",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "publish",
+						Name:      "publish",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name: "repositoryUrl",
+						Name:      "repositoryUrl",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/repositoryUrl",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_repositoryUrl"),
 					},
 					{
-						Name: "repositoryPassword",
+						Name:      "repositoryPassword",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/repositoryPassword",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_repositoryPassword"),
 					},
 					{
-						Name: "repositoryUsername",
+						Name:      "repositoryUsername",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/repositoryUsername",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_repositoryUsername"),
 					},
 					{
-						Name: "buildSettingsInfo",
+						Name:      "buildSettingsInfo",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/buildSettingsInfo",
 							},
-						},
-						Scope:     []string{"STEPS", "STAGES", "PARAMETERS"},
+                        },
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_buildSettingsInfo"),
 					},
 					{
-						Name:        "packBeforePublish",
+						Name:      "packBeforePublish",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "node", Image: "node:lts-stretch"},
+				{Name: "node",Image: "node:lts-stretch",
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -358,7 +362,7 @@ func npmExecuteScriptsMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/buildSettingsInfo"},
+							{"name": "custom/buildSettingsInfo",},
 						},
 					},
 				},

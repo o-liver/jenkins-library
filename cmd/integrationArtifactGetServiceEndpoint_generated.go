@@ -11,16 +11,17 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type integrationArtifactGetServiceEndpointOptions struct {
-	APIServiceKey     string `json:"apiServiceKey,omitempty"`
+	APIServiceKey string `json:"apiServiceKey,omitempty"`
 	IntegrationFlowID string `json:"integrationFlowId,omitempty"`
 }
+
 
 type integrationArtifactGetServiceEndpointCommonPipelineEnvironment struct {
 	custom struct {
@@ -29,10 +30,10 @@ type integrationArtifactGetServiceEndpointCommonPipelineEnvironment struct {
 }
 
 func (p *integrationArtifactGetServiceEndpointCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct {
+	content := []struct{
 		category string
-		name     string
-		value    interface{}
+		name string
+		value interface{}
 	}{
 		{category: "custom", name: "integrationFlowServiceEndpoint", value: p.custom.integrationFlowServiceEndpoint},
 	}
@@ -50,6 +51,7 @@ func (p *integrationArtifactGetServiceEndpointCommonPipelineEnvironment) persist
 	}
 }
 
+
 // IntegrationArtifactGetServiceEndpointCommand Get an deployed CPI intgeration flow service endpoint
 func IntegrationArtifactGetServiceEndpointCommand() *cobra.Command {
 	const STEP_NAME = "integrationArtifactGetServiceEndpoint"
@@ -65,7 +67,7 @@ func IntegrationArtifactGetServiceEndpointCommand() *cobra.Command {
 	var createIntegrationArtifactGetServiceEndpointCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Get an deployed CPI intgeration flow service endpoint",
-		Long:  `With this step you can obtain information about the service endpoints exposed by SAP Cloud Platform Integration on a tenant using OData API. Learn more about the SAP Cloud Integration remote API for getting service endpoint of deployed integration artifact [here](https://help.sap.com/viewer/368c481cd6954bdfa5d0435479fd4eaf/Cloud/en-US/d1679a80543f46509a7329243b595bdb.html).`,
+		Long: `With this step you can obtain information about the service endpoints exposed by SAP Cloud Platform Integration on a tenant using OData API. Learn more about the SAP Cloud Integration remote API for getting service endpoint of deployed integration artifact [here](https://help.sap.com/viewer/368c481cd6954bdfa5d0435479fd4eaf/Cloud/en-US/d1679a80543f46509a7329243b595bdb.html).`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -126,10 +128,10 @@ func IntegrationArtifactGetServiceEndpointCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			integrationArtifactGetServiceEndpoint(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -153,39 +155,40 @@ func addIntegrationArtifactGetServiceEndpointFlags(cmd *cobra.Command, stepConfi
 func integrationArtifactGetServiceEndpointMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "integrationArtifactGetServiceEndpoint",
-			Aliases:     []config.Alias{},
+			Name:    "integrationArtifactGetServiceEndpoint",
+			Aliases: []config.Alias{},
 			Description: "Get an deployed CPI intgeration flow service endpoint",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "cpiApiServiceKeyCredentialsId", Description: "Jenkins secret text credential ID containing the service key to the Process Integration Runtime service instance of plan 'api'", Type: "jenkins"},
+					{Name: "cpiApiServiceKeyCredentialsId",Description: "Jenkins secret text credential ID containing the service key to the Process Integration Runtime service instance of plan 'api'",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name: "apiServiceKey",
+						Name:      "apiServiceKey",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "cpiApiServiceKeyCredentialsId",
+								Name:"cpiApiServiceKeyCredentialsId",
 								Param: "apiServiceKey",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS"},
+                        },
+						Scope:     []string{"PARAMETERS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_apiServiceKey"),
 					},
 					{
-						Name:        "integrationFlowId",
+						Name:      "integrationFlowId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_integrationFlowId"),
+						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_integrationFlowId"),
 					},
 				},
 			},
@@ -195,7 +198,7 @@ func integrationArtifactGetServiceEndpointMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/integrationFlowServiceEndpoint"},
+							{"name": "custom/integrationFlowServiceEndpoint",},
 						},
 					},
 				},

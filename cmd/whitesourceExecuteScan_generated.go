@@ -11,58 +11,59 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type whitesourceExecuteScanOptions struct {
-	AgentDownloadURL                     string   `json:"agentDownloadUrl,omitempty"`
-	AgentFileName                        string   `json:"agentFileName,omitempty"`
-	AgentParameters                      []string `json:"agentParameters,omitempty"`
-	AgentURL                             string   `json:"agentUrl,omitempty"`
-	AggregateVersionWideReport           bool     `json:"aggregateVersionWideReport,omitempty"`
-	BuildDescriptorExcludeList           []string `json:"buildDescriptorExcludeList,omitempty"`
-	BuildDescriptorFile                  string   `json:"buildDescriptorFile,omitempty"`
-	BuildTool                            string   `json:"buildTool,omitempty"`
-	ConfigFilePath                       string   `json:"configFilePath,omitempty"`
-	ContainerRegistryPassword            string   `json:"containerRegistryPassword,omitempty"`
-	ContainerRegistryUser                string   `json:"containerRegistryUser,omitempty"`
-	CreateProductFromPipeline            bool     `json:"createProductFromPipeline,omitempty"`
-	CustomScanVersion                    string   `json:"customScanVersion,omitempty"`
-	CvssSeverityLimit                    string   `json:"cvssSeverityLimit,omitempty"`
-	ScanPath                             string   `json:"scanPath,omitempty"`
-	DockerConfigJSON                     string   `json:"dockerConfigJSON,omitempty"`
+	AgentDownloadURL string `json:"agentDownloadUrl,omitempty"`
+	AgentFileName string `json:"agentFileName,omitempty"`
+	AgentParameters []string `json:"agentParameters,omitempty"`
+	AgentURL string `json:"agentUrl,omitempty"`
+	AggregateVersionWideReport bool `json:"aggregateVersionWideReport,omitempty"`
+	BuildDescriptorExcludeList []string `json:"buildDescriptorExcludeList,omitempty"`
+	BuildDescriptorFile string `json:"buildDescriptorFile,omitempty"`
+	BuildTool string `json:"buildTool,omitempty"`
+	ConfigFilePath string `json:"configFilePath,omitempty"`
+	ContainerRegistryPassword string `json:"containerRegistryPassword,omitempty"`
+	ContainerRegistryUser string `json:"containerRegistryUser,omitempty"`
+	CreateProductFromPipeline bool `json:"createProductFromPipeline,omitempty"`
+	CustomScanVersion string `json:"customScanVersion,omitempty"`
+	CvssSeverityLimit string `json:"cvssSeverityLimit,omitempty"`
+	ScanPath string `json:"scanPath,omitempty"`
+	DockerConfigJSON string `json:"dockerConfigJSON,omitempty"`
 	EmailAddressesOfInitialProductAdmins []string `json:"emailAddressesOfInitialProductAdmins,omitempty"`
-	Excludes                             []string `json:"excludes,omitempty"`
-	Includes                             []string `json:"includes,omitempty"`
-	InstallCommand                       string   `json:"installCommand,omitempty"`
-	JreDownloadURL                       string   `json:"jreDownloadUrl,omitempty"`
-	LicensingVulnerabilities             bool     `json:"licensingVulnerabilities,omitempty"`
-	OrgToken                             string   `json:"orgToken,omitempty"`
-	ProductName                          string   `json:"productName,omitempty"`
-	ProductToken                         string   `json:"productToken,omitempty"`
-	Version                              string   `json:"version,omitempty"`
-	ProjectName                          string   `json:"projectName,omitempty"`
-	ProjectToken                         string   `json:"projectToken,omitempty"`
-	Reporting                            bool     `json:"reporting,omitempty"`
-	ScanImage                            string   `json:"scanImage,omitempty"`
-	ScanImageIncludeLayers               bool     `json:"scanImageIncludeLayers,omitempty"`
-	ScanImageRegistryURL                 string   `json:"scanImageRegistryUrl,omitempty"`
-	SecurityVulnerabilities              bool     `json:"securityVulnerabilities,omitempty"`
-	ServiceURL                           string   `json:"serviceUrl,omitempty"`
-	Timeout                              int      `json:"timeout,omitempty"`
-	UserToken                            string   `json:"userToken,omitempty"`
-	VersioningModel                      string   `json:"versioningModel,omitempty"`
-	VulnerabilityReportFormat            string   `json:"vulnerabilityReportFormat,omitempty" validate:"possible-values=xlsx json xml"`
-	VulnerabilityReportTitle             string   `json:"vulnerabilityReportTitle,omitempty"`
-	ProjectSettingsFile                  string   `json:"projectSettingsFile,omitempty"`
-	GlobalSettingsFile                   string   `json:"globalSettingsFile,omitempty"`
-	M2Path                               string   `json:"m2Path,omitempty"`
-	InstallArtifacts                     bool     `json:"installArtifacts,omitempty"`
-	DefaultNpmRegistry                   string   `json:"defaultNpmRegistry,omitempty"`
+	Excludes []string `json:"excludes,omitempty"`
+	Includes []string `json:"includes,omitempty"`
+	InstallCommand string `json:"installCommand,omitempty"`
+	JreDownloadURL string `json:"jreDownloadUrl,omitempty"`
+	LicensingVulnerabilities bool `json:"licensingVulnerabilities,omitempty"`
+	OrgToken string `json:"orgToken,omitempty"`
+	ProductName string `json:"productName,omitempty"`
+	ProductToken string `json:"productToken,omitempty"`
+	Version string `json:"version,omitempty"`
+	ProjectName string `json:"projectName,omitempty"`
+	ProjectToken string `json:"projectToken,omitempty"`
+	Reporting bool `json:"reporting,omitempty"`
+	ScanImage string `json:"scanImage,omitempty"`
+	ScanImageIncludeLayers bool `json:"scanImageIncludeLayers,omitempty"`
+	ScanImageRegistryURL string `json:"scanImageRegistryUrl,omitempty"`
+	SecurityVulnerabilities bool `json:"securityVulnerabilities,omitempty"`
+	ServiceURL string `json:"serviceUrl,omitempty"`
+	Timeout int `json:"timeout,omitempty"`
+	UserToken string `json:"userToken,omitempty"`
+	VersioningModel string `json:"versioningModel,omitempty"`
+	VulnerabilityReportFormat string `json:"vulnerabilityReportFormat,omitempty" validate:"possible-values=xlsx json xml"`
+	VulnerabilityReportTitle string `json:"vulnerabilityReportTitle,omitempty"`
+	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
+	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
+	M2Path string `json:"m2Path,omitempty"`
+	InstallArtifacts bool `json:"installArtifacts,omitempty"`
+	DefaultNpmRegistry string `json:"defaultNpmRegistry,omitempty"`
 }
+
 
 type whitesourceExecuteScanCommonPipelineEnvironment struct {
 	custom struct {
@@ -71,10 +72,10 @@ type whitesourceExecuteScanCommonPipelineEnvironment struct {
 }
 
 func (p *whitesourceExecuteScanCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct {
+	content := []struct{
 		category string
-		name     string
-		value    interface{}
+		name string
+		value interface{}
 	}{
 		{category: "custom", name: "whitesourceProjectNames", value: p.custom.whitesourceProjectNames},
 	}
@@ -102,10 +103,10 @@ type whitesourceExecuteScanInflux struct {
 	}
 	whitesource_data struct {
 		fields struct {
-			vulnerabilities       int
+			vulnerabilities int
 			major_vulnerabilities int
 			minor_vulnerabilities int
-			policy_violations     int
+			policy_violations int
 		}
 		tags struct {
 		}
@@ -113,17 +114,17 @@ type whitesourceExecuteScanInflux struct {
 }
 
 func (i *whitesourceExecuteScanInflux) persist(path, resourceName string) {
-	measurementContent := []struct {
+	measurementContent := []struct{
 		measurement string
 		valType     string
 		name        string
 		value       interface{}
 	}{
-		{valType: config.InfluxField, measurement: "step_data", name: "whitesource", value: i.step_data.fields.whitesource},
-		{valType: config.InfluxField, measurement: "whitesource_data", name: "vulnerabilities", value: i.whitesource_data.fields.vulnerabilities},
-		{valType: config.InfluxField, measurement: "whitesource_data", name: "major_vulnerabilities", value: i.whitesource_data.fields.major_vulnerabilities},
-		{valType: config.InfluxField, measurement: "whitesource_data", name: "minor_vulnerabilities", value: i.whitesource_data.fields.minor_vulnerabilities},
-		{valType: config.InfluxField, measurement: "whitesource_data", name: "policy_violations", value: i.whitesource_data.fields.policy_violations},
+		{valType: config.InfluxField, measurement: "step_data" , name: "whitesource", value: i.step_data.fields.whitesource},
+		{valType: config.InfluxField, measurement: "whitesource_data" , name: "vulnerabilities", value: i.whitesource_data.fields.vulnerabilities},
+		{valType: config.InfluxField, measurement: "whitesource_data" , name: "major_vulnerabilities", value: i.whitesource_data.fields.major_vulnerabilities},
+		{valType: config.InfluxField, measurement: "whitesource_data" , name: "minor_vulnerabilities", value: i.whitesource_data.fields.minor_vulnerabilities},
+		{valType: config.InfluxField, measurement: "whitesource_data" , name: "policy_violations", value: i.whitesource_data.fields.policy_violations},
 	}
 
 	errCount := 0
@@ -138,6 +139,7 @@ func (i *whitesourceExecuteScanInflux) persist(path, resourceName string) {
 		log.Entry().Error("failed to persist Influx environment")
 	}
 }
+
 
 // WhitesourceExecuteScanCommand Execute a WhiteSource scan
 func WhitesourceExecuteScanCommand() *cobra.Command {
@@ -230,10 +232,10 @@ The step uses the so-called WhiteSource Unified Agent. For details please refer 
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			whitesourceExecuteScan(stepConfig, &stepTelemetryData, &commonPipelineEnvironment, &influx)
 			stepTelemetryData.ErrorCode = "0"
@@ -300,492 +302,506 @@ func addWhitesourceExecuteScanFlags(cmd *cobra.Command, stepConfig *whitesourceE
 func whitesourceExecuteScanMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "whitesourceExecuteScan",
-			Aliases:     []config.Alias{},
+			Name:    "whitesourceExecuteScan",
+			Aliases: []config.Alias{},
 			Description: "Execute a WhiteSource scan",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "userTokenCredentialsId", Description: "Jenkins 'Secret text' credentials ID containing Whitesource user token.", Type: "jenkins", Aliases: []config.Alias{{Name: "whitesourceUserTokenCredentialsId", Deprecated: false}, {Name: "whitesource/userTokenCredentialsId", Deprecated: true}}},
-					{Name: "orgAdminUserTokenCredentialsId", Description: "Jenkins 'Secret text' credentials ID containing Whitesource org admin token.", Type: "jenkins", Aliases: []config.Alias{{Name: "whitesourceOrgAdminUserTokenCredentialsId", Deprecated: false}, {Name: "whitesource/orgAdminUserTokenCredentialsId", Deprecated: true}}},
-					{Name: "dockerConfigJsonCredentialsId", Description: "Jenkins 'Secret file' credentials ID containing Docker config.json (with registry credential(s)). You can find more details about the Docker credentials in the [Docker documentation](https://docs.docker.com/engine/reference/commandline/login/).", Type: "jenkins", Aliases: []config.Alias{{Name: "dockerCredentialsId", Deprecated: true}}},
+					{Name: "userTokenCredentialsId",Description: "Jenkins 'Secret text' credentials ID containing Whitesource user token.",Type: "jenkins",Aliases: []config.Alias{ {Name: "whitesourceUserTokenCredentialsId", Deprecated: false},  {Name: "whitesource/userTokenCredentialsId", Deprecated: true}, },
+					}, 
+					{Name: "orgAdminUserTokenCredentialsId",Description: "Jenkins 'Secret text' credentials ID containing Whitesource org admin token.",Type: "jenkins",Aliases: []config.Alias{ {Name: "whitesourceOrgAdminUserTokenCredentialsId", Deprecated: false},  {Name: "whitesource/orgAdminUserTokenCredentialsId", Deprecated: true}, },
+					}, 
+					{Name: "dockerConfigJsonCredentialsId",Description: "Jenkins 'Secret file' credentials ID containing Docker config.json (with registry credential(s)). You can find more details about the Docker credentials in the [Docker documentation](https://docs.docker.com/engine/reference/commandline/login/).",Type: "jenkins",Aliases: []config.Alias{ {Name: "dockerCredentialsId", Deprecated: true}, },
+					}, 
 				},
 				Resources: []config.StepResources{
-					{Name: "buildDescriptor", Type: "stash"},
-					{Name: "opensourceConfiguration", Type: "stash"},
-					{Name: "checkmarx", Type: "stash"},
+					{Name: "buildDescriptor",Type: "stash",
+					},
+					{Name: "opensourceConfiguration",Type: "stash",
+					},
+					{Name: "checkmarx",Type: "stash",
+					},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "agentDownloadUrl",
+						Name:      "agentDownloadUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar`,
 					},
 					{
-						Name:        "agentFileName",
+						Name:      "agentFileName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `wss-unified-agent.jar`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `wss-unified-agent.jar`,
 					},
 					{
-						Name:        "agentParameters",
+						Name:      "agentParameters",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "agentUrl",
+						Name:      "agentUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "whitesourceAgentUrl"}},
-						Default:     `https://saas.whitesourcesoftware.com/agent`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "whitesourceAgentUrl"},},
+						Default:   `https://saas.whitesourcesoftware.com/agent`,
 					},
 					{
-						Name:        "aggregateVersionWideReport",
+						Name:      "aggregateVersionWideReport",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "buildDescriptorExcludeList",
+						Name:      "buildDescriptorExcludeList",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{`unit-tests/pom.xml`, `integration-tests/pom.xml`},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{`unit-tests/pom.xml`, `integration-tests/pom.xml`},
 					},
 					{
-						Name:        "buildDescriptorFile",
+						Name:      "buildDescriptorFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_buildDescriptorFile"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_buildDescriptorFile"),
 					},
 					{
-						Name: "buildTool",
+						Name:      "buildTool",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "buildTool",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_buildTool"),
 					},
 					{
-						Name:        "configFilePath",
+						Name:      "configFilePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `./wss-unified-agent.config`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `./wss-unified-agent.config`,
 					},
 					{
-						Name: "containerRegistryPassword",
+						Name:      "containerRegistryPassword",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/repositoryPassword",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_containerRegistryPassword"),
 					},
 					{
-						Name: "containerRegistryUser",
+						Name:      "containerRegistryUser",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/repositoryUsername",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_containerRegistryUser"),
 					},
 					{
-						Name:        "createProductFromPipeline",
+						Name:      "createProductFromPipeline",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "customScanVersion",
+						Name:      "customScanVersion",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_customScanVersion"),
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_customScanVersion"),
 					},
 					{
-						Name:        "cvssSeverityLimit",
+						Name:      "cvssSeverityLimit",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `-1`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `-1`,
 					},
 					{
-						Name:        "scanPath",
+						Name:      "scanPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `.`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `.`,
 					},
 					{
-						Name: "dockerConfigJSON",
+						Name:      "dockerConfigJSON",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "custom/dockerConfigJSON",
 							},
-
+                        
 							{
-								Name: "dockerConfigJsonCredentialsId",
+								Name:"dockerConfigJsonCredentialsId",
 								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "dockerConfigFileVaultSecretName",
-								Type:    "vaultSecretFile",
+								Name:"dockerConfigFileVaultSecretName",
+								Type: "vaultSecretFile",
 								Default: "docker-config",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_dockerConfigJSON"),
 					},
 					{
-						Name:        "emailAddressesOfInitialProductAdmins",
+						Name:      "emailAddressesOfInitialProductAdmins",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "excludes",
+						Name:      "excludes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "includes",
+						Name:      "includes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "[]string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     []string{},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "[]string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   []string{},
 					},
 					{
-						Name:        "installCommand",
+						Name:      "installCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_installCommand"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_installCommand"),
 					},
 					{
-						Name:        "jreDownloadUrl",
+						Name:      "jreDownloadUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "whitesource/jreDownloadUrl", Deprecated: true}},
-						Default:     `https://github.com/SAP/SapMachine/releases/download/sapmachine-11.0.2/sapmachine-jre-11.0.2_linux-x64_bin.tar.gz`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "whitesource/jreDownloadUrl", Deprecated: true},},
+						Default:   `https://github.com/SAP/SapMachine/releases/download/sapmachine-11.0.2/sapmachine-jre-11.0.2_linux-x64_bin.tar.gz`,
 					},
 					{
-						Name:        "licensingVulnerabilities",
+						Name:      "licensingVulnerabilities",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name: "orgToken",
+						Name:      "orgToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name: "orgAdminUserTokenCredentialsId",
+								Name:"orgAdminUserTokenCredentialsId",
 								Type: "secret",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "whitesourceOrgToken"}, {Name: "whitesource/orgToken", Deprecated: true}},
+						Aliases:   []config.Alias{{Name: "whitesourceOrgToken"},{Name: "whitesource/orgToken", Deprecated: true},},
 						Default:   os.Getenv("PIPER_orgToken"),
 					},
 					{
-						Name:        "productName",
+						Name:      "productName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "whitesourceProductName"}, {Name: "whitesource/productName", Deprecated: true}},
-						Default:     os.Getenv("PIPER_productName"),
-					},
-					{
-						Name:        "productToken",
-						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "whitesourceProductToken"}, {Name: "whitesource/productToken", Deprecated: true}},
-						Default:     os.Getenv("PIPER_productToken"),
-					},
-					{
-						Name: "version",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:  "commonPipelineEnvironment",
-								Param: "artifactVersion",
-							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "productVersion"}, {Name: "whitesourceProductVersion"}, {Name: "whitesource/productVersion", Deprecated: true}},
+						Aliases:   []config.Alias{{Name: "whitesourceProductName"},{Name: "whitesource/productName", Deprecated: true},},
+						Default:   os.Getenv("PIPER_productName"),
+					},
+					{
+						Name:      "productToken",
+						ResourceRef: []config.ResourceReference{},
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "whitesourceProductToken"},{Name: "whitesource/productToken", Deprecated: true},},
+						Default:   os.Getenv("PIPER_productToken"),
+					},
+					{
+						Name:      "version",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"commonPipelineEnvironment",
+								Param: "artifactVersion",
+							},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "productVersion"},{Name: "whitesourceProductVersion"},{Name: "whitesource/productVersion", Deprecated: true},},
 						Default:   os.Getenv("PIPER_version"),
 					},
 					{
-						Name:        "projectName",
+						Name:      "projectName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "whitesourceProjectName"}},
-						Default:     os.Getenv("PIPER_projectName"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "whitesourceProjectName"},},
+						Default:   os.Getenv("PIPER_projectName"),
 					},
 					{
-						Name:        "projectToken",
+						Name:      "projectToken",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_projectToken"),
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_projectToken"),
 					},
 					{
-						Name:        "reporting",
+						Name:      "reporting",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name: "scanImage",
+						Name:      "scanImage",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "container/imageNameTag",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_scanImage"),
 					},
 					{
-						Name:        "scanImageIncludeLayers",
+						Name:      "scanImageIncludeLayers",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name: "scanImageRegistryUrl",
+						Name:      "scanImageRegistryUrl",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "container/registryUrl",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_scanImageRegistryUrl"),
 					},
 					{
-						Name:        "securityVulnerabilities",
+						Name:      "securityVulnerabilities",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "serviceUrl",
+						Name:      "serviceUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "whitesourceServiceUrl"}, {Name: "whitesource/serviceUrl", Deprecated: true}},
-						Default:     `https://saas.whitesourcesoftware.com/api`,
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "whitesourceServiceUrl"},{Name: "whitesource/serviceUrl", Deprecated: true},},
+						Default:   `https://saas.whitesourcesoftware.com/api`,
 					},
 					{
-						Name:        "timeout",
+						Name:      "timeout",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     900,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   900,
 					},
 					{
-						Name: "userToken",
+						Name:      "userToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name: "userTokenCredentialsId",
+								Name:"userTokenCredentialsId",
 								Type: "secret",
 							},
-
+                        
 							{
-								Name:    "whitesourceVaultSecret",
-								Type:    "vaultSecret",
+								Name:"whitesourceVaultSecret",
+								Type: "vaultSecret",
 								Default: "whitesource",
 							},
-						},
-						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_userToken"),
 					},
 					{
-						Name:        "versioningModel",
+						Name:      "versioningModel",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "defaultVersioningModel"}},
-						Default:     `major`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "defaultVersioningModel"},},
+						Default:   `major`,
 					},
 					{
-						Name:        "vulnerabilityReportFormat",
+						Name:      "vulnerabilityReportFormat",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `xlsx`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `xlsx`,
 					},
 					{
-						Name:        "vulnerabilityReportTitle",
+						Name:      "vulnerabilityReportTitle",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `WhiteSource Security Vulnerability Report`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `WhiteSource Security Vulnerability Report`,
 					},
 					{
-						Name:        "projectSettingsFile",
+						Name:      "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
-						Default:     os.Getenv("PIPER_projectSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
+						Default:   os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:        "globalSettingsFile",
+						Name:      "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/globalSettingsFile"}},
-						Default:     os.Getenv("PIPER_globalSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
+						Default:   os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:        "m2Path",
+						Name:      "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
-						Default:     os.Getenv("PIPER_m2Path"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
+						Default:   os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name:        "installArtifacts",
+						Name:      "installArtifacts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     false,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   false,
 					},
 					{
-						Name:        "defaultNpmRegistry",
+						Name:      "defaultNpmRegistry",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "npm/defaultNpmRegistry"}},
-						Default:     os.Getenv("PIPER_defaultNpmRegistry"),
+						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "npm/defaultNpmRegistry"},},
+						Default:   os.Getenv("PIPER_defaultNpmRegistry"),
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Image: "buildpack-deps:stretch-curl", WorkingDir: "/tmp", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "dub"}, {Name: "buildTool", Value: "docker"}}}}},
-				{Image: "devxci/mbtci-java11-node14", WorkingDir: "/home/mta", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "mta"}}}}},
-				{Image: "golang:1", WorkingDir: "/go", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "golang"}}}}},
-				{Image: "hseeberger/scala-sbt:8u181_2.12.8_1.2.8", WorkingDir: "/tmp", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "sbt"}}}}},
-				{Image: "maven:3.5-jdk-8", WorkingDir: "/tmp", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "maven"}}}}},
-				{Image: "node:lts-stretch", WorkingDir: "/home/node", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "npm"}}}}},
-				{Image: "python:3.6-stretch", WorkingDir: "/tmp", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "pip"}}}}},
-				{Image: "node:lts-stretch", WorkingDir: "/home/node", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "buildTool", Value: "yarn"}}}}},
+				{Image: "buildpack-deps:stretch-curl",WorkingDir: "/tmp",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "dub" },  { Name: "buildTool", Value: "docker" }, } }, },
+				}, 
+				{Image: "devxci/mbtci-java11-node14",WorkingDir: "/home/mta",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "mta" }, } }, },
+				}, 
+				{Image: "golang:1",WorkingDir: "/go",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "golang" }, } }, },
+				}, 
+				{Image: "hseeberger/scala-sbt:8u181_2.12.8_1.2.8",WorkingDir: "/tmp",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "sbt" }, } }, },
+				}, 
+				{Image: "maven:3.5-jdk-8",WorkingDir: "/tmp",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "maven" }, } }, },
+				}, 
+				{Image: "node:lts-stretch",WorkingDir: "/home/node",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "npm" }, } }, },
+				}, 
+				{Image: "python:3.6-stretch",WorkingDir: "/tmp",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "pip" }, } }, },
+				}, 
+				{Image: "node:lts-stretch",WorkingDir: "/home/node",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "buildTool", Value: "yarn" }, } }, },
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -793,15 +809,15 @@ func whitesourceExecuteScanMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/whitesourceProjectNames", "type": "[]string"},
+							{"name": "custom/whitesourceProjectNames","type": "[]string",},
 						},
 					},
 					{
 						Name: "influx",
 						Type: "influx",
 						Parameters: []map[string]interface{}{
-							{"name": "step_data", "fields": []map[string]string{{"name": "whitesource"}}},
-							{"name": "whitesource_data", "fields": []map[string]string{{"name": "vulnerabilities"}, {"name": "major_vulnerabilities"}, {"name": "minor_vulnerabilities"}, {"name": "policy_violations"}}},
+							{"name": "step_data","fields": []map[string]string{ {"name": "whitesource"}, },},
+							{"name": "whitesource_data","fields": []map[string]string{ {"name": "vulnerabilities"},  {"name": "major_vulnerabilities"},  {"name": "minor_vulnerabilities"},  {"name": "policy_violations"}, },},
 						},
 					},
 				},

@@ -10,25 +10,26 @@ import (
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/gcs"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/splunk"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
-	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/bmatcuk/doublestar"
+	"github.com/SAP/jenkins-library/pkg/gcs"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type mavenExecuteIntegrationOptions struct {
-	Retry                       int    `json:"retry,omitempty"`
-	ForkCount                   string `json:"forkCount,omitempty"`
-	Goal                        string `json:"goal,omitempty"`
-	InstallArtifacts            bool   `json:"installArtifacts,omitempty"`
-	ProjectSettingsFile         string `json:"projectSettingsFile,omitempty"`
-	GlobalSettingsFile          string `json:"globalSettingsFile,omitempty"`
-	M2Path                      string `json:"m2Path,omitempty"`
-	LogSuccessfulMavenTransfers bool   `json:"logSuccessfulMavenTransfers,omitempty"`
+	Retry int `json:"retry,omitempty"`
+	ForkCount string `json:"forkCount,omitempty"`
+	Goal string `json:"goal,omitempty"`
+	InstallArtifacts bool `json:"installArtifacts,omitempty"`
+	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
+	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
+	M2Path string `json:"m2Path,omitempty"`
+	LogSuccessfulMavenTransfers bool `json:"logSuccessfulMavenTransfers,omitempty"`
 }
+
 
 type mavenExecuteIntegrationReports struct {
 }
@@ -67,6 +68,7 @@ func (p *mavenExecuteIntegrationReports) persist(stepConfig mavenExecuteIntegrat
 		log.Entry().Errorf("failed to persist reports: %v", err)
 	}
 }
+
 
 // MavenExecuteIntegrationCommand This step will execute backend integration tests via the Jacoco Maven-plugin.
 func MavenExecuteIntegrationCommand() *cobra.Command {
@@ -128,7 +130,7 @@ the integration tests via the Jacoco Maven-plugin.`,
 			stepTelemetryData := telemetry.CustomData{}
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
-				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -144,10 +146,10 @@ the integration tests via the Jacoco Maven-plugin.`,
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			mavenExecuteIntegration(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -175,92 +177,94 @@ func addMavenExecuteIntegrationFlags(cmd *cobra.Command, stepConfig *mavenExecut
 func mavenExecuteIntegrationMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "mavenExecuteIntegration",
-			Aliases:     []config.Alias{{Name: "mavenExecute", Deprecated: false}},
+			Name:    "mavenExecuteIntegration",
+			Aliases: []config.Alias{{Name: "mavenExecute", Deprecated: false},},
 			Description: "This step will execute backend integration tests via the Jacoco Maven-plugin.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:        "retry",
+						Name:      "retry",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STEPS", "STAGES"},
-						Type:        "int",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     1,
+						Scope:     []string{"PARAMETERS","STEPS","STAGES",},
+						Type:      "int",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   1,
 					},
 					{
-						Name:        "forkCount",
+						Name:      "forkCount",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STEPS", "STAGES"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `1C`,
+						Scope:     []string{"PARAMETERS","STEPS","STAGES",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `1C`,
 					},
 					{
-						Name:        "goal",
+						Name:      "goal",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `test`,
+						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `test`,
 					},
 					{
-						Name:        "installArtifacts",
+						Name:      "installArtifacts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     true,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   true,
 					},
 					{
-						Name:        "projectSettingsFile",
+						Name:      "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
-						Default:     os.Getenv("PIPER_projectSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
+						Default:   os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:        "globalSettingsFile",
+						Name:      "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/globalSettingsFile"}},
-						Default:     os.Getenv("PIPER_globalSettingsFile"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
+						Default:   os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:        "m2Path",
+						Name:      "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
-						Default:     os.Getenv("PIPER_m2Path"),
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
+						Default:   os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name:        "logSuccessfulMavenTransfers",
+						Name:      "logSuccessfulMavenTransfers",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
-						Type:        "bool",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "maven/logSuccessfulMavenTransfers"}},
-						Default:     false,
+						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						Type:      "bool",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "maven/logSuccessfulMavenTransfers"},},
+						Default:   false,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "mvn", Image: "maven:3.6-jdk-8"},
+				{Name: "mvn",Image: "maven:3.6-jdk-8",
+				}, 
 			},
 			Sidecars: []config.Container{
-				{},
+				{
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -268,10 +272,10 @@ func mavenExecuteIntegrationMetadata() config.StepData {
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/requirement.mapping", "type": "requirement-mapping"},
-							{"filePattern": "**/TEST-*.xml", "type": "junit"},
-							{"filePattern": "**/integration-test/*.xml", "type": "integration-test"},
-							{"filePattern": "**/jacoco.xml", "type": "jacoco-coverage"},
+							{"filePattern": "**/requirement.mapping","type": "requirement-mapping",},
+							{"filePattern": "**/TEST-*.xml","type": "junit",},
+							{"filePattern": "**/integration-test/*.xml","type": "integration-test",},
+							{"filePattern": "**/jacoco.xml","type": "jacoco-coverage",},
 						},
 					},
 				},

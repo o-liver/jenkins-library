@@ -11,37 +11,38 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type xsDeployOptions struct {
-	DeployOpts            string `json:"deployOpts,omitempty"`
+	DeployOpts string `json:"deployOpts,omitempty"`
 	OperationIDLogPattern string `json:"operationIdLogPattern,omitempty"`
-	MtaPath               string `json:"mtaPath,omitempty"`
-	Action                string `json:"action,omitempty" validate:"possible-values=NONE Resume Abort Retry"`
-	Mode                  string `json:"mode,omitempty" validate:"possible-values=NONE DEPLOY BG_DEPLOY"`
-	OperationID           string `json:"operationId,omitempty"`
-	APIURL                string `json:"apiUrl,omitempty"`
-	Username              string `json:"username,omitempty"`
-	Password              string `json:"password,omitempty"`
-	Org                   string `json:"org,omitempty"`
-	Space                 string `json:"space,omitempty"`
-	LoginOpts             string `json:"loginOpts,omitempty"`
-	XsSessionFile         string `json:"xsSessionFile,omitempty"`
+	MtaPath string `json:"mtaPath,omitempty"`
+	Action string `json:"action,omitempty" validate:"possible-values=NONE Resume Abort Retry"`
+	Mode string `json:"mode,omitempty" validate:"possible-values=NONE DEPLOY BG_DEPLOY"`
+	OperationID string `json:"operationId,omitempty"`
+	APIURL string `json:"apiUrl,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	Org string `json:"org,omitempty"`
+	Space string `json:"space,omitempty"`
+	LoginOpts string `json:"loginOpts,omitempty"`
+	XsSessionFile string `json:"xsSessionFile,omitempty"`
 }
+
 
 type xsDeployCommonPipelineEnvironment struct {
 	operationID string
 }
 
 func (p *xsDeployCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct {
+	content := []struct{
 		category string
-		name     string
-		value    interface{}
+		name string
+		value interface{}
 	}{
 		{category: "", name: "operationId", value: p.operationID},
 	}
@@ -59,6 +60,7 @@ func (p *xsDeployCommonPipelineEnvironment) persist(path, resourceName string) {
 	}
 }
 
+
 // XsDeployCommand Performs xs deployment
 func XsDeployCommand() *cobra.Command {
 	const STEP_NAME = "xsDeploy"
@@ -74,7 +76,7 @@ func XsDeployCommand() *cobra.Command {
 	var createXsDeployCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Performs xs deployment",
-		Long:  `Performs xs deployment`,
+		Long: `Performs xs deployment`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -136,10 +138,10 @@ func XsDeployCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-					GeneralConfig.HookConfig.SplunkConfig.Dsn,
-					GeneralConfig.HookConfig.SplunkConfig.Token,
-					GeneralConfig.HookConfig.SplunkConfig.Index,
-					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+				GeneralConfig.HookConfig.SplunkConfig.Dsn,
+				GeneralConfig.HookConfig.SplunkConfig.Token,
+				GeneralConfig.HookConfig.SplunkConfig.Index,
+				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			xsDeploy(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -180,159 +182,161 @@ func addXsDeployFlags(cmd *cobra.Command, stepConfig *xsDeployOptions) {
 func xsDeployMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:        "xsDeploy",
-			Aliases:     []config.Alias{},
+			Name:    "xsDeploy",
+			Aliases: []config.Alias{},
 			Description: "Performs xs deployment",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "credentialsId", Description: "Jenkins 'Username with password' credentials ID containing username/password for accessing xs endpoint.", Type: "jenkins"},
+					{Name: "credentialsId",Description: "Jenkins 'Username with password' credentials ID containing username/password for accessing xs endpoint.",Type: "jenkins",
+					}, 
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:        "deployOpts",
+						Name:      "deployOpts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_deployOpts"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_deployOpts"),
 					},
 					{
-						Name:        "operationIdLogPattern",
+						Name:      "operationIdLogPattern",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{{Name: "deployIdLogPattern"}},
-						Default:     `^.*xs bg-deploy -i (.*) -a.*$`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{{Name: "deployIdLogPattern"},},
+						Default:   `^.*xs bg-deploy -i (.*) -a.*$`,
 					},
 					{
-						Name: "mtaPath",
+						Name:      "mtaPath",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "mtaPath",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_mtaPath"),
 					},
 					{
-						Name:        "action",
+						Name:      "action",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     `NONE`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   `NONE`,
 					},
 					{
-						Name:        "mode",
+						Name:      "mode",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     `DEPLOY`,
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   `DEPLOY`,
 					},
 					{
-						Name: "operationId",
+						Name:      "operationId",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "commonPipelineEnvironment",
+								Name:"commonPipelineEnvironment",
 								Param: "operationId",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_operationId"),
 					},
 					{
-						Name:        "apiUrl",
+						Name:      "apiUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_apiUrl"),
-					},
-					{
-						Name: "username",
-						ResourceRef: []config.ResourceReference{
-							{
-								Name:  "credentialsId",
-								Param: "username",
-								Type:  "secret",
-							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "user", Deprecated: true}},
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_apiUrl"),
+					},
+					{
+						Name:      "username",
+						ResourceRef: []config.ResourceReference{
+							{
+								Name:"credentialsId",
+								Param: "username",
+								Type: "secret",
+							},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{{Name: "user", Deprecated: true},},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name: "password",
+						Name:      "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:  "credentialsId",
+								Name:"credentialsId",
 								Param: "password",
-								Type:  "secret",
+								Type: "secret",
 							},
-						},
-						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
+                        },
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:        "org",
+						Name:      "org",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_org"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_org"),
 					},
 					{
-						Name:        "space",
+						Name:      "space",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_space"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_space"),
 					},
 					{
-						Name:        "loginOpts",
+						Name:      "loginOpts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   true,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_loginOpts"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: true,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_loginOpts"),
 					},
 					{
-						Name:        "xsSessionFile",
+						Name:      "xsSessionFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
-						Type:        "string",
-						Mandatory:   false,
-						Aliases:     []config.Alias{},
-						Default:     os.Getenv("PIPER_xsSessionFile"),
+						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						Type:      "string",
+						Mandatory: false,
+						Aliases:   []config.Alias{},
+						Default:   os.Getenv("PIPER_xsSessionFile"),
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "xs", Image: "ppiper/xs-cli"},
+				{Name: "xs",Image: "ppiper/xs-cli",
+				}, 
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -340,7 +344,7 @@ func xsDeployMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "operationId"},
+							{"name": "operationId",},
 						},
 					},
 				},
