@@ -9,6 +9,9 @@ import (
 
 type ANS struct {
 	ANSClientHTTP piperhttp.API
+	OauthURL string
+	ClientID string
+	ClientSecret string
 }
 
 const body = `{
@@ -33,6 +36,12 @@ const body = `{
 }`
 
 func (ans *ANS) Send() error {
+	err := ans.ANSClientHTTP.SetBearerToken(ans.OauthURL,
+		ans.ClientID,
+		ans.ClientSecret)
+	if err != nil {
+		return err
+	}
 	header := make(http.Header)
 	header.Add("Content-Type", "application/json")
 	response, err := ans.ANSClientHTTP.SendRequest(http.MethodPost,
