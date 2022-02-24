@@ -2,16 +2,31 @@ package ans
 
 import (
 	"bytes"
+	"encoding/json"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
 	"github.com/SAP/jenkins-library/pkg/log"
+	"github.com/pkg/errors"
 	"net/http"
 )
 
-type ANS struct {
-	ANSClientHTTP piperhttp.API
-	OauthURL string
-	ClientID string
-	ClientSecret string
+type ANSServiceKey struct {
+	Url          string `json:"url"`
+	ClientId     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+	OauthUrl     string `json:"oauth_url"`
+}
+
+// ReadANSServiceKey unmarshalls the given json service key string.
+func ReadANSServiceKey(serviceKeyJSON string) (ansServiceKey ANSServiceKey, err error) {
+	// parse
+	err = json.Unmarshal([]byte(serviceKeyJSON), &ansServiceKey)
+	if err != nil {
+		err = errors.Wrap(err, "error unmarshalling ANS serviceKey")
+		return
+	}
+
+	log.Entry().Info("ANS serviceKey read successfully")
+	return
 }
 
 const body = `{
@@ -35,16 +50,21 @@ const body = `{
 }
 }`
 
-func (ans *ANS) Send() error {
-	err := ans.ANSClientHTTP.SetBearerToken(ans.OauthURL,
-		ans.ClientID,
-		ans.ClientSecret)
+func Send(serviceKeyString string) error {
+	serviceKey, err:= ReadANSServiceKey(serviceKeyString)
+	if err != nil {
+		return err
+	}
+	httpClient := &piperhttp.Client{}
+	err = httpClient.SetBearerToken(serviceKey.OauthUrl,
+		serviceKey.ClientId,
+		serviceKey.ClientSecret)
 	if err != nil {
 		return err
 	}
 	header := make(http.Header)
 	header.Add("Content-Type", "application/json")
-	response, err := ans.ANSClientHTTP.SendRequest(http.MethodPost,
+	response, err := httpClient.SendRequest(http.MethodPost,
 		"https://clm-sl-ans-live-ans-service-api.cfapps.eu10.hana.ondemand.com/cf/producer/v1/resource-events",
 		bytes.NewBuffer([]byte(body)), header, nil)
 	if err != nil {

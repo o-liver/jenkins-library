@@ -80,6 +80,7 @@ import (
 	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
 	"github.com/SAP/jenkins-library/pkg/validation"
+	"github.com/SAP/jenkins-library/pkg/ans"
 	"github.com/spf13/cobra"
 )
 
@@ -183,6 +184,9 @@ func {{.CobraCmdFuncName}}() *cobra.Command {
 				telemetryClient.Send()
 				if len({{if .ExportPrefix}}{{ .ExportPrefix }}.{{end}}GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 					splunkClient.Send(telemetryClient.GetData(), logCollector)
+				}
+				if len({{if .ExportPrefix}}{{ .ExportPrefix }}.{{end}}GeneralConfig.ANSServiceKey) > 0 {
+					ans.Send(GeneralConfig.ANSServiceKey)
 				}
 			}
 			log.DeferExitHandler(handler)

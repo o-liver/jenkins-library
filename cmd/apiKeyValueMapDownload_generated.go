@@ -4,12 +4,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/SAP/jenkins-library/pkg/ans"
-	"github.com/SAP/jenkins-library/pkg/cpi"
-	piperhttp "github.com/SAP/jenkins-library/pkg/http"
 	"os"
 	"time"
 
+	"github.com/SAP/jenkins-library/pkg/ans"
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/splunk"
@@ -33,8 +31,6 @@ func ApiKeyValueMapDownloadCommand() *cobra.Command {
 	var startTime time.Time
 	var logCollector *log.CollectorHook
 	var splunkClient *splunk.Splunk
-	var ansClient *ans.ANS
-	httpClient := &piperhttp.Client{}
 	telemetryClient := &telemetry.Telemetry{}
 
 	var createApiKeyValueMapDownloadCmd = &cobra.Command{
@@ -71,15 +67,6 @@ Learn more about the SAP API Management API for downloading an Key Value Map art
 				log.RegisterHook(logCollector)
 			}
 
-			if len(GeneralConfig.ANSServiceKey) > 0 {
-				serviceKey, err := cpi.ReadANSServiceKey(GeneralConfig.ANSServiceKey)
-				if err != nil {
-					return err
-				}
-				ansClient = &ans.ANS{httpClient, serviceKey.OauthUrl, serviceKey.ClientId, serviceKey.ClientSecret}
-
-			}
-
 			validation, err := validation.New(validation.WithJSONNamesForStructFields(), validation.WithPredefinedErrorMessages())
 			if err != nil {
 				return err
@@ -104,8 +91,8 @@ Learn more about the SAP API Management API for downloading an Key Value Map art
 				if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 					splunkClient.Send(telemetryClient.GetData(), logCollector)
 				}
-				if len(GeneralConfig.ANSServiceKey)>0{
-					ansClient.Send()
+				if len(GeneralConfig.ANSServiceKey) > 0 {
+					ans.Send(GeneralConfig.ANSServiceKey)
 				}
 			}
 			log.DeferExitHandler(handler)

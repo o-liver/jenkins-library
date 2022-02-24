@@ -77,26 +77,6 @@ func ReadCpiServiceKey(serviceKeyJSON string) (cpiServiceKey CPIServiceKey, err 
 	return
 }
 
-type ANSServiceKey struct {
-	Url          string `json:"url"`
-	ClientId     string `json:"client_id"`
-	ClientSecret string `json:"client_secret"`
-	OauthUrl     string `json:"oauth_url"`
-}
-
-// ReadANSServiceKey unmarshalls the given json service key string.
-func ReadANSServiceKey(serviceKeyJSON string) (ansServiceKey ANSServiceKey, err error) {
-	// parse
-	err = json.Unmarshal([]byte(serviceKeyJSON), &ansServiceKey)
-	if err != nil {
-		err = errors.Wrap(err, "error unmarshalling ANS serviceKey")
-		return
-	}
-
-	log.Entry().Info("ANS serviceKey read successfully")
-	return
-}
-
 // GetBearerToken -Provides the bearer token for making CPI OData calls
 func (tokenParameters TokenParameters) GetBearerToken() (string, error) {
 
