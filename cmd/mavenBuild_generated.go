@@ -5,42 +5,41 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
-	"path/filepath"
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/bmatcuk/doublestar"
 	"github.com/SAP/jenkins-library/pkg/gcs"
+	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
+	"github.com/bmatcuk/doublestar"
 	"github.com/spf13/cobra"
 )
 
 type mavenBuildOptions struct {
-	PomPath string `json:"pomPath,omitempty"`
-	Profiles []string `json:"profiles,omitempty"`
-	Flatten bool `json:"flatten,omitempty"`
-	Verify bool `json:"verify,omitempty"`
-	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
-	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
-	M2Path string `json:"m2Path,omitempty"`
-	LogSuccessfulMavenTransfers bool `json:"logSuccessfulMavenTransfers,omitempty"`
-	CreateBOM bool `json:"createBOM,omitempty"`
-	AltDeploymentRepositoryPassword string `json:"altDeploymentRepositoryPassword,omitempty"`
-	AltDeploymentRepositoryUser string `json:"altDeploymentRepositoryUser,omitempty"`
-	AltDeploymentRepositoryURL string `json:"altDeploymentRepositoryUrl,omitempty"`
-	AltDeploymentRepositoryID string `json:"altDeploymentRepositoryID,omitempty"`
-	CustomTLSCertificateLinks []string `json:"customTlsCertificateLinks,omitempty"`
-	Publish bool `json:"publish,omitempty"`
-	JavaCaCertFilePath string `json:"javaCaCertFilePath,omitempty"`
-	BuildSettingsInfo string `json:"buildSettingsInfo,omitempty"`
+	PomPath                         string   `json:"pomPath,omitempty"`
+	Profiles                        []string `json:"profiles,omitempty"`
+	Flatten                         bool     `json:"flatten,omitempty"`
+	Verify                          bool     `json:"verify,omitempty"`
+	ProjectSettingsFile             string   `json:"projectSettingsFile,omitempty"`
+	GlobalSettingsFile              string   `json:"globalSettingsFile,omitempty"`
+	M2Path                          string   `json:"m2Path,omitempty"`
+	LogSuccessfulMavenTransfers     bool     `json:"logSuccessfulMavenTransfers,omitempty"`
+	CreateBOM                       bool     `json:"createBOM,omitempty"`
+	AltDeploymentRepositoryPassword string   `json:"altDeploymentRepositoryPassword,omitempty"`
+	AltDeploymentRepositoryUser     string   `json:"altDeploymentRepositoryUser,omitempty"`
+	AltDeploymentRepositoryURL      string   `json:"altDeploymentRepositoryUrl,omitempty"`
+	AltDeploymentRepositoryID       string   `json:"altDeploymentRepositoryID,omitempty"`
+	CustomTLSCertificateLinks       []string `json:"customTlsCertificateLinks,omitempty"`
+	Publish                         bool     `json:"publish,omitempty"`
+	JavaCaCertFilePath              string   `json:"javaCaCertFilePath,omitempty"`
+	BuildSettingsInfo               string   `json:"buildSettingsInfo,omitempty"`
 }
-
 
 type mavenBuildCommonPipelineEnvironment struct {
 	custom struct {
@@ -49,10 +48,10 @@ type mavenBuildCommonPipelineEnvironment struct {
 }
 
 func (p *mavenBuildCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct{
+	content := []struct {
 		category string
-		name string
-		value interface{}
+		name     string
+		value    interface{}
 	}{
 		{category: "custom", name: "buildSettingsInfo", value: p.custom.buildSettingsInfo},
 	}
@@ -106,7 +105,6 @@ func (p *mavenBuildReports) persist(stepConfig mavenBuildOptions, gcpJsonKeyFile
 		log.Entry().Errorf("failed to persist reports: %v", err)
 	}
 }
-
 
 // MavenBuildCommand This step will install the maven project into the local maven repository.
 func MavenBuildCommand() *cobra.Command {
@@ -205,7 +203,7 @@ mavenBuild:
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
 				commonPipelineEnvironment.persist(GeneralConfig.EnvRootPath, "commonPipelineEnvironment")
-				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -221,10 +219,10 @@ mavenBuild:
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			mavenBuild(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -261,206 +259,205 @@ func addMavenBuildFlags(cmd *cobra.Command, stepConfig *mavenBuildOptions) {
 func mavenBuildMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "mavenBuild",
-			Aliases: []config.Alias{{Name: "mavenExecute", Deprecated: false},},
+			Name:        "mavenBuild",
+			Aliases:     []config.Alias{{Name: "mavenExecute", Deprecated: false}},
 			Description: "This step will install the maven project into the local maven repository.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "altDeploymentRepositoryPasswordId",Description: "Jenkins credentials ID containing the artifact deployment repository password.",Type: "jenkins",
-					}, 
+					{Name: "altDeploymentRepositoryPasswordId", Description: "Jenkins credentials ID containing the artifact deployment repository password.", Type: "jenkins"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "pomPath",
+						Name:        "pomPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `pom.xml`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `pom.xml`,
 					},
 					{
-						Name:      "profiles",
+						Name:        "profiles",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 					{
-						Name:      "flatten",
+						Name:        "flatten",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   true,
+						Scope:       []string{"PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     true,
 					},
 					{
-						Name:      "verify",
+						Name:        "verify",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   false,
+						Scope:       []string{"PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     false,
 					},
 					{
-						Name:      "projectSettingsFile",
+						Name:        "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
-						Default:   os.Getenv("PIPER_projectSettingsFile"),
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
+						Default:     os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:      "globalSettingsFile",
+						Name: "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/mavenGlobalSettingsFile",
 							},
-                        },
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
+						},
+						Scope:     []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
+						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"}},
 						Default:   os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:      "m2Path",
+						Name:        "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
-						Default:   os.Getenv("PIPER_m2Path"),
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
+						Default:     os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name:      "logSuccessfulMavenTransfers",
+						Name:        "logSuccessfulMavenTransfers",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/logSuccessfulMavenTransfers"},},
-						Default:   false,
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/logSuccessfulMavenTransfers"}},
+						Default:     false,
 					},
 					{
-						Name:      "createBOM",
+						Name:        "createBOM",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/createBOM"},},
-						Default:   false,
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/createBOM"}},
+						Default:     false,
 					},
 					{
-						Name:      "altDeploymentRepositoryPassword",
+						Name: "altDeploymentRepositoryPassword",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/repositoryPassword",
 							},
-                        
+
 							{
-								Name:"altDeploymentRepositoryPasswordId",
+								Name: "altDeploymentRepositoryPasswordId",
 								Type: "secret",
 							},
-                        
+
 							{
-								Name:"altDeploymentRepositoryPasswordFileVaultSecretName",
-								Type: "vaultSecretFile",
+								Name:    "altDeploymentRepositoryPasswordFileVaultSecretName",
+								Type:    "vaultSecretFile",
 								Default: "alt-deployment-repository-passowrd",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_altDeploymentRepositoryPassword"),
 					},
 					{
-						Name:      "altDeploymentRepositoryUser",
+						Name: "altDeploymentRepositoryUser",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/repositoryUsername",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_altDeploymentRepositoryUser"),
 					},
 					{
-						Name:      "altDeploymentRepositoryUrl",
+						Name: "altDeploymentRepositoryUrl",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/repositoryUrl",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_altDeploymentRepositoryUrl"),
 					},
 					{
-						Name:      "altDeploymentRepositoryID",
+						Name: "altDeploymentRepositoryID",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/repositoryId",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_altDeploymentRepositoryID"),
 					},
 					{
-						Name:      "customTlsCertificateLinks",
+						Name:        "customTlsCertificateLinks",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 					{
-						Name:      "publish",
+						Name:        "publish",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/publish"},},
-						Default:   false,
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/publish"}},
+						Default:     false,
 					},
 					{
-						Name:      "javaCaCertFilePath",
+						Name:        "javaCaCertFilePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/javaCaCertFilePath"},},
-						Default:   os.Getenv("PIPER_javaCaCertFilePath"),
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/javaCaCertFilePath"}},
+						Default:     os.Getenv("PIPER_javaCaCertFilePath"),
 					},
 					{
-						Name:      "buildSettingsInfo",
+						Name: "buildSettingsInfo",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/buildSettingsInfo",
 							},
-                        },
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						},
+						Scope:     []string{"STEPS", "STAGES", "PARAMETERS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
@@ -469,8 +466,7 @@ func mavenBuildMetadata() config.StepData {
 				},
 			},
 			Containers: []config.Container{
-				{Name: "mvn",Image: "maven:3.6-jdk-8",
-				}, 
+				{Name: "mvn", Image: "maven:3.6-jdk-8"},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -478,16 +474,16 @@ func mavenBuildMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/buildSettingsInfo",},
+							{"name": "custom/buildSettingsInfo"},
 						},
 					},
 					{
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/bom.xml","type": "sbom",},
-							{"filePattern": "**/TEST-*.xml","type": "junit",},
-							{"filePattern": "**/jacoco.xml","type": "jacoco-coverage",},
+							{"filePattern": "**/bom.xml", "type": "sbom"},
+							{"filePattern": "**/TEST-*.xml", "type": "junit"},
+							{"filePattern": "**/jacoco.xml", "type": "jacoco-coverage"},
 						},
 					},
 				},

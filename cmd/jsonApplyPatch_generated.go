@@ -9,19 +9,17 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type jsonApplyPatchOptions struct {
-	Input string `json:"input,omitempty"`
-	Patch string `json:"patch,omitempty"`
+	Input  string `json:"input,omitempty"`
+	Patch  string `json:"patch,omitempty"`
 	Output string `json:"output,omitempty"`
 }
-
-
 
 // JsonApplyPatchCommand Patches a json with a patch file
 func JsonApplyPatchCommand() *cobra.Command {
@@ -97,10 +95,10 @@ This step can, e.g., be used if there is a json schema which needs to be patched
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			jsonApplyPatch(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -126,43 +124,42 @@ func addJsonApplyPatchFlags(cmd *cobra.Command, stepConfig *jsonApplyPatchOption
 func jsonApplyPatchMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "jsonApplyPatch",
-			Aliases: []config.Alias{},
+			Name:        "jsonApplyPatch",
+			Aliases:     []config.Alias{},
 			Description: "Patches a json with a patch file",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:      "input",
+						Name:        "input",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_input"),
+						Scope:       []string{"PARAMETERS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_input"),
 					},
 					{
-						Name:      "patch",
+						Name:        "patch",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_patch"),
+						Scope:       []string{"PARAMETERS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_patch"),
 					},
 					{
-						Name:      "output",
+						Name:        "output",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_output"),
+						Scope:       []string{"PARAMETERS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_output"),
 					},
 				},
 			},
-			
 		},
 	}
 	return theMetaData

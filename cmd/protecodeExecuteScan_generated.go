@@ -11,36 +11,35 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type protecodeExecuteScanOptions struct {
-	ExcludeCVEs string `json:"excludeCVEs,omitempty"`
-	FailOnSevereVulnerabilities bool `json:"failOnSevereVulnerabilities,omitempty"`
-	ScanImage string `json:"scanImage,omitempty"`
-	DockerRegistryURL string `json:"dockerRegistryUrl,omitempty"`
-	DockerConfigJSON string `json:"dockerConfigJSON,omitempty"`
-	CleanupMode string `json:"cleanupMode,omitempty" validate:"possible-values=none binary complete"`
-	FilePath string `json:"filePath,omitempty"`
-	IncludeLayers bool `json:"includeLayers,omitempty"`
-	TimeoutMinutes string `json:"timeoutMinutes,omitempty"`
-	ServerURL string `json:"serverUrl,omitempty"`
-	ReportFileName string `json:"reportFileName,omitempty"`
-	FetchURL string `json:"fetchUrl,omitempty"`
-	Group string `json:"group,omitempty"`
-	VerifyOnly bool `json:"verifyOnly,omitempty"`
-	ReplaceProductID int `json:"replaceProductId,omitempty"`
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	Version string `json:"version,omitempty"`
-	CustomScanVersion string `json:"customScanVersion,omitempty"`
-	VersioningModel string `json:"versioningModel,omitempty" validate:"possible-values=major major-minor semantic full"`
-	PullRequestName string `json:"pullRequestName,omitempty"`
+	ExcludeCVEs                 string `json:"excludeCVEs,omitempty"`
+	FailOnSevereVulnerabilities bool   `json:"failOnSevereVulnerabilities,omitempty"`
+	ScanImage                   string `json:"scanImage,omitempty"`
+	DockerRegistryURL           string `json:"dockerRegistryUrl,omitempty"`
+	DockerConfigJSON            string `json:"dockerConfigJSON,omitempty"`
+	CleanupMode                 string `json:"cleanupMode,omitempty" validate:"possible-values=none binary complete"`
+	FilePath                    string `json:"filePath,omitempty"`
+	IncludeLayers               bool   `json:"includeLayers,omitempty"`
+	TimeoutMinutes              string `json:"timeoutMinutes,omitempty"`
+	ServerURL                   string `json:"serverUrl,omitempty"`
+	ReportFileName              string `json:"reportFileName,omitempty"`
+	FetchURL                    string `json:"fetchUrl,omitempty"`
+	Group                       string `json:"group,omitempty"`
+	VerifyOnly                  bool   `json:"verifyOnly,omitempty"`
+	ReplaceProductID            int    `json:"replaceProductId,omitempty"`
+	Username                    string `json:"username,omitempty"`
+	Password                    string `json:"password,omitempty"`
+	Version                     string `json:"version,omitempty"`
+	CustomScanVersion           string `json:"customScanVersion,omitempty"`
+	VersioningModel             string `json:"versioningModel,omitempty" validate:"possible-values=major major-minor semantic full"`
+	PullRequestName             string `json:"pullRequestName,omitempty"`
 }
-
 
 type protecodeExecuteScanInflux struct {
 	step_data struct {
@@ -52,12 +51,12 @@ type protecodeExecuteScanInflux struct {
 	}
 	protecode_data struct {
 		fields struct {
-			excluded_vulnerabilities int
+			excluded_vulnerabilities   int
 			historical_vulnerabilities int
-			major_vulnerabilities int
-			minor_vulnerabilities int
-			triaged_vulnerabilities int
-			vulnerabilities int
+			major_vulnerabilities      int
+			minor_vulnerabilities      int
+			triaged_vulnerabilities    int
+			vulnerabilities            int
 		}
 		tags struct {
 		}
@@ -65,19 +64,19 @@ type protecodeExecuteScanInflux struct {
 }
 
 func (i *protecodeExecuteScanInflux) persist(path, resourceName string) {
-	measurementContent := []struct{
+	measurementContent := []struct {
 		measurement string
 		valType     string
 		name        string
 		value       interface{}
 	}{
-		{valType: config.InfluxField, measurement: "step_data" , name: "protecode", value: i.step_data.fields.protecode},
-		{valType: config.InfluxField, measurement: "protecode_data" , name: "excluded_vulnerabilities", value: i.protecode_data.fields.excluded_vulnerabilities},
-		{valType: config.InfluxField, measurement: "protecode_data" , name: "historical_vulnerabilities", value: i.protecode_data.fields.historical_vulnerabilities},
-		{valType: config.InfluxField, measurement: "protecode_data" , name: "major_vulnerabilities", value: i.protecode_data.fields.major_vulnerabilities},
-		{valType: config.InfluxField, measurement: "protecode_data" , name: "minor_vulnerabilities", value: i.protecode_data.fields.minor_vulnerabilities},
-		{valType: config.InfluxField, measurement: "protecode_data" , name: "triaged_vulnerabilities", value: i.protecode_data.fields.triaged_vulnerabilities},
-		{valType: config.InfluxField, measurement: "protecode_data" , name: "vulnerabilities", value: i.protecode_data.fields.vulnerabilities},
+		{valType: config.InfluxField, measurement: "step_data", name: "protecode", value: i.step_data.fields.protecode},
+		{valType: config.InfluxField, measurement: "protecode_data", name: "excluded_vulnerabilities", value: i.protecode_data.fields.excluded_vulnerabilities},
+		{valType: config.InfluxField, measurement: "protecode_data", name: "historical_vulnerabilities", value: i.protecode_data.fields.historical_vulnerabilities},
+		{valType: config.InfluxField, measurement: "protecode_data", name: "major_vulnerabilities", value: i.protecode_data.fields.major_vulnerabilities},
+		{valType: config.InfluxField, measurement: "protecode_data", name: "minor_vulnerabilities", value: i.protecode_data.fields.minor_vulnerabilities},
+		{valType: config.InfluxField, measurement: "protecode_data", name: "triaged_vulnerabilities", value: i.protecode_data.fields.triaged_vulnerabilities},
+		{valType: config.InfluxField, measurement: "protecode_data", name: "vulnerabilities", value: i.protecode_data.fields.vulnerabilities},
 	}
 
 	errCount := 0
@@ -92,7 +91,6 @@ func (i *protecodeExecuteScanInflux) persist(path, resourceName string) {
 		log.Entry().Error("failed to persist Influx environment")
 	}
 }
-
 
 // ProtecodeExecuteScanCommand Black Duck Binary Analysis (BDBA), previously known as Protecode is an Open Source Vulnerability Scanner that is capable of scanning binaries. It can be used to scan docker images but is supports many other programming languages especially those of the C family.
 func ProtecodeExecuteScanCommand() *cobra.Command {
@@ -176,10 +174,10 @@ BDBA (Protecode) uses a combination of static binary analysis techniques to X-ra
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			protecodeExecuteScan(stepConfig, &stepTelemetryData, &influx)
 			stepTelemetryData.ErrorCode = "0"
@@ -224,262 +222,260 @@ func addProtecodeExecuteScanFlags(cmd *cobra.Command, stepConfig *protecodeExecu
 func protecodeExecuteScanMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "protecodeExecuteScan",
-			Aliases: []config.Alias{},
+			Name:        "protecodeExecuteScan",
+			Aliases:     []config.Alias{},
 			Description: "Black Duck Binary Analysis (BDBA), previously known as Protecode is an Open Source Vulnerability Scanner that is capable of scanning binaries. It can be used to scan docker images but is supports many other programming languages especially those of the C family.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "protecodeCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing username and password to authenticate to the Protecode system.",Type: "jenkins",
-					}, 
-					{Name: "dockerConfigJsonCredentialsId",Description: "Jenkins 'Secret file' credentials ID containing Docker config.json (with registry credential(s)). You can create it like explained in [Prerequisites](https://www.project-piper.io/steps/protecodeExecuteScan/#prerequisites).",Type: "jenkins",Aliases: []config.Alias{ {Name: "dockerCredentialsId", Deprecated: true}, },
-					}, 
+					{Name: "protecodeCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing username and password to authenticate to the Protecode system.", Type: "jenkins"},
+					{Name: "dockerConfigJsonCredentialsId", Description: "Jenkins 'Secret file' credentials ID containing Docker config.json (with registry credential(s)). You can create it like explained in [Prerequisites](https://www.project-piper.io/steps/protecodeExecuteScan/#prerequisites).", Type: "jenkins", Aliases: []config.Alias{{Name: "dockerCredentialsId", Deprecated: true}}},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "excludeCVEs",
+						Name:        "excludeCVEs",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "protecodeExcludeCVEs"},},
-						Default:   ``,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "protecodeExcludeCVEs"}},
+						Default:     ``,
 					},
 					{
-						Name:      "failOnSevereVulnerabilities",
+						Name:        "failOnSevereVulnerabilities",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "protecodeFailOnSevereVulnerabilities"},},
-						Default:   true,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "protecodeFailOnSevereVulnerabilities"}},
+						Default:     true,
 					},
 					{
-						Name:      "scanImage",
+						Name: "scanImage",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "container/imageNameTag",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "dockerImage"},},
+						Aliases:   []config.Alias{{Name: "dockerImage"}},
 						Default:   os.Getenv("PIPER_scanImage"),
 					},
 					{
-						Name:      "dockerRegistryUrl",
+						Name: "dockerRegistryUrl",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "container/registryUrl",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_dockerRegistryUrl"),
 					},
 					{
-						Name:      "dockerConfigJSON",
+						Name: "dockerConfigJSON",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/dockerConfigJSON",
 							},
-                        
+
 							{
-								Name:"dockerConfigJsonCredentialsId",
+								Name: "dockerConfigJsonCredentialsId",
 								Type: "secret",
 							},
-                        
+
 							{
-								Name:"dockerConfigFileVaultSecretName",
-								Type: "vaultSecretFile",
+								Name:    "dockerConfigFileVaultSecretName",
+								Type:    "vaultSecretFile",
 								Default: "docker-config",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_dockerConfigJSON"),
 					},
 					{
-						Name:      "cleanupMode",
+						Name:        "cleanupMode",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `binary`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `binary`,
 					},
 					{
-						Name:      "filePath",
+						Name:        "filePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_filePath"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_filePath"),
 					},
 					{
-						Name:      "includeLayers",
+						Name:        "includeLayers",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   false,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     false,
 					},
 					{
-						Name:      "timeoutMinutes",
+						Name:        "timeoutMinutes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "protecodeTimeoutMinutes"},},
-						Default:   `60`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "protecodeTimeoutMinutes"}},
+						Default:     `60`,
 					},
 					{
-						Name:      "serverUrl",
+						Name:        "serverUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "protecodeServerUrl"},},
-						Default:   os.Getenv("PIPER_serverUrl"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "protecodeServerUrl"}},
+						Default:     os.Getenv("PIPER_serverUrl"),
 					},
 					{
-						Name:      "reportFileName",
+						Name:        "reportFileName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `protecode_report.pdf`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `protecode_report.pdf`,
 					},
 					{
-						Name:      "fetchUrl",
+						Name:        "fetchUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_fetchUrl"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_fetchUrl"),
 					},
 					{
-						Name:      "group",
+						Name:        "group",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "protecodeGroup"},},
-						Default:   os.Getenv("PIPER_group"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "protecodeGroup"}},
+						Default:     os.Getenv("PIPER_group"),
 					},
 					{
-						Name:      "verifyOnly",
+						Name:        "verifyOnly",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "reuseExisting", Deprecated: true},},
-						Default:   false,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "reuseExisting", Deprecated: true}},
+						Default:     false,
 					},
 					{
-						Name:      "replaceProductId",
+						Name:        "replaceProductId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "int",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   0,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "int",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     0,
 					},
 					{
-						Name:      "username",
+						Name: "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"protecodeCredentialsId",
+								Name:  "protecodeCredentialsId",
 								Param: "username",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        
+
 							{
-								Name:"protecodeVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "protecodeVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "protecode",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "user", Deprecated: true},},
+						Aliases:   []config.Alias{{Name: "user", Deprecated: true}},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name:      "password",
+						Name: "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"protecodeCredentialsId",
+								Name:  "protecodeCredentialsId",
 								Param: "password",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        
+
 							{
-								Name:"protecodeVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "protecodeVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "protecode",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:      "version",
+						Name: "version",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "artifactVersion",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "artifactVersion", Deprecated: true},},
+						Aliases:   []config.Alias{{Name: "artifactVersion", Deprecated: true}},
 						Default:   os.Getenv("PIPER_version"),
 					},
 					{
-						Name:      "customScanVersion",
+						Name:        "customScanVersion",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STAGES","STEPS","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_customScanVersion"),
+						Scope:       []string{"GENERAL", "STAGES", "STEPS", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_customScanVersion"),
 					},
 					{
-						Name:      "versioningModel",
+						Name:        "versioningModel",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `major`,
+						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `major`,
 					},
 					{
-						Name:      "pullRequestName",
+						Name:        "pullRequestName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_pullRequestName"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_pullRequestName"),
 					},
 				},
 			},
@@ -489,8 +485,8 @@ func protecodeExecuteScanMetadata() config.StepData {
 						Name: "influx",
 						Type: "influx",
 						Parameters: []map[string]interface{}{
-							{"name": "step_data","fields": []map[string]string{ {"name": "protecode"}, },},
-							{"name": "protecode_data","fields": []map[string]string{ {"name": "excluded_vulnerabilities"},  {"name": "historical_vulnerabilities"},  {"name": "major_vulnerabilities"},  {"name": "minor_vulnerabilities"},  {"name": "triaged_vulnerabilities"},  {"name": "vulnerabilities"}, },},
+							{"name": "step_data", "fields": []map[string]string{{"name": "protecode"}}},
+							{"name": "protecode_data", "fields": []map[string]string{{"name": "excluded_vulnerabilities"}, {"name": "historical_vulnerabilities"}, {"name": "major_vulnerabilities"}, {"name": "minor_vulnerabilities"}, {"name": "triaged_vulnerabilities"}, {"name": "vulnerabilities"}}},
 						},
 					},
 				},

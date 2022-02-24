@@ -11,35 +11,34 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type kanikoExecuteOptions struct {
-	BuildOptions []string `json:"buildOptions,omitempty"`
-	BuildSettingsInfo string `json:"buildSettingsInfo,omitempty"`
-	ContainerMultiImageBuild bool `json:"containerMultiImageBuild,omitempty"`
+	BuildOptions                     []string `json:"buildOptions,omitempty"`
+	BuildSettingsInfo                string   `json:"buildSettingsInfo,omitempty"`
+	ContainerMultiImageBuild         bool     `json:"containerMultiImageBuild,omitempty"`
 	ContainerMultiImageBuildExcludes []string `json:"containerMultiImageBuildExcludes,omitempty"`
-	ContainerBuildOptions string `json:"containerBuildOptions,omitempty"`
-	ContainerImage string `json:"containerImage,omitempty"`
-	ContainerImageName string `json:"containerImageName,omitempty"`
-	ContainerImageTag string `json:"containerImageTag,omitempty"`
-	ContainerPreparationCommand string `json:"containerPreparationCommand,omitempty"`
-	ContainerRegistryURL string `json:"containerRegistryUrl,omitempty"`
-	CustomTLSCertificateLinks []string `json:"customTlsCertificateLinks,omitempty"`
-	DockerConfigJSON string `json:"dockerConfigJSON,omitempty"`
-	DockerfilePath string `json:"dockerfilePath,omitempty"`
-	TargetArchitectures []string `json:"targetArchitectures,omitempty"`
+	ContainerBuildOptions            string   `json:"containerBuildOptions,omitempty"`
+	ContainerImage                   string   `json:"containerImage,omitempty"`
+	ContainerImageName               string   `json:"containerImageName,omitempty"`
+	ContainerImageTag                string   `json:"containerImageTag,omitempty"`
+	ContainerPreparationCommand      string   `json:"containerPreparationCommand,omitempty"`
+	ContainerRegistryURL             string   `json:"containerRegistryUrl,omitempty"`
+	CustomTLSCertificateLinks        []string `json:"customTlsCertificateLinks,omitempty"`
+	DockerConfigJSON                 string   `json:"dockerConfigJSON,omitempty"`
+	DockerfilePath                   string   `json:"dockerfilePath,omitempty"`
+	TargetArchitectures              []string `json:"targetArchitectures,omitempty"`
 }
-
 
 type kanikoExecuteCommonPipelineEnvironment struct {
 	container struct {
-		registryURL string
-		imageNameTag string
-		imageNames []string
+		registryURL   string
+		imageNameTag  string
+		imageNames    []string
 		imageNameTags []string
 	}
 	custom struct {
@@ -48,10 +47,10 @@ type kanikoExecuteCommonPipelineEnvironment struct {
 }
 
 func (p *kanikoExecuteCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct{
+	content := []struct {
 		category string
-		name string
-		value interface{}
+		name     string
+		value    interface{}
 	}{
 		{category: "container", name: "registryUrl", value: p.container.registryURL},
 		{category: "container", name: "imageNameTag", value: p.container.imageNameTag},
@@ -72,7 +71,6 @@ func (p *kanikoExecuteCommonPipelineEnvironment) persist(path, resourceName stri
 		log.Entry().Error("failed to persist Piper environment")
 	}
 }
-
 
 // KanikoExecuteCommand Executes a [Kaniko](https://github.com/GoogleContainerTools/kaniko) build for creating a Docker container.
 func KanikoExecuteCommand() *cobra.Command {
@@ -164,10 +162,10 @@ You can activate multiple builds using the parameters
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			kanikoExecute(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -201,179 +199,177 @@ func addKanikoExecuteFlags(cmd *cobra.Command, stepConfig *kanikoExecuteOptions)
 func kanikoExecuteMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "kanikoExecute",
-			Aliases: []config.Alias{},
+			Name:        "kanikoExecute",
+			Aliases:     []config.Alias{},
 			Description: "Executes a [Kaniko](https://github.com/GoogleContainerTools/kaniko) build for creating a Docker container.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "dockerConfigJsonCredentialsId",Description: "Jenkins 'Secret file' credentials ID containing Docker config.json (with registry credential(s)). You can create it like explained in the [protocodeExecuteScan Prerequisites section](https://www.project-piper.io/steps/protecodeExecuteScan/#prerequisites).",Type: "jenkins",
-					}, 
+					{Name: "dockerConfigJsonCredentialsId", Description: "Jenkins 'Secret file' credentials ID containing Docker config.json (with registry credential(s)). You can create it like explained in the [protocodeExecuteScan Prerequisites section](https://www.project-piper.io/steps/protecodeExecuteScan/#prerequisites).", Type: "jenkins"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "buildOptions",
+						Name:        "buildOptions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{`--skip-tls-verify-pull`, `--ignore-path`, `/busybox`},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{`--skip-tls-verify-pull`, `--ignore-path`, `/busybox`},
 					},
 					{
-						Name:      "buildSettingsInfo",
+						Name: "buildSettingsInfo",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/buildSettingsInfo",
 							},
-                        },
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						},
+						Scope:     []string{"STEPS", "STAGES", "PARAMETERS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_buildSettingsInfo"),
 					},
 					{
-						Name:      "containerMultiImageBuild",
+						Name:        "containerMultiImageBuild",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   false,
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     false,
 					},
 					{
-						Name:      "containerMultiImageBuildExcludes",
+						Name:        "containerMultiImageBuildExcludes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 					{
-						Name:      "containerBuildOptions",
+						Name:        "containerBuildOptions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_containerBuildOptions"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_containerBuildOptions"),
 					},
 					{
-						Name:      "containerImage",
+						Name:        "containerImage",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "containerImageNameAndTag", Deprecated: true},},
-						Default:   os.Getenv("PIPER_containerImage"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "containerImageNameAndTag", Deprecated: true}},
+						Default:     os.Getenv("PIPER_containerImage"),
 					},
 					{
-						Name:      "containerImageName",
+						Name:        "containerImageName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "dockerImageName"},},
-						Default:   os.Getenv("PIPER_containerImageName"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "dockerImageName"}},
+						Default:     os.Getenv("PIPER_containerImageName"),
 					},
 					{
-						Name:      "containerImageTag",
+						Name: "containerImageTag",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "artifactVersion",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "artifactVersion"},},
+						Aliases:   []config.Alias{{Name: "artifactVersion"}},
 						Default:   os.Getenv("PIPER_containerImageTag"),
 					},
 					{
-						Name:      "containerPreparationCommand",
+						Name:        "containerPreparationCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `rm -f /kaniko/.docker/config.json`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `rm -f /kaniko/.docker/config.json`,
 					},
 					{
-						Name:      "containerRegistryUrl",
+						Name: "containerRegistryUrl",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "container/registryUrl",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "dockerRegistryUrl"},},
+						Aliases:   []config.Alias{{Name: "dockerRegistryUrl"}},
 						Default:   os.Getenv("PIPER_containerRegistryUrl"),
 					},
 					{
-						Name:      "customTlsCertificateLinks",
+						Name:        "customTlsCertificateLinks",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 					{
-						Name:      "dockerConfigJSON",
+						Name: "dockerConfigJSON",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/dockerConfigJSON",
 							},
-                        
+
 							{
-								Name:"dockerConfigJsonCredentialsId",
+								Name: "dockerConfigJsonCredentialsId",
 								Type: "secret",
 							},
-                        
+
 							{
-								Name:"dockerConfigFileVaultSecretName",
-								Type: "vaultSecretFile",
+								Name:    "dockerConfigFileVaultSecretName",
+								Type:    "vaultSecretFile",
 								Default: "docker-config",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_dockerConfigJSON"),
 					},
 					{
-						Name:      "dockerfilePath",
+						Name:        "dockerfilePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "dockerfile"},},
-						Default:   `Dockerfile`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "dockerfile"}},
+						Default:     `Dockerfile`,
 					},
 					{
-						Name:      "targetArchitectures",
+						Name:        "targetArchitectures",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{``},
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{``},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Image: "gcr.io/kaniko-project/executor:debug",EnvVars: []config.EnvVar{ {Name: "container", Value: "docker"},  {Name: "TMPDIR", Value: "/"}, },Options: []config.Option{ {Name: "-u", Value: "0"},  {Name: "--entrypoint", Value: ""}, },
-				}, 
+				{Image: "gcr.io/kaniko-project/executor:debug", EnvVars: []config.EnvVar{{Name: "container", Value: "docker"}, {Name: "TMPDIR", Value: "/"}}, Options: []config.Option{{Name: "-u", Value: "0"}, {Name: "--entrypoint", Value: ""}}},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -381,11 +377,11 @@ func kanikoExecuteMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "container/registryUrl",},
-							{"name": "container/imageNameTag",},
-							{"name": "container/imageNames","type": "[]string",},
-							{"name": "container/imageNameTags","type": "[]string",},
-							{"name": "custom/buildSettingsInfo",},
+							{"name": "container/registryUrl"},
+							{"name": "container/imageNameTag"},
+							{"name": "container/imageNames", "type": "[]string"},
+							{"name": "container/imageNameTags", "type": "[]string"},
+							{"name": "custom/buildSettingsInfo"},
 						},
 					},
 				},

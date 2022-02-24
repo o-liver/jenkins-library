@@ -9,29 +9,27 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type vaultRotateSecretIdOptions struct {
-	SecretStore string `json:"secretStore,omitempty" validate:"possible-values=jenkins ado"`
-	JenkinsURL string `json:"jenkinsUrl,omitempty"`
-	JenkinsCredentialDomain string `json:"jenkinsCredentialDomain,omitempty"`
-	JenkinsUsername string `json:"jenkinsUsername,omitempty"`
-	JenkinsToken string `json:"jenkinsToken,omitempty"`
+	SecretStore                          string `json:"secretStore,omitempty" validate:"possible-values=jenkins ado"`
+	JenkinsURL                           string `json:"jenkinsUrl,omitempty"`
+	JenkinsCredentialDomain              string `json:"jenkinsCredentialDomain,omitempty"`
+	JenkinsUsername                      string `json:"jenkinsUsername,omitempty"`
+	JenkinsToken                         string `json:"jenkinsToken,omitempty"`
 	VaultAppRoleSecretTokenCredentialsID string `json:"vaultAppRoleSecretTokenCredentialsId,omitempty"`
-	VaultServerURL string `json:"vaultServerUrl,omitempty"`
-	VaultNamespace string `json:"vaultNamespace,omitempty"`
-	DaysBeforeExpiry int `json:"daysBeforeExpiry,omitempty"`
-	AdoOrganization string `json:"adoOrganization,omitempty"`
-	AdoPersonalAccessToken string `json:"adoPersonalAccessToken,omitempty" validate:"required_if=SecretStore ado"`
-	AdoProject string `json:"adoProject,omitempty"`
-	AdoPipelineID int `json:"adoPipelineId,omitempty"`
+	VaultServerURL                       string `json:"vaultServerUrl,omitempty"`
+	VaultNamespace                       string `json:"vaultNamespace,omitempty"`
+	DaysBeforeExpiry                     int    `json:"daysBeforeExpiry,omitempty"`
+	AdoOrganization                      string `json:"adoOrganization,omitempty"`
+	AdoPersonalAccessToken               string `json:"adoPersonalAccessToken,omitempty" validate:"required_if=SecretStore ado"`
+	AdoProject                           string `json:"adoProject,omitempty"`
+	AdoPipelineID                        int    `json:"adoPipelineId,omitempty"`
 }
-
-
 
 // VaultRotateSecretIdCommand Rotate Vault AppRole Secret ID
 func VaultRotateSecretIdCommand() *cobra.Command {
@@ -47,7 +45,7 @@ func VaultRotateSecretIdCommand() *cobra.Command {
 	var createVaultRotateSecretIdCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Rotate Vault AppRole Secret ID",
-		Long: `This step takes the given Vault secret ID and checks whether it needs to be renewed and if so it will update the secret ID in the configured secret store.`,
+		Long:  `This step takes the given Vault secret ID and checks whether it needs to be renewed and if so it will update the secret ID in the configured secret store.`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -110,10 +108,10 @@ func VaultRotateSecretIdCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			vaultRotateSecretId(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -148,157 +146,156 @@ func addVaultRotateSecretIdFlags(cmd *cobra.Command, stepConfig *vaultRotateSecr
 func vaultRotateSecretIdMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "vaultRotateSecretId",
-			Aliases: []config.Alias{},
+			Name:        "vaultRotateSecretId",
+			Aliases:     []config.Alias{},
 			Description: "Rotate Vault AppRole Secret ID",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:      "secretStore",
+						Name:        "secretStore",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `jenkins`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `jenkins`,
 					},
 					{
-						Name:      "jenkinsUrl",
+						Name: "jenkinsUrl",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"jenkinsVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "jenkinsVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "jenkins",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "url"},},
+						Aliases:   []config.Alias{{Name: "url"}},
 						Default:   os.Getenv("PIPER_jenkinsUrl"),
 					},
 					{
-						Name:      "jenkinsCredentialDomain",
+						Name:        "jenkinsCredentialDomain",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `_`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `_`,
 					},
 					{
-						Name:      "jenkinsUsername",
+						Name: "jenkinsUsername",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"jenkinsVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "jenkinsVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "jenkins",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "userId"},},
+						Aliases:   []config.Alias{{Name: "userId"}},
 						Default:   os.Getenv("PIPER_jenkinsUsername"),
 					},
 					{
-						Name:      "jenkinsToken",
+						Name: "jenkinsToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"jenkinsVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "jenkinsVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "jenkins",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "token"},},
+						Aliases:   []config.Alias{{Name: "token"}},
 						Default:   os.Getenv("PIPER_jenkinsToken"),
 					},
 					{
-						Name:      "vaultAppRoleSecretTokenCredentialsId",
+						Name:        "vaultAppRoleSecretTokenCredentialsId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_vaultAppRoleSecretTokenCredentialsId"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_vaultAppRoleSecretTokenCredentialsId"),
 					},
 					{
-						Name:      "vaultServerUrl",
+						Name:        "vaultServerUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_vaultServerUrl"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_vaultServerUrl"),
 					},
 					{
-						Name:      "vaultNamespace",
+						Name:        "vaultNamespace",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_vaultNamespace"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_vaultNamespace"),
 					},
 					{
-						Name:      "daysBeforeExpiry",
+						Name:        "daysBeforeExpiry",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "int",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   15,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "int",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     15,
 					},
 					{
-						Name:      "adoOrganization",
+						Name:        "adoOrganization",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_adoOrganization"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_adoOrganization"),
 					},
 					{
-						Name:      "adoPersonalAccessToken",
+						Name: "adoPersonalAccessToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"azureDevOpsVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "azureDevOpsVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "azure-dev-ops",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "token"},},
+						Aliases:   []config.Alias{{Name: "token"}},
 						Default:   os.Getenv("PIPER_adoPersonalAccessToken"),
 					},
 					{
-						Name:      "adoProject",
+						Name:        "adoProject",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_adoProject"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_adoProject"),
 					},
 					{
-						Name:      "adoPipelineId",
+						Name:        "adoPipelineId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "int",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   0,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "int",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     0,
 					},
 				},
 			},
-			
 		},
 	}
 	return theMetaData

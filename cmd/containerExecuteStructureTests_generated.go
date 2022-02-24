@@ -9,21 +9,19 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type containerExecuteStructureTestsOptions struct {
-	PullImage bool `json:"pullImage,omitempty"`
-	TestConfiguration string `json:"testConfiguration,omitempty"`
-	TestDriver string `json:"testDriver,omitempty"`
-	TestImage string `json:"testImage,omitempty"`
+	PullImage          bool   `json:"pullImage,omitempty"`
+	TestConfiguration  string `json:"testConfiguration,omitempty"`
+	TestDriver         string `json:"testDriver,omitempty"`
+	TestImage          string `json:"testImage,omitempty"`
 	TestReportFilePath string `json:"testReportFilePath,omitempty"`
 }
-
-
 
 // ContainerExecuteStructureTestsCommand In this step [Container Structure Tests](https://github.com/GoogleContainerTools/container-structure-test) are executed.
 func ContainerExecuteStructureTestsCommand() *cobra.Command {
@@ -102,10 +100,10 @@ func ContainerExecuteStructureTestsCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			containerExecuteStructureTests(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -132,65 +130,63 @@ func addContainerExecuteStructureTestsFlags(cmd *cobra.Command, stepConfig *cont
 func containerExecuteStructureTestsMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "containerExecuteStructureTests",
-			Aliases: []config.Alias{},
+			Name:        "containerExecuteStructureTests",
+			Aliases:     []config.Alias{},
 			Description: "In this step [Container Structure Tests](https://github.com/GoogleContainerTools/container-structure-test) are executed.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:      "pullImage",
+						Name:        "pullImage",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   false,
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     false,
 					},
 					{
-						Name:      "testConfiguration",
+						Name:        "testConfiguration",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_testConfiguration"),
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_testConfiguration"),
 					},
 					{
-						Name:      "testDriver",
+						Name:        "testDriver",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_testDriver"),
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_testDriver"),
 					},
 					{
-						Name:      "testImage",
+						Name:        "testImage",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_testImage"),
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_testImage"),
 					},
 					{
-						Name:      "testReportFilePath",
+						Name:        "testReportFilePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `cst-report.json`,
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `cst-report.json`,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Image: "ppiper/container-structure-test",Options: []config.Option{ {Name: "-u", Value: "0"},  {Name: "--entrypoint", Value: ""}, },
-				}, 
+				{Image: "ppiper/container-structure-test", Options: []config.Option{{Name: "-u", Value: "0"}, {Name: "--entrypoint", Value: ""}}},
 			},
-			
 		},
 	}
 	return theMetaData

@@ -9,20 +9,18 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type integrationArtifactResourceOptions struct {
-	APIServiceKey string `json:"apiServiceKey,omitempty"`
+	APIServiceKey     string `json:"apiServiceKey,omitempty"`
 	IntegrationFlowID string `json:"integrationFlowId,omitempty"`
-	Operation string `json:"operation,omitempty" validate:"possible-values=create update delete"`
-	ResourcePath string `json:"resourcePath,omitempty"`
+	Operation         string `json:"operation,omitempty" validate:"possible-values=create update delete"`
+	ResourcePath      string `json:"resourcePath,omitempty"`
 }
-
-
 
 // IntegrationArtifactResourceCommand Add, Delete or Update an resource file of integration flow designtime artifact
 func IntegrationArtifactResourceCommand() *cobra.Command {
@@ -38,7 +36,7 @@ func IntegrationArtifactResourceCommand() *cobra.Command {
 	var createIntegrationArtifactResourceCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Add, Delete or Update an resource file of integration flow designtime artifact",
-		Long: `With this step you can either add, delete or update a resource of integration flow designtime artifact using the OData API. Learn more about the SAP Cloud Integration remote API for managing an resource of integration flow artifact [here](https://help.sap.com/viewer/368c481cd6954bdfa5d0435479fd4eaf/Cloud/en-US/d1679a80543f46509a7329243b595bdb.html).`,
+		Long:  `With this step you can either add, delete or update a resource of integration flow designtime artifact using the OData API. Learn more about the SAP Cloud Integration remote API for managing an resource of integration flow artifact [here](https://help.sap.com/viewer/368c481cd6954bdfa5d0435479fd4eaf/Cloud/en-US/d1679a80543f46509a7329243b595bdb.html).`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -98,10 +96,10 @@ func IntegrationArtifactResourceCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			integrationArtifactResource(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -129,62 +127,60 @@ func addIntegrationArtifactResourceFlags(cmd *cobra.Command, stepConfig *integra
 func integrationArtifactResourceMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "integrationArtifactResource",
-			Aliases: []config.Alias{},
+			Name:        "integrationArtifactResource",
+			Aliases:     []config.Alias{},
 			Description: "Add, Delete or Update an resource file of integration flow designtime artifact",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "cpiApiServiceKeyCredentialsId",Description: "Jenkins secret text credential ID containing the service key to the Process Integration Runtime service instance of plan 'api'",Type: "jenkins",
-					}, 
+					{Name: "cpiApiServiceKeyCredentialsId", Description: "Jenkins secret text credential ID containing the service key to the Process Integration Runtime service instance of plan 'api'", Type: "jenkins"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "apiServiceKey",
+						Name: "apiServiceKey",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"cpiApiServiceKeyCredentialsId",
+								Name:  "cpiApiServiceKeyCredentialsId",
 								Param: "apiServiceKey",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        },
-						Scope:     []string{"PARAMETERS",},
+						},
+						Scope:     []string{"PARAMETERS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_apiServiceKey"),
 					},
 					{
-						Name:      "integrationFlowId",
+						Name:        "integrationFlowId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_integrationFlowId"),
+						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_integrationFlowId"),
 					},
 					{
-						Name:      "operation",
+						Name:        "operation",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_operation"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_operation"),
 					},
 					{
-						Name:      "resourcePath",
+						Name:        "resourcePath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_resourcePath"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_resourcePath"),
 					},
 				},
 			},
-			
 		},
 	}
 	return theMetaData

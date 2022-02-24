@@ -9,22 +9,20 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type influxWriteDataOptions struct {
-	ServerURL string `json:"serverUrl,omitempty"`
-	AuthToken string `json:"authToken,omitempty"`
-	Bucket string `json:"bucket,omitempty"`
+	ServerURL    string `json:"serverUrl,omitempty"`
+	AuthToken    string `json:"authToken,omitempty"`
+	Bucket       string `json:"bucket,omitempty"`
 	Organization string `json:"organization,omitempty"`
-	DataMap string `json:"dataMap,omitempty"`
-	DataMapTags string `json:"dataMapTags,omitempty"`
+	DataMap      string `json:"dataMap,omitempty"`
+	DataMapTags  string `json:"dataMapTags,omitempty"`
 }
-
-
 
 // InfluxWriteDataCommand Writes metrics to influxdb
 func InfluxWriteDataCommand() *cobra.Command {
@@ -40,7 +38,7 @@ func InfluxWriteDataCommand() *cobra.Command {
 	var createInfluxWriteDataCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Writes metrics to influxdb",
-		Long: `In this step, the metrics are written to the timeseries database [InfluxDB](https://www.influxdata.com/time-series-platform/influxdb/)`,
+		Long:  `In this step, the metrics are written to the timeseries database [InfluxDB](https://www.influxdata.com/time-series-platform/influxdb/)`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -100,10 +98,10 @@ func InfluxWriteDataCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			influxWriteData(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -132,85 +130,83 @@ func addInfluxWriteDataFlags(cmd *cobra.Command, stepConfig *influxWriteDataOpti
 func influxWriteDataMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "influxWriteData",
-			Aliases: []config.Alias{},
+			Name:        "influxWriteData",
+			Aliases:     []config.Alias{},
 			Description: "Writes metrics to influxdb",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "influxAuthTokenId",Description: "Influxdb token for authentication to the InfluxDB. In 1.8 version use 'username:password' instead.",Type: "jenkins",
-					}, 
+					{Name: "influxAuthTokenId", Description: "Influxdb token for authentication to the InfluxDB. In 1.8 version use 'username:password' instead.", Type: "jenkins"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "serverUrl",
+						Name:        "serverUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_serverUrl"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_serverUrl"),
 					},
 					{
-						Name:      "authToken",
+						Name: "authToken",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"influxAuthTokenId",
+								Name: "influxAuthTokenId",
 								Type: "secret",
 							},
-                        
+
 							{
-								Name:"influxVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "influxVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "influxdb",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_authToken"),
 					},
 					{
-						Name:      "bucket",
+						Name:        "bucket",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `piper`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `piper`,
 					},
 					{
-						Name:      "organization",
+						Name:        "organization",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_organization"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_organization"),
 					},
 					{
-						Name:      "dataMap",
+						Name:        "dataMap",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_dataMap"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_dataMap"),
 					},
 					{
-						Name:      "dataMapTags",
+						Name:        "dataMapTags",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_dataMapTags"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_dataMapTags"),
 					},
 				},
 			},
-			
 		},
 	}
 	return theMetaData

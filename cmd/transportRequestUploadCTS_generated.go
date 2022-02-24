@@ -11,27 +11,26 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type transportRequestUploadCTSOptions struct {
-	Description string `json:"description,omitempty"`
-	Endpoint string `json:"endpoint,omitempty"`
-	Client string `json:"client,omitempty"`
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	ApplicationName string `json:"applicationName,omitempty"`
-	AbapPackage string `json:"abapPackage,omitempty"`
-	OsDeployUser string `json:"osDeployUser,omitempty"`
-	DeployConfigFile string `json:"deployConfigFile,omitempty"`
-	TransportRequestID string `json:"transportRequestId,omitempty"`
+	Description            string   `json:"description,omitempty"`
+	Endpoint               string   `json:"endpoint,omitempty"`
+	Client                 string   `json:"client,omitempty"`
+	Username               string   `json:"username,omitempty"`
+	Password               string   `json:"password,omitempty"`
+	ApplicationName        string   `json:"applicationName,omitempty"`
+	AbapPackage            string   `json:"abapPackage,omitempty"`
+	OsDeployUser           string   `json:"osDeployUser,omitempty"`
+	DeployConfigFile       string   `json:"deployConfigFile,omitempty"`
+	TransportRequestID     string   `json:"transportRequestId,omitempty"`
 	DeployToolDependencies []string `json:"deployToolDependencies,omitempty"`
-	NpmInstallOpts []string `json:"npmInstallOpts,omitempty"`
+	NpmInstallOpts         []string `json:"npmInstallOpts,omitempty"`
 }
-
 
 type transportRequestUploadCTSCommonPipelineEnvironment struct {
 	custom struct {
@@ -40,10 +39,10 @@ type transportRequestUploadCTSCommonPipelineEnvironment struct {
 }
 
 func (p *transportRequestUploadCTSCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct{
+	content := []struct {
 		category string
-		name string
-		value interface{}
+		name     string
+		value    interface{}
 	}{
 		{category: "custom", name: "transportRequestId", value: p.custom.transportRequestID},
 	}
@@ -60,7 +59,6 @@ func (p *transportRequestUploadCTSCommonPipelineEnvironment) persist(path, resou
 		log.Entry().Error("failed to persist Piper environment")
 	}
 }
-
 
 // TransportRequestUploadCTSCommand This step uploads an UI5 application to the SAPUI5 ABAP repository.
 func TransportRequestUploadCTSCommand() *cobra.Command {
@@ -140,10 +138,10 @@ It processes the results of the ` + "`" + `ui5 build` + "`" + ` command of the S
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			transportRequestUploadCTS(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -180,135 +178,133 @@ func addTransportRequestUploadCTSFlags(cmd *cobra.Command, stepConfig *transport
 func transportRequestUploadCTSMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "transportRequestUploadCTS",
-			Aliases: []config.Alias{{Name: "transportRequestUploadFile", Deprecated: false},},
+			Name:        "transportRequestUploadCTS",
+			Aliases:     []config.Alias{{Name: "transportRequestUploadFile", Deprecated: false}},
 			Description: "This step uploads an UI5 application to the SAPUI5 ABAP repository.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "uploadCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate against the ABAP system.",Type: "jenkins",Aliases: []config.Alias{ {Name: "changeManagement/credentialsId", Deprecated: false}, },
-					}, 
+					{Name: "uploadCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate against the ABAP system.", Type: "jenkins", Aliases: []config.Alias{{Name: "changeManagement/credentialsId", Deprecated: false}}},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "description",
+						Name:        "description",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "applicationDescription"},},
-						Default:   `Deployed with Piper based on SAP Fiori tools`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "applicationDescription"}},
+						Default:     `Deployed with Piper based on SAP Fiori tools`,
 					},
 					{
-						Name:      "endpoint",
+						Name:        "endpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/endpoint"},{Name: "changeManagement/cts/endpoint"},},
-						Default:   os.Getenv("PIPER_endpoint"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/endpoint"}, {Name: "changeManagement/cts/endpoint"}},
+						Default:     os.Getenv("PIPER_endpoint"),
 					},
 					{
-						Name:      "client",
+						Name:        "client",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/client"},{Name: "changeManagement/cts/client"},},
-						Default:   os.Getenv("PIPER_client"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/client"}, {Name: "changeManagement/cts/client"}},
+						Default:     os.Getenv("PIPER_client"),
 					},
 					{
-						Name:      "username",
+						Name:        "username",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_username"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_username"),
 					},
 					{
-						Name:      "password",
+						Name:        "password",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_password"),
+						Scope:       []string{"PARAMETERS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_password"),
 					},
 					{
-						Name:      "applicationName",
+						Name:        "applicationName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_applicationName"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_applicationName"),
 					},
 					{
-						Name:      "abapPackage",
+						Name:        "abapPackage",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_abapPackage"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_abapPackage"),
 					},
 					{
-						Name:      "osDeployUser",
+						Name:        "osDeployUser",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/osDeployUser"},{Name: "changeManagement/cts/osDeployUser"},},
-						Default:   `node`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/osDeployUser"}, {Name: "changeManagement/cts/osDeployUser"}},
+						Default:     `node`,
 					},
 					{
-						Name:      "deployConfigFile",
+						Name:        "deployConfigFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/deployConfigFile"},{Name: "changeManagement/cts/deployConfigFile"},},
-						Default:   `ui5-deploy.yaml`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/deployConfigFile"}, {Name: "changeManagement/cts/deployConfigFile"}},
+						Default:     `ui5-deploy.yaml`,
 					},
 					{
-						Name:      "transportRequestId",
+						Name: "transportRequestId",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/transportRequestId",
 							},
-                        },
-						Scope:     []string{"PARAMETERS",},
+						},
+						Scope:     []string{"PARAMETERS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_transportRequestId"),
 					},
 					{
-						Name:      "deployToolDependencies",
+						Name:        "deployToolDependencies",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/deployToolDependencies"},{Name: "changeManagement/cts/deployToolDependencies"},},
-						Default:   []string{`@ui5/cli`, `@sap/ux-ui5-tooling`, `@ui5/logger`, `@ui5/fs`},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/deployToolDependencies"}, {Name: "changeManagement/cts/deployToolDependencies"}},
+						Default:     []string{`@ui5/cli`, `@sap/ux-ui5-tooling`, `@ui5/logger`, `@ui5/fs`},
 					},
 					{
-						Name:      "npmInstallOpts",
+						Name:        "npmInstallOpts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/npmInstallOpts"},{Name: "changeManagement/cts/npmInstallOpts"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/npmInstallOpts"}, {Name: "changeManagement/cts/npmInstallOpts"}},
+						Default:     []string{},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "fiori-client",Image: "node",
-				}, 
+				{Name: "fiori-client", Image: "node"},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -316,7 +312,7 @@ func transportRequestUploadCTSMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/transportRequestId",},
+							{"name": "custom/transportRequestId"},
 						},
 					},
 				},

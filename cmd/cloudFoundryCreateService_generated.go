@@ -9,30 +9,28 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type cloudFoundryCreateServiceOptions struct {
-	CfAPIEndpoint string `json:"cfApiEndpoint,omitempty"`
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	CfOrg string `json:"cfOrg,omitempty"`
-	CfSpace string `json:"cfSpace,omitempty"`
-	CfService string `json:"cfService,omitempty"`
-	CfServicePlan string `json:"cfServicePlan,omitempty"`
-	CfServiceInstanceName string `json:"cfServiceInstanceName,omitempty"`
-	CfServiceBroker string `json:"cfServiceBroker,omitempty"`
-	CfCreateServiceConfig string `json:"cfCreateServiceConfig,omitempty"`
-	CfServiceTags string `json:"cfServiceTags,omitempty"`
-	ServiceManifest string `json:"serviceManifest,omitempty"`
-	ManifestVariables []string `json:"manifestVariables,omitempty"`
+	CfAPIEndpoint          string   `json:"cfApiEndpoint,omitempty"`
+	Username               string   `json:"username,omitempty"`
+	Password               string   `json:"password,omitempty"`
+	CfOrg                  string   `json:"cfOrg,omitempty"`
+	CfSpace                string   `json:"cfSpace,omitempty"`
+	CfService              string   `json:"cfService,omitempty"`
+	CfServicePlan          string   `json:"cfServicePlan,omitempty"`
+	CfServiceInstanceName  string   `json:"cfServiceInstanceName,omitempty"`
+	CfServiceBroker        string   `json:"cfServiceBroker,omitempty"`
+	CfCreateServiceConfig  string   `json:"cfCreateServiceConfig,omitempty"`
+	CfServiceTags          string   `json:"cfServiceTags,omitempty"`
+	ServiceManifest        string   `json:"serviceManifest,omitempty"`
+	ManifestVariables      []string `json:"manifestVariables,omitempty"`
 	ManifestVariablesFiles []string `json:"manifestVariablesFiles,omitempty"`
 }
-
-
 
 // CloudFoundryCreateServiceCommand Creates one or multiple Services in Cloud Foundry
 func CloudFoundryCreateServiceCommand() *cobra.Command {
@@ -115,10 +113,10 @@ Please provide either of the following options:
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			cloudFoundryCreateService(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -157,178 +155,174 @@ func addCloudFoundryCreateServiceFlags(cmd *cobra.Command, stepConfig *cloudFoun
 func cloudFoundryCreateServiceMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "cloudFoundryCreateService",
-			Aliases: []config.Alias{},
+			Name:        "cloudFoundryCreateService",
+			Aliases:     []config.Alias{},
 			Description: "Creates one or multiple Services in Cloud Foundry",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "cfCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate to the Cloud Foundry API.",Type: "jenkins",Aliases: []config.Alias{ {Name: "cloudFoundry/credentialsId", Deprecated: false}, },
-					}, 
+					{Name: "cfCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate to the Cloud Foundry API.", Type: "jenkins", Aliases: []config.Alias{{Name: "cloudFoundry/credentialsId", Deprecated: false}}},
 				},
 				Resources: []config.StepResources{
-					{Name: "deployDescriptor",Type: "stash",
-					},
+					{Name: "deployDescriptor", Type: "stash"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "cfApiEndpoint",
+						Name:        "cfApiEndpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/apiEndpoint"},},
-						Default:   `https://api.cf.eu10.hana.ondemand.com`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/apiEndpoint"}},
+						Default:     `https://api.cf.eu10.hana.ondemand.com`,
 					},
 					{
-						Name:      "username",
+						Name: "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"cfCredentialsId",
+								Name:  "cfCredentialsId",
 								Param: "username",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        
+
 							{
-								Name:"cloudfoundryVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "cloudfoundryVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "cloudfoundry-$(org)-$(space)",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name:      "password",
+						Name: "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"cfCredentialsId",
+								Name:  "cfCredentialsId",
 								Param: "password",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        
+
 							{
-								Name:"cloudfoundryVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "cloudfoundryVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "cloudfoundry-$(org)-$(space)",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:      "cfOrg",
+						Name:        "cfOrg",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/org"},},
-						Default:   os.Getenv("PIPER_cfOrg"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/org"}},
+						Default:     os.Getenv("PIPER_cfOrg"),
 					},
 					{
-						Name:      "cfSpace",
+						Name:        "cfSpace",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/space"},},
-						Default:   os.Getenv("PIPER_cfSpace"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/space"}},
+						Default:     os.Getenv("PIPER_cfSpace"),
 					},
 					{
-						Name:      "cfService",
+						Name:        "cfService",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/service"},},
-						Default:   os.Getenv("PIPER_cfService"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/service"}},
+						Default:     os.Getenv("PIPER_cfService"),
 					},
 					{
-						Name:      "cfServicePlan",
+						Name:        "cfServicePlan",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/servicePlan"},},
-						Default:   os.Getenv("PIPER_cfServicePlan"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/servicePlan"}},
+						Default:     os.Getenv("PIPER_cfServicePlan"),
 					},
 					{
-						Name:      "cfServiceInstanceName",
+						Name:        "cfServiceInstanceName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/serviceInstanceName"},},
-						Default:   os.Getenv("PIPER_cfServiceInstanceName"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/serviceInstanceName"}},
+						Default:     os.Getenv("PIPER_cfServiceInstanceName"),
 					},
 					{
-						Name:      "cfServiceBroker",
+						Name:        "cfServiceBroker",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/serviceBroker"},},
-						Default:   os.Getenv("PIPER_cfServiceBroker"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/serviceBroker"}},
+						Default:     os.Getenv("PIPER_cfServiceBroker"),
 					},
 					{
-						Name:      "cfCreateServiceConfig",
+						Name:        "cfCreateServiceConfig",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/createServiceConfig"},},
-						Default:   os.Getenv("PIPER_cfCreateServiceConfig"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/createServiceConfig"}},
+						Default:     os.Getenv("PIPER_cfCreateServiceConfig"),
 					},
 					{
-						Name:      "cfServiceTags",
+						Name:        "cfServiceTags",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/serviceTags"},},
-						Default:   os.Getenv("PIPER_cfServiceTags"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/serviceTags"}},
+						Default:     os.Getenv("PIPER_cfServiceTags"),
 					},
 					{
-						Name:      "serviceManifest",
+						Name:        "serviceManifest",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/serviceManifest"},{Name: "cfServiceManifest"},},
-						Default:   `service-manifest.yml`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/serviceManifest"}, {Name: "cfServiceManifest"}},
+						Default:     `service-manifest.yml`,
 					},
 					{
-						Name:      "manifestVariables",
+						Name:        "manifestVariables",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/manifestVariables"},{Name: "cfManifestVariables"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/manifestVariables"}, {Name: "cfManifestVariables"}},
+						Default:     []string{},
 					},
 					{
-						Name:      "manifestVariablesFiles",
+						Name:        "manifestVariablesFiles",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/manifestVariablesFiles"},{Name: "cfManifestVariablesFiles"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/manifestVariablesFiles"}, {Name: "cfManifestVariablesFiles"}},
+						Default:     []string{},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "cf",Image: "ppiper/cf-cli:7",
-				}, 
+				{Name: "cf", Image: "ppiper/cf-cli:7"},
 			},
-			
 		},
 	}
 	return theMetaData

@@ -5,33 +5,32 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
-	"path/filepath"
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/bmatcuk/doublestar"
 	"github.com/SAP/jenkins-library/pkg/gcs"
+	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
+	"github.com/bmatcuk/doublestar"
 	"github.com/spf13/cobra"
 )
 
 type newmanExecuteOptions struct {
-	NewmanCollection string `json:"newmanCollection,omitempty"`
-	NewmanRunCommand string `json:"newmanRunCommand,omitempty"`
-	RunOptions []string `json:"runOptions,omitempty"`
-	NewmanInstallCommand string `json:"newmanInstallCommand,omitempty"`
-	NewmanEnvironment string `json:"newmanEnvironment,omitempty"`
-	NewmanGlobals string `json:"newmanGlobals,omitempty"`
-	FailOnError bool `json:"failOnError,omitempty"`
-	CfAppsWithSecrets []string `json:"cfAppsWithSecrets,omitempty"`
+	NewmanCollection     string   `json:"newmanCollection,omitempty"`
+	NewmanRunCommand     string   `json:"newmanRunCommand,omitempty"`
+	RunOptions           []string `json:"runOptions,omitempty"`
+	NewmanInstallCommand string   `json:"newmanInstallCommand,omitempty"`
+	NewmanEnvironment    string   `json:"newmanEnvironment,omitempty"`
+	NewmanGlobals        string   `json:"newmanGlobals,omitempty"`
+	FailOnError          bool     `json:"failOnError,omitempty"`
+	CfAppsWithSecrets    []string `json:"cfAppsWithSecrets,omitempty"`
 }
-
 
 type newmanExecuteInflux struct {
 	step_data struct {
@@ -44,13 +43,13 @@ type newmanExecuteInflux struct {
 }
 
 func (i *newmanExecuteInflux) persist(path, resourceName string) {
-	measurementContent := []struct{
+	measurementContent := []struct {
 		measurement string
 		valType     string
 		name        string
 		value       interface{}
 	}{
-		{valType: config.InfluxField, measurement: "step_data" , name: "newman", value: i.step_data.fields.newman},
+		{valType: config.InfluxField, measurement: "step_data", name: "newman", value: i.step_data.fields.newman},
 	}
 
 	errCount := 0
@@ -103,7 +102,6 @@ func (p *newmanExecuteReports) persist(stepConfig newmanExecuteOptions, gcpJsonK
 	}
 }
 
-
 // NewmanExecuteCommand Installs newman and executes specified newman collections.
 func NewmanExecuteCommand() *cobra.Command {
 	const STEP_NAME = "newmanExecute"
@@ -120,7 +118,7 @@ func NewmanExecuteCommand() *cobra.Command {
 	var createNewmanExecuteCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Installs newman and executes specified newman collections.",
-		Long: `This script executes [Postman](https://www.getpostman.com) tests from a collection via the [Newman](https://www.getpostman.com/docs/v6/postman/collection_runs/command_line_integration_with_newman) command line tool.`,
+		Long:  `This script executes [Postman](https://www.getpostman.com) tests from a collection via the [Newman](https://www.getpostman.com/docs/v6/postman/collection_runs/command_line_integration_with_newman) command line tool.`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -165,7 +163,7 @@ func NewmanExecuteCommand() *cobra.Command {
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
 				influx.persist(GeneralConfig.EnvRootPath, "influx")
-				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -181,10 +179,10 @@ func NewmanExecuteCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			newmanExecute(stepConfig, &stepTelemetryData, &influx)
 			stepTelemetryData.ErrorCode = "0"
@@ -212,94 +210,92 @@ func addNewmanExecuteFlags(cmd *cobra.Command, stepConfig *newmanExecuteOptions)
 func newmanExecuteMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "newmanExecute",
-			Aliases: []config.Alias{},
+			Name:        "newmanExecute",
+			Aliases:     []config.Alias{},
 			Description: "Installs newman and executes specified newman collections.",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Resources: []config.StepResources{
-					{Name: "tests",Type: "stash",
-					},
+					{Name: "tests", Type: "stash"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "newmanCollection",
+						Name:        "newmanCollection",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `**/*.postman_collection.json`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `**/*.postman_collection.json`,
 					},
 					{
-						Name:      "newmanRunCommand",
+						Name:        "newmanRunCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_newmanRunCommand"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_newmanRunCommand"),
 					},
 					{
-						Name:      "runOptions",
+						Name:        "runOptions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{`run`, `{{.NewmanCollection}}`, `--reporters`, `cli,junit,html`, `--reporter-junit-export`, `target/newman/TEST-{{.CollectionDisplayName}}.xml`, `--reporter-html-export`, `target/newman/TEST-{{.CollectionDisplayName}}.html`},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{`run`, `{{.NewmanCollection}}`, `--reporters`, `cli,junit,html`, `--reporter-junit-export`, `target/newman/TEST-{{.CollectionDisplayName}}.xml`, `--reporter-html-export`, `target/newman/TEST-{{.CollectionDisplayName}}.html`},
 					},
 					{
-						Name:      "newmanInstallCommand",
+						Name:        "newmanInstallCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `npm install newman newman-reporter-html --global --quiet`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `npm install newman newman-reporter-html --global --quiet`,
 					},
 					{
-						Name:      "newmanEnvironment",
+						Name:        "newmanEnvironment",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_newmanEnvironment"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_newmanEnvironment"),
 					},
 					{
-						Name:      "newmanGlobals",
+						Name:        "newmanGlobals",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_newmanGlobals"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_newmanGlobals"),
 					},
 					{
-						Name:      "failOnError",
+						Name:        "failOnError",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   true,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     true,
 					},
 					{
-						Name:      "cfAppsWithSecrets",
+						Name:        "cfAppsWithSecrets",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "newman",Image: "node:lts-stretch",WorkingDir: "/home/node",
-				}, 
+				{Name: "newman", Image: "node:lts-stretch", WorkingDir: "/home/node"},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -307,16 +303,16 @@ func newmanExecuteMetadata() config.StepData {
 						Name: "influx",
 						Type: "influx",
 						Parameters: []map[string]interface{}{
-							{"name": "step_data","fields": []map[string]string{ {"name": "newman"}, },},
+							{"name": "step_data", "fields": []map[string]string{{"name": "newman"}}},
 						},
 					},
 					{
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/TEST-*.xml","type": "acceptance-test",},
-							{"filePattern": "**/requirement.mapping","type": "requirement-mapping",},
-							{"filePattern": "**/delivery.mapping","type": "delivery-mapping",},
+							{"filePattern": "**/TEST-*.xml", "type": "acceptance-test"},
+							{"filePattern": "**/requirement.mapping", "type": "requirement-mapping"},
+							{"filePattern": "**/delivery.mapping", "type": "delivery-mapping"},
 						},
 					},
 				},

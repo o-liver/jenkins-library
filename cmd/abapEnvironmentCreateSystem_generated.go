@@ -9,33 +9,31 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type abapEnvironmentCreateSystemOptions struct {
-	CfAPIEndpoint string `json:"cfApiEndpoint,omitempty"`
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	CfOrg string `json:"cfOrg,omitempty"`
-	CfSpace string `json:"cfSpace,omitempty"`
-	CfService string `json:"cfService,omitempty"`
-	CfServicePlan string `json:"cfServicePlan,omitempty"`
-	CfServiceInstance string `json:"cfServiceInstance,omitempty"`
-	ServiceManifest string `json:"serviceManifest,omitempty"`
-	AbapSystemAdminEmail string `json:"abapSystemAdminEmail,omitempty"`
-	AbapSystemDescription string `json:"abapSystemDescription,omitempty"`
-	AbapSystemIsDevelopmentAllowed bool `json:"abapSystemIsDevelopmentAllowed,omitempty"`
-	AbapSystemID string `json:"abapSystemID,omitempty"`
-	AbapSystemSizeOfPersistence int `json:"abapSystemSizeOfPersistence,omitempty"`
-	AbapSystemSizeOfRuntime int `json:"abapSystemSizeOfRuntime,omitempty"`
-	AddonDescriptorFileName string `json:"addonDescriptorFileName,omitempty"`
-	IncludeAddon bool `json:"includeAddon,omitempty"`
+	CfAPIEndpoint                  string `json:"cfApiEndpoint,omitempty"`
+	Username                       string `json:"username,omitempty"`
+	Password                       string `json:"password,omitempty"`
+	CfOrg                          string `json:"cfOrg,omitempty"`
+	CfSpace                        string `json:"cfSpace,omitempty"`
+	CfService                      string `json:"cfService,omitempty"`
+	CfServicePlan                  string `json:"cfServicePlan,omitempty"`
+	CfServiceInstance              string `json:"cfServiceInstance,omitempty"`
+	ServiceManifest                string `json:"serviceManifest,omitempty"`
+	AbapSystemAdminEmail           string `json:"abapSystemAdminEmail,omitempty"`
+	AbapSystemDescription          string `json:"abapSystemDescription,omitempty"`
+	AbapSystemIsDevelopmentAllowed bool   `json:"abapSystemIsDevelopmentAllowed,omitempty"`
+	AbapSystemID                   string `json:"abapSystemID,omitempty"`
+	AbapSystemSizeOfPersistence    int    `json:"abapSystemSizeOfPersistence,omitempty"`
+	AbapSystemSizeOfRuntime        int    `json:"abapSystemSizeOfRuntime,omitempty"`
+	AddonDescriptorFileName        string `json:"addonDescriptorFileName,omitempty"`
+	IncludeAddon                   bool   `json:"includeAddon,omitempty"`
 }
-
-
 
 // AbapEnvironmentCreateSystemCommand Creates a SAP Cloud Platform ABAP Environment system (aka Steampunk system)
 func AbapEnvironmentCreateSystemCommand() *cobra.Command {
@@ -51,7 +49,7 @@ func AbapEnvironmentCreateSystemCommand() *cobra.Command {
 	var createAbapEnvironmentCreateSystemCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Creates a SAP Cloud Platform ABAP Environment system (aka Steampunk system)",
-		Long: `This step creates a SAP Cloud Platform ABAP Environment system (aka Steampunk system) via the cloud foundry command line interface (cf CLI). This can be done by providing a service manifest as a configuration file (parameter ` + "`" + `serviceManifest` + "`" + `) or by passing the configuration values directly via the other parameters of this step.`,
+		Long:  `This step creates a SAP Cloud Platform ABAP Environment system (aka Steampunk system) via the cloud foundry command line interface (cf CLI). This can be done by providing a service manifest as a configuration file (parameter ` + "`" + `serviceManifest` + "`" + `) or by passing the configuration values directly via the other parameters of this step.`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -112,10 +110,10 @@ func AbapEnvironmentCreateSystemCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			abapEnvironmentCreateSystem(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -157,201 +155,198 @@ func addAbapEnvironmentCreateSystemFlags(cmd *cobra.Command, stepConfig *abapEnv
 func abapEnvironmentCreateSystemMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "abapEnvironmentCreateSystem",
-			Aliases: []config.Alias{},
+			Name:        "abapEnvironmentCreateSystem",
+			Aliases:     []config.Alias{},
 			Description: "Creates a SAP Cloud Platform ABAP Environment system (aka Steampunk system)",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "cfCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate to the Cloud Foundry API.",Type: "jenkins",Aliases: []config.Alias{ {Name: "cloudFoundry/credentialsId", Deprecated: false}, },
-					}, 
+					{Name: "cfCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate to the Cloud Foundry API.", Type: "jenkins", Aliases: []config.Alias{{Name: "cloudFoundry/credentialsId", Deprecated: false}}},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "cfApiEndpoint",
+						Name:        "cfApiEndpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/apiEndpoint"},},
-						Default:   `https://api.cf.eu10.hana.ondemand.com`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/apiEndpoint"}},
+						Default:     `https://api.cf.eu10.hana.ondemand.com`,
 					},
 					{
-						Name:      "username",
+						Name: "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"cfCredentialsId",
+								Name:  "cfCredentialsId",
 								Param: "username",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        
+
 							{
-								Name:"cloudfoundryVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "cloudfoundryVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "cloudfoundry-$(org)-$(space)",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name:      "password",
+						Name: "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"cfCredentialsId",
+								Name:  "cfCredentialsId",
 								Param: "password",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        
+
 							{
-								Name:"cloudfoundryVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "cloudfoundryVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "cloudfoundry-$(org)-$(space)",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:      "cfOrg",
+						Name:        "cfOrg",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/org"},},
-						Default:   os.Getenv("PIPER_cfOrg"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/org"}},
+						Default:     os.Getenv("PIPER_cfOrg"),
 					},
 					{
-						Name:      "cfSpace",
+						Name:        "cfSpace",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/space"},},
-						Default:   os.Getenv("PIPER_cfSpace"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/space"}},
+						Default:     os.Getenv("PIPER_cfSpace"),
 					},
 					{
-						Name:      "cfService",
+						Name:        "cfService",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/service"},},
-						Default:   os.Getenv("PIPER_cfService"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/service"}},
+						Default:     os.Getenv("PIPER_cfService"),
 					},
 					{
-						Name:      "cfServicePlan",
+						Name:        "cfServicePlan",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/servicePlan"},},
-						Default:   os.Getenv("PIPER_cfServicePlan"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/servicePlan"}},
+						Default:     os.Getenv("PIPER_cfServicePlan"),
 					},
 					{
-						Name:      "cfServiceInstance",
+						Name:        "cfServiceInstance",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/serviceInstance"},},
-						Default:   os.Getenv("PIPER_cfServiceInstance"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/serviceInstance"}},
+						Default:     os.Getenv("PIPER_cfServiceInstance"),
 					},
 					{
-						Name:      "serviceManifest",
+						Name:        "serviceManifest",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "cloudFoundry/serviceManifest"},{Name: "cfServiceManifest"},},
-						Default:   os.Getenv("PIPER_serviceManifest"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "cloudFoundry/serviceManifest"}, {Name: "cfServiceManifest"}},
+						Default:     os.Getenv("PIPER_serviceManifest"),
 					},
 					{
-						Name:      "abapSystemAdminEmail",
+						Name:        "abapSystemAdminEmail",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_abapSystemAdminEmail"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_abapSystemAdminEmail"),
 					},
 					{
-						Name:      "abapSystemDescription",
+						Name:        "abapSystemDescription",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `Test system created by an automated pipeline`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `Test system created by an automated pipeline`,
 					},
 					{
-						Name:      "abapSystemIsDevelopmentAllowed",
+						Name:        "abapSystemIsDevelopmentAllowed",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   true,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     true,
 					},
 					{
-						Name:      "abapSystemID",
+						Name:        "abapSystemID",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `H02`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `H02`,
 					},
 					{
-						Name:      "abapSystemSizeOfPersistence",
+						Name:        "abapSystemSizeOfPersistence",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "int",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   0,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "int",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     0,
 					},
 					{
-						Name:      "abapSystemSizeOfRuntime",
+						Name:        "abapSystemSizeOfRuntime",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "int",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   0,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "int",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     0,
 					},
 					{
-						Name:      "addonDescriptorFileName",
+						Name:        "addonDescriptorFileName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_addonDescriptorFileName"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_addonDescriptorFileName"),
 					},
 					{
-						Name:      "includeAddon",
+						Name:        "includeAddon",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   false,
+						Scope:       []string{"PARAMETERS", "STAGES"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     false,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "cf",Image: "ppiper/cf-cli:7",
-				}, 
+				{Name: "cf", Image: "ppiper/cf-cli:7"},
 			},
-			
 		},
 	}
 	return theMetaData

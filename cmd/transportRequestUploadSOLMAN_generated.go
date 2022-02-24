@@ -11,36 +11,35 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type transportRequestUploadSOLMANOptions struct {
-	Endpoint string `json:"endpoint,omitempty"`
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	ApplicationID string `json:"applicationId,omitempty"`
-	ChangeDocumentID string `json:"changeDocumentId,omitempty"`
-	TransportRequestID string `json:"transportRequestId,omitempty"`
-	FilePath string `json:"filePath,omitempty"`
-	CmClientOpts []string `json:"cmClientOpts,omitempty"`
+	Endpoint           string   `json:"endpoint,omitempty"`
+	Username           string   `json:"username,omitempty"`
+	Password           string   `json:"password,omitempty"`
+	ApplicationID      string   `json:"applicationId,omitempty"`
+	ChangeDocumentID   string   `json:"changeDocumentId,omitempty"`
+	TransportRequestID string   `json:"transportRequestId,omitempty"`
+	FilePath           string   `json:"filePath,omitempty"`
+	CmClientOpts       []string `json:"cmClientOpts,omitempty"`
 }
-
 
 type transportRequestUploadSOLMANCommonPipelineEnvironment struct {
 	custom struct {
-		changeDocumentID string
+		changeDocumentID   string
 		transportRequestID string
 	}
 }
 
 func (p *transportRequestUploadSOLMANCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct{
+	content := []struct {
 		category string
-		name string
-		value interface{}
+		name     string
+		value    interface{}
 	}{
 		{category: "custom", name: "changeDocumentId", value: p.custom.changeDocumentID},
 		{category: "custom", name: "transportRequestId", value: p.custom.transportRequestID},
@@ -58,7 +57,6 @@ func (p *transportRequestUploadSOLMANCommonPipelineEnvironment) persist(path, re
 		log.Entry().Error("failed to persist Piper environment")
 	}
 }
-
 
 // TransportRequestUploadSOLMANCommand Uploads a specified file into a given transport via Solution Manager
 func TransportRequestUploadSOLMANCommand() *cobra.Command {
@@ -139,10 +137,10 @@ The application ID specifies how the file needs to be handled on server side.`,
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			transportRequestUploadSOLMAN(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -178,121 +176,119 @@ func addTransportRequestUploadSOLMANFlags(cmd *cobra.Command, stepConfig *transp
 func transportRequestUploadSOLMANMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "transportRequestUploadSOLMAN",
-			Aliases: []config.Alias{{Name: "transportRequestUploadFile", Deprecated: false},},
+			Name:        "transportRequestUploadSOLMAN",
+			Aliases:     []config.Alias{{Name: "transportRequestUploadFile", Deprecated: false}},
 			Description: "Uploads a specified file into a given transport via Solution Manager",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "uploadCredentialsId",Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate against the ABAP backend",Type: "jenkins",Aliases: []config.Alias{ {Name: "changeManagement/credentialsId", Deprecated: false}, },
-					}, 
+					{Name: "uploadCredentialsId", Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate against the ABAP backend", Type: "jenkins", Aliases: []config.Alias{{Name: "changeManagement/credentialsId", Deprecated: false}}},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "endpoint",
+						Name:        "endpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "changeManagement/endpoint"},},
-						Default:   os.Getenv("PIPER_endpoint"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "changeManagement/endpoint"}},
+						Default:     os.Getenv("PIPER_endpoint"),
 					},
 					{
-						Name:      "username",
+						Name: "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"uploadCredentialsId",
+								Name:  "uploadCredentialsId",
 								Param: "username",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name:      "password",
+						Name: "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"uploadCredentialsId",
+								Name:  "uploadCredentialsId",
 								Param: "password",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        },
-						Scope:     []string{"PARAMETERS",},
+						},
+						Scope:     []string{"PARAMETERS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:      "applicationId",
+						Name:        "applicationId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_applicationId"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_applicationId"),
 					},
 					{
-						Name:      "changeDocumentId",
+						Name: "changeDocumentId",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/changeDocumentId",
 							},
-                        },
-						Scope:     []string{"PARAMETERS",},
+						},
+						Scope:     []string{"PARAMETERS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_changeDocumentId"),
 					},
 					{
-						Name:      "transportRequestId",
+						Name: "transportRequestId",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/transportRequestId",
 							},
-                        },
-						Scope:     []string{"PARAMETERS",},
+						},
+						Scope:     []string{"PARAMETERS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_transportRequestId"),
 					},
 					{
-						Name:      "filePath",
+						Name: "filePath",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "mtarFilePath",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_filePath"),
 					},
 					{
-						Name:      "cmClientOpts",
+						Name:        "cmClientOpts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "[]string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "clientOpts"},{Name: "changeManagement/clientOpts"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "[]string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "clientOpts"}, {Name: "changeManagement/clientOpts"}},
+						Default:     []string{},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "cmclient",Image: "ppiper/cm-client",
-				}, 
+				{Name: "cmclient", Image: "ppiper/cm-client"},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -300,8 +296,8 @@ func transportRequestUploadSOLMANMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/changeDocumentId",},
-							{"name": "custom/transportRequestId",},
+							{"name": "custom/changeDocumentId"},
+							{"name": "custom/transportRequestId"},
 						},
 					},
 				},

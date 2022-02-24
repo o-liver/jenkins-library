@@ -9,8 +9,8 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
@@ -18,8 +18,6 @@ import (
 type shellExecuteOptions struct {
 	Sources []string `json:"sources,omitempty"`
 }
-
-
 
 // ShellExecuteCommand Step executes defined script
 func ShellExecuteCommand() *cobra.Command {
@@ -35,7 +33,7 @@ func ShellExecuteCommand() *cobra.Command {
 	var createShellExecuteCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Step executes defined script",
-		Long: `Step executes defined script with using test Vault credentials`,
+		Long:  `Step executes defined script with using test Vault credentials`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -94,10 +92,10 @@ func ShellExecuteCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			shellExecute(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -118,29 +116,27 @@ func addShellExecuteFlags(cmd *cobra.Command, stepConfig *shellExecuteOptions) {
 func shellExecuteMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "shellExecute",
-			Aliases: []config.Alias{},
+			Name:        "shellExecute",
+			Aliases:     []config.Alias{},
 			Description: "Step executes defined script",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:      "sources",
+						Name:        "sources",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "shell",Image: "node:lts-stretch",WorkingDir: "/home/node",
-				}, 
+				{Name: "shell", Image: "node:lts-stretch", WorkingDir: "/home/node"},
 			},
-			
 		},
 	}
 	return theMetaData

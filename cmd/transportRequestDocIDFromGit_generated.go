@@ -11,18 +11,17 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type transportRequestDocIDFromGitOptions struct {
-	GitFrom string `json:"gitFrom,omitempty"`
-	GitTo string `json:"gitTo,omitempty"`
+	GitFrom             string `json:"gitFrom,omitempty"`
+	GitTo               string `json:"gitTo,omitempty"`
 	ChangeDocumentLabel string `json:"changeDocumentLabel,omitempty"`
 }
-
 
 type transportRequestDocIDFromGitCommonPipelineEnvironment struct {
 	custom struct {
@@ -31,10 +30,10 @@ type transportRequestDocIDFromGitCommonPipelineEnvironment struct {
 }
 
 func (p *transportRequestDocIDFromGitCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct{
+	content := []struct {
 		category string
-		name string
-		value interface{}
+		name     string
+		value    interface{}
 	}{
 		{category: "custom", name: "changeDocumentId", value: p.custom.changeDocumentID},
 	}
@@ -51,7 +50,6 @@ func (p *transportRequestDocIDFromGitCommonPipelineEnvironment) persist(path, re
 		log.Entry().Error("failed to persist Piper environment")
 	}
 }
-
 
 // TransportRequestDocIDFromGitCommand Retrieves change document ID from Git repository
 func TransportRequestDocIDFromGitCommand() *cobra.Command {
@@ -129,10 +127,10 @@ It is primarily made for the transportRequestUploadSOLMAN step to provide the ch
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			transportRequestDocIDFromGit(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -155,39 +153,39 @@ func addTransportRequestDocIDFromGitFlags(cmd *cobra.Command, stepConfig *transp
 func transportRequestDocIDFromGitMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "transportRequestDocIDFromGit",
-			Aliases: []config.Alias{},
+			Name:        "transportRequestDocIDFromGit",
+			Aliases:     []config.Alias{},
 			Description: "Retrieves change document ID from Git repository",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:      "gitFrom",
+						Name:        "gitFrom",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/git/from"},},
-						Default:   `origin/master`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/git/from"}},
+						Default:     `origin/master`,
 					},
 					{
-						Name:      "gitTo",
+						Name:        "gitTo",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/git/to"},},
-						Default:   `HEAD`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/git/to"}},
+						Default:     `HEAD`,
 					},
 					{
-						Name:      "changeDocumentLabel",
+						Name:        "changeDocumentLabel",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/changeDocumentLabel"},},
-						Default:   `ChangeDocument`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/changeDocumentLabel"}},
+						Default:     `ChangeDocument`,
 					},
 				},
 			},
@@ -197,7 +195,7 @@ func transportRequestDocIDFromGitMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/changeDocumentId",},
+							{"name": "custom/changeDocumentId"},
 						},
 					},
 				},

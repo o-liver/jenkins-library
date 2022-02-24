@@ -1,12 +1,13 @@
 package cmd
 
 import (
+	"github.com/SAP/jenkins-library/pkg/ans"
+	"github.com/SAP/jenkins-library/pkg/cpi"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 
-	"github.com/SAP/jenkins-library/pkg/cpi"
 	piperhttp "github.com/SAP/jenkins-library/pkg/http"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/telemetry"
@@ -38,10 +39,24 @@ func runApiKeyValueMapDownload(config *apiKeyValueMapDownloadOptions, telemetryD
 		return err
 	}
 	downloadkeyValueMapArtifactURL := "" //fmt.Sprintf("%s/apiportal/api/1.0/Management.svc/KeyMapEntries('%s')", serviceKey.Host, config.KeyValueMapName)
-	err = httpClient.SetBearerToken(serviceKey.OauthUrl, serviceKey.ClientId, serviceKey.ClientSecret)
+
+	//err = httpClient.SetBearerToken(serviceKey.OauthUrl, serviceKey.ClientId, serviceKey.ClientSecret)
+	//if err != nil {
+	//return errors.Wrap(err, "failed to fetch Bearer Token")
+	//}
+	var ansClient *ans.ANS
+	ansClient = &ans.ANS{httpClient}
+
+	//ansClient.ansClient = &piperhttp.Client{}
+	err = httpClient.SetBearerToken(serviceKey.OauthUrl,
+		serviceKey.ClientId,
+		serviceKey.ClientSecret)
 	if err != nil {
 		return errors.Wrap(err, "failed to fetch Bearer Token")
 	}
+
+	ansClient.Send()
+
 	httpMethod := http.MethodGet
 	downloadResp, httpErr := httpClient.SendRequest(httpMethod, downloadkeyValueMapArtifactURL, nil, header, nil)
 	if httpErr != nil {

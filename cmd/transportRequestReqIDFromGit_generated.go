@@ -11,18 +11,17 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type transportRequestReqIDFromGitOptions struct {
-	GitFrom string `json:"gitFrom,omitempty"`
-	GitTo string `json:"gitTo,omitempty"`
+	GitFrom               string `json:"gitFrom,omitempty"`
+	GitTo                 string `json:"gitTo,omitempty"`
 	TransportRequestLabel string `json:"transportRequestLabel,omitempty"`
 }
-
 
 type transportRequestReqIDFromGitCommonPipelineEnvironment struct {
 	custom struct {
@@ -31,10 +30,10 @@ type transportRequestReqIDFromGitCommonPipelineEnvironment struct {
 }
 
 func (p *transportRequestReqIDFromGitCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct{
+	content := []struct {
 		category string
-		name string
-		value interface{}
+		name     string
+		value    interface{}
 	}{
 		{category: "custom", name: "transportRequestId", value: p.custom.transportRequestID},
 	}
@@ -51,7 +50,6 @@ func (p *transportRequestReqIDFromGitCommonPipelineEnvironment) persist(path, re
 		log.Entry().Error("failed to persist Piper environment")
 	}
 }
-
 
 // TransportRequestReqIDFromGitCommand Retrieves the transport request ID from Git repository
 func TransportRequestReqIDFromGitCommand() *cobra.Command {
@@ -129,10 +127,10 @@ It is primarily made for the transport request upload steps to provide the trans
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			transportRequestReqIDFromGit(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -155,39 +153,39 @@ func addTransportRequestReqIDFromGitFlags(cmd *cobra.Command, stepConfig *transp
 func transportRequestReqIDFromGitMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "transportRequestReqIDFromGit",
-			Aliases: []config.Alias{},
+			Name:        "transportRequestReqIDFromGit",
+			Aliases:     []config.Alias{},
 			Description: "Retrieves the transport request ID from Git repository",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:      "gitFrom",
+						Name:        "gitFrom",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/git/from"},},
-						Default:   `origin/master`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/git/from"}},
+						Default:     `origin/master`,
 					},
 					{
-						Name:      "gitTo",
+						Name:        "gitTo",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/git/to"},},
-						Default:   `HEAD`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/git/to"}},
+						Default:     `HEAD`,
 					},
 					{
-						Name:      "transportRequestLabel",
+						Name:        "transportRequestLabel",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "changeManagement/transportRequestLabel"},},
-						Default:   `TransportRequest`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "changeManagement/transportRequestLabel"}},
+						Default:     `TransportRequest`,
 					},
 				},
 			},
@@ -197,7 +195,7 @@ func transportRequestReqIDFromGitMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/transportRequestId",},
+							{"name": "custom/transportRequestId"},
 						},
 					},
 				},

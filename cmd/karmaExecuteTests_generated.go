@@ -10,21 +10,20 @@ import (
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/bmatcuk/doublestar"
 	"github.com/SAP/jenkins-library/pkg/gcs"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
+	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
+	"github.com/bmatcuk/doublestar"
 	"github.com/spf13/cobra"
 )
 
 type karmaExecuteTestsOptions struct {
-	InstallCommand string `json:"installCommand,omitempty"`
-	Modules []string `json:"modules,omitempty"`
-	RunCommand string `json:"runCommand,omitempty"`
+	InstallCommand string   `json:"installCommand,omitempty"`
+	Modules        []string `json:"modules,omitempty"`
+	RunCommand     string   `json:"runCommand,omitempty"`
 }
-
 
 type karmaExecuteTestsReports struct {
 }
@@ -66,7 +65,6 @@ func (p *karmaExecuteTestsReports) persist(stepConfig karmaExecuteTestsOptions, 
 		log.Entry().Errorf("failed to persist reports: %v", err)
 	}
 }
-
 
 // KarmaExecuteTestsCommand Executes the Karma test runner
 func KarmaExecuteTestsCommand() *cobra.Command {
@@ -137,7 +135,7 @@ In the Docker network, the containers can be referenced by the values provided i
 			stepTelemetryData := telemetry.CustomData{}
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
-				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -153,10 +151,10 @@ In the Docker network, the containers can be referenced by the values provided i
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			karmaExecuteTests(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -182,59 +180,54 @@ func addKarmaExecuteTestsFlags(cmd *cobra.Command, stepConfig *karmaExecuteTests
 func karmaExecuteTestsMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "karmaExecuteTests",
-			Aliases: []config.Alias{},
+			Name:        "karmaExecuteTests",
+			Aliases:     []config.Alias{},
 			Description: "Executes the Karma test runner",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "seleniumHubCredentialsId",Description: "Defines the id of the user/password credentials to be used to connect to a Selenium Hub. The credentials are provided in the environment variables `PIPER_SELENIUM_HUB_USER` and `PIPER_SELENIUM_HUB_PASSWORD`.",Type: "jenkins",
-					}, 
+					{Name: "seleniumHubCredentialsId", Description: "Defines the id of the user/password credentials to be used to connect to a Selenium Hub. The credentials are provided in the environment variables `PIPER_SELENIUM_HUB_USER` and `PIPER_SELENIUM_HUB_PASSWORD`.", Type: "jenkins"},
 				},
 				Resources: []config.StepResources{
-					{Name: "buildDescriptor",Type: "stash",
-					},
-					{Name: "tests",Type: "stash",
-					},
+					{Name: "buildDescriptor", Type: "stash"},
+					{Name: "tests", Type: "stash"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "installCommand",
+						Name:        "installCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   `npm install --quiet`,
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     `npm install --quiet`,
 					},
 					{
-						Name:      "modules",
+						Name:        "modules",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   []string{`.`},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     []string{`.`},
 					},
 					{
-						Name:      "runCommand",
+						Name:        "runCommand",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   `npm run karma`,
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     `npm run karma`,
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "karma",Image: "node:lts-stretch",EnvVars: []config.EnvVar{ {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"},  {Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"},  {Name: "PIPER_SELENIUM_HOSTNAME", Value: "karma"},  {Name: "PIPER_SELENIUM_WEBDRIVER_HOSTNAME", Value: "selenium"},  {Name: "PIPER_SELENIUM_WEBDRIVER_PORT", Value: "4444"}, },WorkingDir: "/home/node",
-				}, 
+				{Name: "karma", Image: "node:lts-stretch", EnvVars: []config.EnvVar{{Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}, {Name: "NO_PROXY", Value: "localhost,selenium,$NO_PROXY"}, {Name: "PIPER_SELENIUM_HOSTNAME", Value: "karma"}, {Name: "PIPER_SELENIUM_WEBDRIVER_HOSTNAME", Value: "selenium"}, {Name: "PIPER_SELENIUM_WEBDRIVER_PORT", Value: "4444"}}, WorkingDir: "/home/node"},
 			},
 			Sidecars: []config.Container{
-				{Name: "selenium",Image: "selenium/standalone-chrome",EnvVars: []config.EnvVar{ {Name: "NO_PROXY", Value: "localhost,karma,$NO_PROXY"},  {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}, },
-				}, 
+				{Name: "selenium", Image: "selenium/standalone-chrome", EnvVars: []config.EnvVar{{Name: "NO_PROXY", Value: "localhost,karma,$NO_PROXY"}, {Name: "no_proxy", Value: "localhost,selenium,$no_proxy"}}},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -242,13 +235,13 @@ func karmaExecuteTestsMetadata() config.StepData {
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/TEST-*.xml","type": "karma",},
-							{"filePattern": "**/cobertura-coverage.xml","type": "karma",},
-							{"filePattern": "**/TEST-*.xml","type": "junit",},
-							{"filePattern": "**/jacoco.xml","type": "jacoco-coverage",},
-							{"filePattern": "**/cobertura-coverage.xml","type": "cobertura-coverage",},
-							{"filePattern": "**/xmake_stage.json","type": "xmake",},
-							{"filePattern": "**/requirement.mapping","type": "requirement-mapping",},
+							{"filePattern": "**/TEST-*.xml", "type": "karma"},
+							{"filePattern": "**/cobertura-coverage.xml", "type": "karma"},
+							{"filePattern": "**/TEST-*.xml", "type": "junit"},
+							{"filePattern": "**/jacoco.xml", "type": "jacoco-coverage"},
+							{"filePattern": "**/cobertura-coverage.xml", "type": "cobertura-coverage"},
+							{"filePattern": "**/xmake_stage.json", "type": "xmake"},
+							{"filePattern": "**/requirement.mapping", "type": "requirement-mapping"},
 						},
 					},
 				},

@@ -11,20 +11,19 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type batsExecuteTestsOptions struct {
-	OutputFormat string `json:"outputFormat,omitempty" validate:"possible-values=tap junit"`
-	Repository string `json:"repository,omitempty"`
-	TestPackage string `json:"testPackage,omitempty"`
-	TestPath string `json:"testPath,omitempty"`
-	EnvVars []string `json:"envVars,omitempty"`
+	OutputFormat string   `json:"outputFormat,omitempty" validate:"possible-values=tap junit"`
+	Repository   string   `json:"repository,omitempty"`
+	TestPackage  string   `json:"testPackage,omitempty"`
+	TestPath     string   `json:"testPath,omitempty"`
+	EnvVars      []string `json:"envVars,omitempty"`
 }
-
 
 type batsExecuteTestsInflux struct {
 	step_data struct {
@@ -37,13 +36,13 @@ type batsExecuteTestsInflux struct {
 }
 
 func (i *batsExecuteTestsInflux) persist(path, resourceName string) {
-	measurementContent := []struct{
+	measurementContent := []struct {
 		measurement string
 		valType     string
 		name        string
 		value       interface{}
 	}{
-		{valType: config.InfluxField, measurement: "step_data" , name: "bats", value: i.step_data.fields.bats},
+		{valType: config.InfluxField, measurement: "step_data", name: "bats", value: i.step_data.fields.bats},
 	}
 
 	errCount := 0
@@ -58,7 +57,6 @@ func (i *batsExecuteTestsInflux) persist(path, resourceName string) {
 		log.Entry().Error("failed to persist Influx environment")
 	}
 }
-
 
 // BatsExecuteTestsCommand This step executes tests using the [Bash Automated Testing System - bats-core](https://github.com/bats-core/bats-core).
 func BatsExecuteTestsCommand() *cobra.Command {
@@ -75,7 +73,7 @@ func BatsExecuteTestsCommand() *cobra.Command {
 	var createBatsExecuteTestsCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "This step executes tests using the [Bash Automated Testing System - bats-core](https://github.com/bats-core/bats-core).",
-		Long: `Bats is a TAP-compliant testing framework for Bash. It provides a simple way to verify that the UNIX programs you write behave as expected. A Bats test file is a Bash script with special syntax for defining test cases. Under the hood, each test case is just a function with a description.`,
+		Long:  `Bats is a TAP-compliant testing framework for Bash. It provides a simple way to verify that the UNIX programs you write behave as expected. A Bats test file is a Bash script with special syntax for defining test cases. Under the hood, each test case is just a function with a description.`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -135,10 +133,10 @@ func BatsExecuteTestsCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			batsExecuteTests(stepConfig, &stepTelemetryData, &influx)
 			stepTelemetryData.ErrorCode = "0"
@@ -163,67 +161,65 @@ func addBatsExecuteTestsFlags(cmd *cobra.Command, stepConfig *batsExecuteTestsOp
 func batsExecuteTestsMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "batsExecuteTests",
-			Aliases: []config.Alias{},
+			Name:        "batsExecuteTests",
+			Aliases:     []config.Alias{},
 			Description: "This step executes tests using the [Bash Automated Testing System - bats-core](https://github.com/bats-core/bats-core).",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Resources: []config.StepResources{
-					{Name: "tests",Type: "stash",
-					},
+					{Name: "tests", Type: "stash"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "outputFormat",
+						Name:        "outputFormat",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `junit`,
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `junit`,
 					},
 					{
-						Name:      "repository",
+						Name:        "repository",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `https://github.com/bats-core/bats-core.git`,
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `https://github.com/bats-core/bats-core.git`,
 					},
 					{
-						Name:      "testPackage",
+						Name:        "testPackage",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `piper-bats`,
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `piper-bats`,
 					},
 					{
-						Name:      "testPath",
+						Name:        "testPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `src/test`,
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `src/test`,
 					},
 					{
-						Name:      "envVars",
+						Name:        "envVars",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "bats",Image: "node:lts-stretch",WorkingDir: "/home/node",Conditions: []config.Condition{ {ConditionRef: "strings-equal", Params: []config.Param{ { Name: "outputFormat", Value: "junit" }, } }, },
-				}, 
+				{Name: "bats", Image: "node:lts-stretch", WorkingDir: "/home/node", Conditions: []config.Condition{{ConditionRef: "strings-equal", Params: []config.Param{{Name: "outputFormat", Value: "junit"}}}}},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -231,7 +227,7 @@ func batsExecuteTestsMetadata() config.StepData {
 						Name: "influx",
 						Type: "influx",
 						Parameters: []map[string]interface{}{
-							{"name": "step_data","fields": []map[string]string{ {"name": "bats"}, },},
+							{"name": "step_data", "fields": []map[string]string{{"name": "bats"}}},
 						},
 					},
 				},

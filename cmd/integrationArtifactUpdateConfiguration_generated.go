@@ -9,21 +9,19 @@ import (
 
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type integrationArtifactUpdateConfigurationOptions struct {
-	APIServiceKey string `json:"apiServiceKey,omitempty"`
-	IntegrationFlowID string `json:"integrationFlowId,omitempty"`
+	APIServiceKey          string `json:"apiServiceKey,omitempty"`
+	IntegrationFlowID      string `json:"integrationFlowId,omitempty"`
 	IntegrationFlowVersion string `json:"integrationFlowVersion,omitempty"`
-	ParameterKey string `json:"parameterKey,omitempty"`
-	ParameterValue string `json:"parameterValue,omitempty"`
+	ParameterKey           string `json:"parameterKey,omitempty"`
+	ParameterValue         string `json:"parameterValue,omitempty"`
 }
-
-
 
 // IntegrationArtifactUpdateConfigurationCommand Update integration flow Configuration parameter
 func IntegrationArtifactUpdateConfigurationCommand() *cobra.Command {
@@ -39,7 +37,7 @@ func IntegrationArtifactUpdateConfigurationCommand() *cobra.Command {
 	var createIntegrationArtifactUpdateConfigurationCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "Update integration flow Configuration parameter",
-		Long: `With this step you can update the value for a configuration parameters of a designtime integration flow using the OData API. Learn more about the SAP Cloud Integration remote API for configuration update of the integration flow parameter [here](https://help.sap.com/viewer/368c481cd6954bdfa5d0435479fd4eaf/Cloud/en-US/d1679a80543f46509a7329243b595bdb.html).`,
+		Long:  `With this step you can update the value for a configuration parameters of a designtime integration flow using the OData API. Learn more about the SAP Cloud Integration remote API for configuration update of the integration flow parameter [here](https://help.sap.com/viewer/368c481cd6954bdfa5d0435479fd4eaf/Cloud/en-US/d1679a80543f46509a7329243b595bdb.html).`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -99,10 +97,10 @@ func IntegrationArtifactUpdateConfigurationCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			integrationArtifactUpdateConfiguration(stepConfig, &stepTelemetryData)
 			stepTelemetryData.ErrorCode = "0"
@@ -132,71 +130,69 @@ func addIntegrationArtifactUpdateConfigurationFlags(cmd *cobra.Command, stepConf
 func integrationArtifactUpdateConfigurationMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "integrationArtifactUpdateConfiguration",
-			Aliases: []config.Alias{},
+			Name:        "integrationArtifactUpdateConfiguration",
+			Aliases:     []config.Alias{},
 			Description: "Update integration flow Configuration parameter",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "cpiApiServiceKeyCredentialsId",Description: "Jenkins secret text credential ID containing the service key to the Process Integration Runtime service instance of plan 'api'",Type: "jenkins",
-					}, 
+					{Name: "cpiApiServiceKeyCredentialsId", Description: "Jenkins secret text credential ID containing the service key to the Process Integration Runtime service instance of plan 'api'", Type: "jenkins"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "apiServiceKey",
+						Name: "apiServiceKey",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"cpiApiServiceKeyCredentialsId",
+								Name:  "cpiApiServiceKeyCredentialsId",
 								Param: "apiServiceKey",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        },
-						Scope:     []string{"PARAMETERS",},
+						},
+						Scope:     []string{"PARAMETERS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_apiServiceKey"),
 					},
 					{
-						Name:      "integrationFlowId",
+						Name:        "integrationFlowId",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_integrationFlowId"),
+						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_integrationFlowId"),
 					},
 					{
-						Name:      "integrationFlowVersion",
+						Name:        "integrationFlowVersion",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_integrationFlowVersion"),
+						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_integrationFlowVersion"),
 					},
 					{
-						Name:      "parameterKey",
+						Name:        "parameterKey",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_parameterKey"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_parameterKey"),
 					},
 					{
-						Name:      "parameterValue",
+						Name:        "parameterValue",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_parameterValue"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_parameterValue"),
 					},
 				},
 			},
-			
 		},
 	}
 	return theMetaData

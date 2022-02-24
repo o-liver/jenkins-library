@@ -11,21 +11,20 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type isChangeInDevelopmentOptions struct {
-	Endpoint string `json:"endpoint,omitempty"`
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	ChangeDocumentID string `json:"changeDocumentId,omitempty"`
-	FailIfStatusIsNotInDevelopment bool `json:"failIfStatusIsNotInDevelopment,omitempty"`
-	CmClientOpts []string `json:"cmClientOpts,omitempty"`
+	Endpoint                       string   `json:"endpoint,omitempty"`
+	Username                       string   `json:"username,omitempty"`
+	Password                       string   `json:"password,omitempty"`
+	ChangeDocumentID               string   `json:"changeDocumentId,omitempty"`
+	FailIfStatusIsNotInDevelopment bool     `json:"failIfStatusIsNotInDevelopment,omitempty"`
+	CmClientOpts                   []string `json:"cmClientOpts,omitempty"`
 }
-
 
 type isChangeInDevelopmentCommonPipelineEnvironment struct {
 	custom struct {
@@ -34,10 +33,10 @@ type isChangeInDevelopmentCommonPipelineEnvironment struct {
 }
 
 func (p *isChangeInDevelopmentCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct{
+	content := []struct {
 		category string
-		name string
-		value interface{}
+		name     string
+		value    interface{}
 	}{
 		{category: "custom", name: "isChangeInDevelopment", value: p.custom.isChangeInDevelopment},
 	}
@@ -55,7 +54,6 @@ func (p *isChangeInDevelopmentCommonPipelineEnvironment) persist(path, resourceN
 	}
 }
 
-
 // IsChangeInDevelopmentCommand This step checks if a certain change is in status 'in development'
 func IsChangeInDevelopmentCommand() *cobra.Command {
 	const STEP_NAME = "isChangeInDevelopment"
@@ -71,7 +69,7 @@ func IsChangeInDevelopmentCommand() *cobra.Command {
 	var createIsChangeInDevelopmentCmd = &cobra.Command{
 		Use:   STEP_NAME,
 		Short: "This step checks if a certain change is in status 'in development'",
-		Long: `This step checks if a certain change is in status 'in development'`,
+		Long:  `This step checks if a certain change is in status 'in development'`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			startTime = time.Now()
 			log.SetStepName(STEP_NAME)
@@ -133,10 +131,10 @@ func IsChangeInDevelopmentCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			isChangeInDevelopment(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -166,93 +164,91 @@ func addIsChangeInDevelopmentFlags(cmd *cobra.Command, stepConfig *isChangeInDev
 func isChangeInDevelopmentMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "isChangeInDevelopment",
-			Aliases: []config.Alias{},
+			Name:        "isChangeInDevelopment",
+			Aliases:     []config.Alias{},
 			Description: "This step checks if a certain change is in status 'in development'",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "credentialsId",Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate against the ABAP backend",Type: "jenkins",Aliases: []config.Alias{ {Name: "changeManagement/credentialsId", Deprecated: false}, },
-					}, 
+					{Name: "credentialsId", Description: "Jenkins 'Username with password' credentials ID containing user and password to authenticate against the ABAP backend", Type: "jenkins", Aliases: []config.Alias{{Name: "changeManagement/credentialsId", Deprecated: false}}},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "endpoint",
+						Name:        "endpoint",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "changeManagement/endpoint"},},
-						Default:   os.Getenv("PIPER_endpoint"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "changeManagement/endpoint"}},
+						Default:     os.Getenv("PIPER_endpoint"),
 					},
 					{
-						Name:      "username",
+						Name: "username",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"credentialsId",
+								Name:  "credentialsId",
 								Param: "username",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS","GENERAL",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS", "GENERAL"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_username"),
 					},
 					{
-						Name:      "password",
+						Name: "password",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"credentialsId",
+								Name:  "credentialsId",
 								Param: "password",
-								Type: "secret",
+								Type:  "secret",
 							},
-                        },
-						Scope:     []string{"PARAMETERS",},
+						},
+						Scope:     []string{"PARAMETERS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_password"),
 					},
 					{
-						Name:      "changeDocumentId",
+						Name: "changeDocumentId",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/changeDocumentId",
 							},
-                        },
-						Scope:     []string{"PARAMETERS",},
+						},
+						Scope:     []string{"PARAMETERS"},
 						Type:      "string",
 						Mandatory: true,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_changeDocumentId"),
 					},
 					{
-						Name:      "failIfStatusIsNotInDevelopment",
+						Name:        "failIfStatusIsNotInDevelopment",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   true,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     true,
 					},
 					{
-						Name:      "cmClientOpts",
+						Name:        "cmClientOpts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "clientOpts"},{Name: "changeManagement/clientOpts"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "clientOpts"}, {Name: "changeManagement/clientOpts"}},
+						Default:     []string{},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "cmclient",Image: "ppiper/cm-client",
-				}, 
+				{Name: "cmclient", Image: "ppiper/cm-client"},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -260,7 +256,7 @@ func isChangeInDevelopmentMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "custom/isChangeInDevelopment","type": "bool",},
+							{"name": "custom/isChangeInDevelopment", "type": "bool"},
 						},
 					},
 				},

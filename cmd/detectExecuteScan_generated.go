@@ -11,39 +11,38 @@ import (
 	"github.com/SAP/jenkins-library/pkg/config"
 	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
 	"github.com/spf13/cobra"
 )
 
 type detectExecuteScanOptions struct {
-	Token string `json:"token,omitempty"`
-	CodeLocation string `json:"codeLocation,omitempty"`
-	ProjectName string `json:"projectName,omitempty"`
-	Scanners []string `json:"scanners,omitempty" validate:"possible-values=signature source"`
-	ScanPaths []string `json:"scanPaths,omitempty"`
-	DependencyPath string `json:"dependencyPath,omitempty"`
-	Unmap bool `json:"unmap,omitempty"`
-	ScanProperties []string `json:"scanProperties,omitempty"`
-	ServerURL string `json:"serverUrl,omitempty"`
-	Groups []string `json:"groups,omitempty"`
-	FailOn []string `json:"failOn,omitempty" validate:"possible-values=ALL BLOCKER CRITICAL MAJOR MINOR NONE"`
-	VersioningModel string `json:"versioningModel,omitempty" validate:"possible-values=major major-minor semantic full"`
-	Version string `json:"version,omitempty"`
-	CustomScanVersion string `json:"customScanVersion,omitempty"`
-	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
-	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
-	M2Path string `json:"m2Path,omitempty"`
-	InstallArtifacts bool `json:"installArtifacts,omitempty"`
-	IncludedPackageManagers []string `json:"includedPackageManagers,omitempty"`
-	ExcludedPackageManagers []string `json:"excludedPackageManagers,omitempty"`
-	MavenExcludedScopes []string `json:"mavenExcludedScopes,omitempty"`
-	DetectTools []string `json:"detectTools,omitempty"`
-	ScanOnChanges bool `json:"scanOnChanges,omitempty"`
+	Token                      string   `json:"token,omitempty"`
+	CodeLocation               string   `json:"codeLocation,omitempty"`
+	ProjectName                string   `json:"projectName,omitempty"`
+	Scanners                   []string `json:"scanners,omitempty" validate:"possible-values=signature source"`
+	ScanPaths                  []string `json:"scanPaths,omitempty"`
+	DependencyPath             string   `json:"dependencyPath,omitempty"`
+	Unmap                      bool     `json:"unmap,omitempty"`
+	ScanProperties             []string `json:"scanProperties,omitempty"`
+	ServerURL                  string   `json:"serverUrl,omitempty"`
+	Groups                     []string `json:"groups,omitempty"`
+	FailOn                     []string `json:"failOn,omitempty" validate:"possible-values=ALL BLOCKER CRITICAL MAJOR MINOR NONE"`
+	VersioningModel            string   `json:"versioningModel,omitempty" validate:"possible-values=major major-minor semantic full"`
+	Version                    string   `json:"version,omitempty"`
+	CustomScanVersion          string   `json:"customScanVersion,omitempty"`
+	ProjectSettingsFile        string   `json:"projectSettingsFile,omitempty"`
+	GlobalSettingsFile         string   `json:"globalSettingsFile,omitempty"`
+	M2Path                     string   `json:"m2Path,omitempty"`
+	InstallArtifacts           bool     `json:"installArtifacts,omitempty"`
+	IncludedPackageManagers    []string `json:"includedPackageManagers,omitempty"`
+	ExcludedPackageManagers    []string `json:"excludedPackageManagers,omitempty"`
+	MavenExcludedScopes        []string `json:"mavenExcludedScopes,omitempty"`
+	DetectTools                []string `json:"detectTools,omitempty"`
+	ScanOnChanges              bool     `json:"scanOnChanges,omitempty"`
 	CustomEnvironmentVariables []string `json:"customEnvironmentVariables,omitempty"`
 }
-
 
 type detectExecuteScanInflux struct {
 	step_data struct {
@@ -55,11 +54,11 @@ type detectExecuteScanInflux struct {
 	}
 	detect_data struct {
 		fields struct {
-			vulnerabilities int
+			vulnerabilities       int
 			major_vulnerabilities int
 			minor_vulnerabilities int
-			components int
-			policy_violations int
+			components            int
+			policy_violations     int
 		}
 		tags struct {
 		}
@@ -67,18 +66,18 @@ type detectExecuteScanInflux struct {
 }
 
 func (i *detectExecuteScanInflux) persist(path, resourceName string) {
-	measurementContent := []struct{
+	measurementContent := []struct {
 		measurement string
 		valType     string
 		name        string
 		value       interface{}
 	}{
-		{valType: config.InfluxField, measurement: "step_data" , name: "detect", value: i.step_data.fields.detect},
-		{valType: config.InfluxField, measurement: "detect_data" , name: "vulnerabilities", value: i.detect_data.fields.vulnerabilities},
-		{valType: config.InfluxField, measurement: "detect_data" , name: "major_vulnerabilities", value: i.detect_data.fields.major_vulnerabilities},
-		{valType: config.InfluxField, measurement: "detect_data" , name: "minor_vulnerabilities", value: i.detect_data.fields.minor_vulnerabilities},
-		{valType: config.InfluxField, measurement: "detect_data" , name: "components", value: i.detect_data.fields.components},
-		{valType: config.InfluxField, measurement: "detect_data" , name: "policy_violations", value: i.detect_data.fields.policy_violations},
+		{valType: config.InfluxField, measurement: "step_data", name: "detect", value: i.step_data.fields.detect},
+		{valType: config.InfluxField, measurement: "detect_data", name: "vulnerabilities", value: i.detect_data.fields.vulnerabilities},
+		{valType: config.InfluxField, measurement: "detect_data", name: "major_vulnerabilities", value: i.detect_data.fields.major_vulnerabilities},
+		{valType: config.InfluxField, measurement: "detect_data", name: "minor_vulnerabilities", value: i.detect_data.fields.minor_vulnerabilities},
+		{valType: config.InfluxField, measurement: "detect_data", name: "components", value: i.detect_data.fields.components},
+		{valType: config.InfluxField, measurement: "detect_data", name: "policy_violations", value: i.detect_data.fields.policy_violations},
 	}
 
 	errCount := 0
@@ -93,7 +92,6 @@ func (i *detectExecuteScanInflux) persist(path, resourceName string) {
 		log.Entry().Error("failed to persist Influx environment")
 	}
 }
-
 
 // DetectExecuteScanCommand Executes Synopsys Detect scan
 func DetectExecuteScanCommand() *cobra.Command {
@@ -173,10 +171,10 @@ Please configure your BlackDuck server Url using the serverUrl parameter and the
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			detectExecuteScan(stepConfig, &stepTelemetryData, &influx)
 			stepTelemetryData.ErrorCode = "0"
@@ -223,260 +221,256 @@ func addDetectExecuteScanFlags(cmd *cobra.Command, stepConfig *detectExecuteScan
 func detectExecuteScanMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "detectExecuteScan",
-			Aliases: []config.Alias{},
+			Name:        "detectExecuteScan",
+			Aliases:     []config.Alias{},
 			Description: "Executes Synopsys Detect scan",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Secrets: []config.StepSecrets{
-					{Name: "detectTokenCredentialsId",Description: "Jenkins 'Secret text' credentials ID containing the API token used to authenticate with the Synopsis Detect (formerly BlackDuck) Server.",Type: "jenkins",Aliases: []config.Alias{ {Name: "apiTokenCredentialsId", Deprecated: false}, },
-					}, 
+					{Name: "detectTokenCredentialsId", Description: "Jenkins 'Secret text' credentials ID containing the API token used to authenticate with the Synopsis Detect (formerly BlackDuck) Server.", Type: "jenkins", Aliases: []config.Alias{{Name: "apiTokenCredentialsId", Deprecated: false}}},
 				},
 				Resources: []config.StepResources{
-					{Name: "buildDescriptor",Type: "stash",
-					},
-					{Name: "checkmarx",Type: "stash",
-					},
+					{Name: "buildDescriptor", Type: "stash"},
+					{Name: "checkmarx", Type: "stash"},
 				},
 				Parameters: []config.StepParameters{
 					{
-						Name:      "token",
+						Name: "token",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"detectTokenCredentialsId",
+								Name: "detectTokenCredentialsId",
 								Type: "secret",
 							},
-                        
+
 							{
-								Name:"detectVaultSecretName",
-								Type: "vaultSecret",
+								Name:    "detectVaultSecretName",
+								Type:    "vaultSecret",
 								Default: "detect",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "blackduckToken"},{Name: "detectToken"},{Name: "apiToken", Deprecated: true},{Name: "detect/apiToken", Deprecated: true},},
+						Aliases:   []config.Alias{{Name: "blackduckToken"}, {Name: "detectToken"}, {Name: "apiToken", Deprecated: true}, {Name: "detect/apiToken", Deprecated: true}},
 						Default:   os.Getenv("PIPER_token"),
 					},
 					{
-						Name:      "codeLocation",
+						Name:        "codeLocation",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_codeLocation"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_codeLocation"),
 					},
 					{
-						Name:      "projectName",
+						Name:        "projectName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "detect/projectName"},},
-						Default:   os.Getenv("PIPER_projectName"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "detect/projectName"}},
+						Default:     os.Getenv("PIPER_projectName"),
 					},
 					{
-						Name:      "scanners",
+						Name:        "scanners",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/scanners"},},
-						Default:   []string{`signature`},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/scanners"}},
+						Default:     []string{`signature`},
 					},
 					{
-						Name:      "scanPaths",
+						Name:        "scanPaths",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/scanPaths"},},
-						Default:   []string{`.`},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/scanPaths"}},
+						Default:     []string{`.`},
 					},
 					{
-						Name:      "dependencyPath",
+						Name:        "dependencyPath",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/dependencyPath"},},
-						Default:   `.`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/dependencyPath"}},
+						Default:     `.`,
 					},
 					{
-						Name:      "unmap",
+						Name:        "unmap",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/unmap"},},
-						Default:   false,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/unmap"}},
+						Default:     false,
 					},
 					{
-						Name:      "scanProperties",
+						Name:        "scanProperties",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/scanProperties"},},
-						Default:   []string{`--blackduck.signature.scanner.memory=4096`, `--detect.timeout=6000`, `--blackduck.trust.cert=true`, `--logging.level.com.synopsys.integration=DEBUG`, `--detect.maven.excluded.scopes=test`},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/scanProperties"}},
+						Default:     []string{`--blackduck.signature.scanner.memory=4096`, `--detect.timeout=6000`, `--blackduck.trust.cert=true`, `--logging.level.com.synopsys.integration=DEBUG`, `--detect.maven.excluded.scopes=test`},
 					},
 					{
-						Name:      "serverUrl",
+						Name:        "serverUrl",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: true,
-						Aliases:   []config.Alias{{Name: "detect/serverUrl"},},
-						Default:   os.Getenv("PIPER_serverUrl"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   true,
+						Aliases:     []config.Alias{{Name: "detect/serverUrl"}},
+						Default:     os.Getenv("PIPER_serverUrl"),
 					},
 					{
-						Name:      "groups",
+						Name:        "groups",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/groups"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/groups"}},
+						Default:     []string{},
 					},
 					{
-						Name:      "failOn",
+						Name:        "failOn",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/failOn"},},
-						Default:   []string{`BLOCKER`},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/failOn"}},
+						Default:     []string{`BLOCKER`},
 					},
 					{
-						Name:      "versioningModel",
+						Name:        "versioningModel",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `major`,
+						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `major`,
 					},
 					{
-						Name:      "version",
+						Name: "version",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "artifactVersion",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "projectVersion"},{Name: "detect/projectVersion"},},
+						Aliases:   []config.Alias{{Name: "projectVersion"}, {Name: "detect/projectVersion"}},
 						Default:   os.Getenv("PIPER_version"),
 					},
 					{
-						Name:      "customScanVersion",
+						Name:        "customScanVersion",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STAGES","STEPS","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_customScanVersion"),
+						Scope:       []string{"GENERAL", "STAGES", "STEPS", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_customScanVersion"),
 					},
 					{
-						Name:      "projectSettingsFile",
+						Name:        "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
-						Default:   os.Getenv("PIPER_projectSettingsFile"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
+						Default:     os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:      "globalSettingsFile",
+						Name:        "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
-						Default:   os.Getenv("PIPER_globalSettingsFile"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/globalSettingsFile"}},
+						Default:     os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:      "m2Path",
+						Name:        "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
-						Default:   os.Getenv("PIPER_m2Path"),
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
+						Default:     os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name:      "installArtifacts",
+						Name:        "installArtifacts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   false,
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     false,
 					},
 					{
-						Name:      "includedPackageManagers",
+						Name:        "includedPackageManagers",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/includedPackageManagers"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/includedPackageManagers"}},
+						Default:     []string{},
 					},
 					{
-						Name:      "excludedPackageManagers",
+						Name:        "excludedPackageManagers",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/excludedPackageManagers"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/excludedPackageManagers"}},
+						Default:     []string{},
 					},
 					{
-						Name:      "mavenExcludedScopes",
+						Name:        "mavenExcludedScopes",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/mavenExcludedScopes"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/mavenExcludedScopes"}},
+						Default:     []string{},
 					},
 					{
-						Name:      "detectTools",
+						Name:        "detectTools",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "detect/detectTools"},},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "detect/detectTools"}},
+						Default:     []string{},
 					},
 					{
-						Name:      "scanOnChanges",
+						Name:        "scanOnChanges",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   false,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     false,
 					},
 					{
-						Name:      "customEnvironmentVariables",
+						Name:        "customEnvironmentVariables",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 				},
 			},
 			Containers: []config.Container{
-				{Name: "openjdk",Image: "openjdk:11",WorkingDir: "/root",Options: []config.Option{ {Name: "-u", Value: "0"}, },
-				}, 
+				{Name: "openjdk", Image: "openjdk:11", WorkingDir: "/root", Options: []config.Option{{Name: "-u", Value: "0"}}},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -484,8 +478,8 @@ func detectExecuteScanMetadata() config.StepData {
 						Name: "influx",
 						Type: "influx",
 						Parameters: []map[string]interface{}{
-							{"name": "step_data","fields": []map[string]string{ {"name": "detect"}, },},
-							{"name": "detect_data","fields": []map[string]string{ {"name": "vulnerabilities"},  {"name": "major_vulnerabilities"},  {"name": "minor_vulnerabilities"},  {"name": "components"},  {"name": "policy_violations"}, },},
+							{"name": "step_data", "fields": []map[string]string{{"name": "detect"}}},
+							{"name": "detect_data", "fields": []map[string]string{{"name": "vulnerabilities"}, {"name": "major_vulnerabilities"}, {"name": "minor_vulnerabilities"}, {"name": "components"}, {"name": "policy_violations"}}},
 						},
 					},
 				},

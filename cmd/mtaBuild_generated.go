@@ -5,60 +5,59 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
-	"path/filepath"
 	"time"
 
 	"github.com/SAP/jenkins-library/pkg/config"
-	"github.com/SAP/jenkins-library/pkg/log"
-	"github.com/bmatcuk/doublestar"
 	"github.com/SAP/jenkins-library/pkg/gcs"
+	"github.com/SAP/jenkins-library/pkg/log"
 	"github.com/SAP/jenkins-library/pkg/piperenv"
-	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/splunk"
+	"github.com/SAP/jenkins-library/pkg/telemetry"
 	"github.com/SAP/jenkins-library/pkg/validation"
+	"github.com/bmatcuk/doublestar"
 	"github.com/spf13/cobra"
 )
 
 type mtaBuildOptions struct {
-	MtarName string `json:"mtarName,omitempty"`
-	MtarGroup string `json:"mtarGroup,omitempty"`
-	Version string `json:"version,omitempty"`
-	Extensions string `json:"extensions,omitempty"`
-	Jobs int `json:"jobs,omitempty"`
-	Platform string `json:"platform,omitempty" validate:"possible-values=CF NEO XSA"`
-	ApplicationName string `json:"applicationName,omitempty"`
-	Source string `json:"source,omitempty"`
-	Target string `json:"target,omitempty"`
-	DefaultNpmRegistry string `json:"defaultNpmRegistry,omitempty"`
-	ProjectSettingsFile string `json:"projectSettingsFile,omitempty"`
-	GlobalSettingsFile string `json:"globalSettingsFile,omitempty"`
-	M2Path string `json:"m2Path,omitempty"`
-	InstallArtifacts bool `json:"installArtifacts,omitempty"`
-	MtaDeploymentRepositoryPassword string `json:"mtaDeploymentRepositoryPassword,omitempty"`
-	MtaDeploymentRepositoryUser string `json:"mtaDeploymentRepositoryUser,omitempty"`
-	MtaDeploymentRepositoryURL string `json:"mtaDeploymentRepositoryUrl,omitempty"`
-	Publish bool `json:"publish,omitempty"`
-	Profiles []string `json:"profiles,omitempty"`
-	BuildSettingsInfo string `json:"buildSettingsInfo,omitempty"`
+	MtarName                        string   `json:"mtarName,omitempty"`
+	MtarGroup                       string   `json:"mtarGroup,omitempty"`
+	Version                         string   `json:"version,omitempty"`
+	Extensions                      string   `json:"extensions,omitempty"`
+	Jobs                            int      `json:"jobs,omitempty"`
+	Platform                        string   `json:"platform,omitempty" validate:"possible-values=CF NEO XSA"`
+	ApplicationName                 string   `json:"applicationName,omitempty"`
+	Source                          string   `json:"source,omitempty"`
+	Target                          string   `json:"target,omitempty"`
+	DefaultNpmRegistry              string   `json:"defaultNpmRegistry,omitempty"`
+	ProjectSettingsFile             string   `json:"projectSettingsFile,omitempty"`
+	GlobalSettingsFile              string   `json:"globalSettingsFile,omitempty"`
+	M2Path                          string   `json:"m2Path,omitempty"`
+	InstallArtifacts                bool     `json:"installArtifacts,omitempty"`
+	MtaDeploymentRepositoryPassword string   `json:"mtaDeploymentRepositoryPassword,omitempty"`
+	MtaDeploymentRepositoryUser     string   `json:"mtaDeploymentRepositoryUser,omitempty"`
+	MtaDeploymentRepositoryURL      string   `json:"mtaDeploymentRepositoryUrl,omitempty"`
+	Publish                         bool     `json:"publish,omitempty"`
+	Profiles                        []string `json:"profiles,omitempty"`
+	BuildSettingsInfo               string   `json:"buildSettingsInfo,omitempty"`
 }
-
 
 type mtaBuildCommonPipelineEnvironment struct {
 	mtarFilePath string
-	custom struct {
-		mtaBuildToolDesc string
-		mtarPublishedURL string
+	custom       struct {
+		mtaBuildToolDesc  string
+		mtarPublishedURL  string
 		buildSettingsInfo string
 	}
 }
 
 func (p *mtaBuildCommonPipelineEnvironment) persist(path, resourceName string) {
-	content := []struct{
+	content := []struct {
 		category string
-		name string
-		value interface{}
+		name     string
+		value    interface{}
 	}{
 		{category: "", name: "mtarFilePath", value: p.mtarFilePath},
 		{category: "custom", name: "mtaBuildToolDesc", value: p.custom.mtaBuildToolDesc},
@@ -115,7 +114,6 @@ func (p *mtaBuildReports) persist(stepConfig mtaBuildOptions, gcpJsonKeyFilePath
 		log.Entry().Errorf("failed to persist reports: %v", err)
 	}
 }
-
 
 // MtaBuildCommand Performs an mta build
 func MtaBuildCommand() *cobra.Command {
@@ -182,7 +180,7 @@ func MtaBuildCommand() *cobra.Command {
 			stepTelemetryData.ErrorCode = "1"
 			handler := func() {
 				commonPipelineEnvironment.persist(GeneralConfig.EnvRootPath, "commonPipelineEnvironment")
-				reports.persist(stepConfig,GeneralConfig.GCPJsonKeyFilePath,GeneralConfig.GCSBucketId,GeneralConfig.GCSFolderPath,GeneralConfig.GCSSubFolder)
+				reports.persist(stepConfig, GeneralConfig.GCPJsonKeyFilePath, GeneralConfig.GCSBucketId, GeneralConfig.GCSFolderPath, GeneralConfig.GCSSubFolder)
 				config.RemoveVaultSecretFiles()
 				stepTelemetryData.Duration = fmt.Sprintf("%v", time.Since(startTime).Milliseconds())
 				stepTelemetryData.ErrorCategory = log.GetErrorCategory().String()
@@ -198,10 +196,10 @@ func MtaBuildCommand() *cobra.Command {
 			telemetryClient.Initialize(GeneralConfig.NoTelemetry, STEP_NAME)
 			if len(GeneralConfig.HookConfig.SplunkConfig.Dsn) > 0 {
 				splunkClient.Initialize(GeneralConfig.CorrelationID,
-				GeneralConfig.HookConfig.SplunkConfig.Dsn,
-				GeneralConfig.HookConfig.SplunkConfig.Token,
-				GeneralConfig.HookConfig.SplunkConfig.Index,
-				GeneralConfig.HookConfig.SplunkConfig.SendLogs)
+					GeneralConfig.HookConfig.SplunkConfig.Dsn,
+					GeneralConfig.HookConfig.SplunkConfig.Token,
+					GeneralConfig.HookConfig.SplunkConfig.Index,
+					GeneralConfig.HookConfig.SplunkConfig.SendLogs)
 			}
 			mtaBuild(stepConfig, &stepTelemetryData, &commonPipelineEnvironment)
 			stepTelemetryData.ErrorCode = "0"
@@ -241,224 +239,224 @@ func addMtaBuildFlags(cmd *cobra.Command, stepConfig *mtaBuildOptions) {
 func mtaBuildMetadata() config.StepData {
 	var theMetaData = config.StepData{
 		Metadata: config.StepMetadata{
-			Name:    "mtaBuild",
-			Aliases: []config.Alias{},
+			Name:        "mtaBuild",
+			Aliases:     []config.Alias{},
 			Description: "Performs an mta build",
 		},
 		Spec: config.StepSpec{
 			Inputs: config.StepInputs{
 				Parameters: []config.StepParameters{
 					{
-						Name:      "mtarName",
+						Name:        "mtarName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_mtarName"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_mtarName"),
 					},
 					{
-						Name:      "mtarGroup",
+						Name:        "mtarGroup",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_mtarGroup"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_mtarGroup"),
 					},
 					{
-						Name:      "version",
+						Name: "version",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "artifactVersion",
 							},
-                        },
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "artifactVersion"},},
+						Aliases:   []config.Alias{{Name: "artifactVersion"}},
 						Default:   os.Getenv("PIPER_version"),
 					},
 					{
-						Name:      "extensions",
+						Name:        "extensions",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "extension"},},
-						Default:   os.Getenv("PIPER_extensions"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "extension"}},
+						Default:     os.Getenv("PIPER_extensions"),
 					},
 					{
-						Name:      "jobs",
+						Name:        "jobs",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "int",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "jobs"},},
-						Default:   0,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "int",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "jobs"}},
+						Default:     0,
 					},
 					{
-						Name:      "platform",
+						Name:        "platform",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `CF`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `CF`,
 					},
 					{
-						Name:      "applicationName",
+						Name:        "applicationName",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   os.Getenv("PIPER_applicationName"),
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     os.Getenv("PIPER_applicationName"),
 					},
 					{
-						Name:      "source",
+						Name:        "source",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `./`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `./`,
 					},
 					{
-						Name:      "target",
+						Name:        "target",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   `./`,
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     `./`,
 					},
 					{
-						Name:      "defaultNpmRegistry",
+						Name:        "defaultNpmRegistry",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "npm/defaultNpmRegistry"},},
-						Default:   os.Getenv("PIPER_defaultNpmRegistry"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "npm/defaultNpmRegistry"}},
+						Default:     os.Getenv("PIPER_defaultNpmRegistry"),
 					},
 					{
-						Name:      "projectSettingsFile",
+						Name:        "projectSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/projectSettingsFile"},},
-						Default:   os.Getenv("PIPER_projectSettingsFile"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/projectSettingsFile"}},
+						Default:     os.Getenv("PIPER_projectSettingsFile"),
 					},
 					{
-						Name:      "globalSettingsFile",
+						Name:        "globalSettingsFile",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/globalSettingsFile"},},
-						Default:   os.Getenv("PIPER_globalSettingsFile"),
+						Scope:       []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/globalSettingsFile"}},
+						Default:     os.Getenv("PIPER_globalSettingsFile"),
 					},
 					{
-						Name:      "m2Path",
+						Name:        "m2Path",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "string",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "maven/m2Path"},},
-						Default:   os.Getenv("PIPER_m2Path"),
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "maven/m2Path"}},
+						Default:     os.Getenv("PIPER_m2Path"),
 					},
 					{
-						Name:      "installArtifacts",
+						Name:        "installArtifacts",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"GENERAL","STEPS","STAGES","PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   false,
+						Scope:       []string{"GENERAL", "STEPS", "STAGES", "PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     false,
 					},
 					{
-						Name:      "mtaDeploymentRepositoryPassword",
+						Name: "mtaDeploymentRepositoryPassword",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/repositoryPassword",
 							},
-                        
+
 							{
-								Name:"mtaDeploymentRepositoryPasswordId",
+								Name: "mtaDeploymentRepositoryPasswordId",
 								Type: "secret",
 							},
-                        
+
 							{
-								Name:"mtaDeploymentRepositoryPasswordFileVaultSecretName",
-								Type: "vaultSecretFile",
+								Name:    "mtaDeploymentRepositoryPasswordFileVaultSecretName",
+								Type:    "vaultSecretFile",
 								Default: "mta-deployment-repository-passowrd",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_mtaDeploymentRepositoryPassword"),
 					},
 					{
-						Name:      "mtaDeploymentRepositoryUser",
+						Name: "mtaDeploymentRepositoryUser",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/repositoryUsername",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_mtaDeploymentRepositoryUser"),
 					},
 					{
-						Name:      "mtaDeploymentRepositoryUrl",
+						Name: "mtaDeploymentRepositoryUrl",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/repositoryUrl",
 							},
-                        },
-						Scope:     []string{"GENERAL","PARAMETERS","STAGES","STEPS",},
+						},
+						Scope:     []string{"GENERAL", "PARAMETERS", "STAGES", "STEPS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
 						Default:   os.Getenv("PIPER_mtaDeploymentRepositoryUrl"),
 					},
 					{
-						Name:      "publish",
+						Name:        "publish",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
-						Type:      "bool",
-						Mandatory: false,
-						Aliases:   []config.Alias{{Name: "mta/publish"},},
-						Default:   false,
+						Scope:       []string{"STEPS", "STAGES", "PARAMETERS"},
+						Type:        "bool",
+						Mandatory:   false,
+						Aliases:     []config.Alias{{Name: "mta/publish"}},
+						Default:     false,
 					},
 					{
-						Name:      "profiles",
+						Name:        "profiles",
 						ResourceRef: []config.ResourceReference{},
-						Scope:     []string{"PARAMETERS","GENERAL","STAGES","STEPS",},
-						Type:      "[]string",
-						Mandatory: false,
-						Aliases:   []config.Alias{},
-						Default:   []string{},
+						Scope:       []string{"PARAMETERS", "GENERAL", "STAGES", "STEPS"},
+						Type:        "[]string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
+						Default:     []string{},
 					},
 					{
-						Name:      "buildSettingsInfo",
+						Name: "buildSettingsInfo",
 						ResourceRef: []config.ResourceReference{
 							{
-								Name:"commonPipelineEnvironment",
+								Name:  "commonPipelineEnvironment",
 								Param: "custom/buildSettingsInfo",
 							},
-                        },
-						Scope:     []string{"STEPS","STAGES","PARAMETERS",},
+						},
+						Scope:     []string{"STEPS", "STAGES", "PARAMETERS"},
 						Type:      "string",
 						Mandatory: false,
 						Aliases:   []config.Alias{},
@@ -467,8 +465,7 @@ func mtaBuildMetadata() config.StepData {
 				},
 			},
 			Containers: []config.Container{
-				{Image: "devxci/mbtci-java11-node14",
-				}, 
+				{Image: "devxci/mbtci-java11-node14"},
 			},
 			Outputs: config.StepOutputs{
 				Resources: []config.StepResources{
@@ -476,19 +473,19 @@ func mtaBuildMetadata() config.StepData {
 						Name: "commonPipelineEnvironment",
 						Type: "piperEnvironment",
 						Parameters: []map[string]interface{}{
-							{"name": "mtarFilePath",},
-							{"name": "custom/mtaBuildToolDesc",},
-							{"name": "custom/mtarPublishedUrl",},
-							{"name": "custom/buildSettingsInfo",},
+							{"name": "mtarFilePath"},
+							{"name": "custom/mtaBuildToolDesc"},
+							{"name": "custom/mtarPublishedUrl"},
+							{"name": "custom/buildSettingsInfo"},
 						},
 					},
 					{
 						Name: "reports",
 						Type: "reports",
 						Parameters: []map[string]interface{}{
-							{"filePattern": "**/TEST-*.xml","type": "junit",},
-							{"filePattern": "**/cobertura-coverage.xml","type": "cobertura-coverage",},
-							{"filePattern": "**/jacoco.xml","type": "jacoco-coverage",},
+							{"filePattern": "**/TEST-*.xml", "type": "junit"},
+							{"filePattern": "**/cobertura-coverage.xml", "type": "cobertura-coverage"},
+							{"filePattern": "**/jacoco.xml", "type": "jacoco-coverage"},
 						},
 					},
 				},
